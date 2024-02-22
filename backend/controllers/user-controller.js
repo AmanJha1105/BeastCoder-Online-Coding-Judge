@@ -55,7 +55,7 @@ const login =async(req,res,next)=>{
     }
     //if user does not exist throw error
     if(!existingUser){
-        return res.staus(400).json({message:"Invalid Credentials"});
+        return res.status(400).json({message:"Invalid Credentials"});
     }
 
     //check password
@@ -77,7 +77,7 @@ const login =async(req,res,next)=>{
 
     res.cookie(String(existingUser._id),token,{
         path:'/',
-        expires: new Date(Date.now()+1000*15),
+        expires: new Date(Date.now()+1000*1000*4),
         httpOnly: true,
         sameSite: 'lax'
     })

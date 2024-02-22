@@ -7,10 +7,10 @@ const cors=require("cors");
 const {ConnectDB}= require('./database/db');
 const app=express();
 
-app.use(cors());
-app.use(cookieParser());
 app.use(express.json());
-app.use('/',router);
+app.use(cookieParser());
+app.use(cors());
+app.use(router);
 
 ConnectDB();
 
