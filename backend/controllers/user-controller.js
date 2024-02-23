@@ -70,14 +70,20 @@ const login =async(req,res,next)=>{
     //generate token for correct details.
 
     const token= jwt.sign({id:existingUser._id},JWT_SECRET_KEY,{
-        expiresIn:"3hr"
+        expiresIn:"35s"
     });
+
+    console.log("gernerated token\n", token);
+
+    if(req.cookies[`${existingUser._id}`]){
+        req.cookies[`${existingUser._id}`]="";
+    }
 
     //sending cookie when user logs in
 
     res.cookie(String(existingUser._id),token,{
         path:'/',
-        expires: new Date(Date.now()+1000*1000*4),
+        expires: new Date(Date.now()+1000*30),
         httpOnly: true,
         sameSite: 'lax'
     })
@@ -128,11 +134,14 @@ const getUser= async(req,res,next)=>{
 const refreshToken = (req,res,next)=>{
 
     const cookies=req.headers.cookie;
+
+    console.log(cookies);
     
     const prevtoken= cookies.split("=")[1];
     if(!prevtoken){
         return res.status(400).json({message: "Couldn't find token"});
     }
+    console.log("prev token is",prevtoken);
     jwt.verify(String(prevtoken),JWT_SECRET_KEY,(err,user)=>{
         if(err){
             console.log(err);
@@ -144,9 +153,11 @@ const refreshToken = (req,res,next)=>{
             expiresIn:"30s"
         })
 
+        console.log("Regenerated token\n",token);
+
         res.cookie(String(user.id),token,{
             path:'/',
-            expires: new Date(Date.now()+1000*1000*4),
+            expires: new Date(Date.now()+1000*30),
             httpOnly: true,
             sameSite: 'lax'
         });
