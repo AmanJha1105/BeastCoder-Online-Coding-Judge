@@ -123,9 +123,42 @@ const getUser= async(req,res,next)=>{
    }
 
    return res.status(200).json({user});
+};
+
+const refreshToken = (req,res,next)=>{
+
+    const cookies=req.headers.cookie;
+    
+    const prevtoken= cookies.split("=")[1];
+    if(!prevtoken){
+        return res.status(400).json({message: "Couldn't find token"});
+    }
+    jwt.verify(String(prevtoken),JWT_SECRET_KEY,(err,user)=>{
+        if(err){
+            console.log(err);
+            return res.status(403).json({message: "Authentication failed"});
+        }
+        res.clearCookie(`${user.id}`);
+        req.cookies[`${user.id}`]="";
+        const token = jwt.sign({id:user.id},JWT_SECRET_KEY,{
+            expiresIn:"30s"
+        })
+
+        res.cookie(String(user.id),token,{
+            path:'/',
+            expires: new Date(Date.now()+1000*1000*4),
+            httpOnly: true,
+            sameSite: 'lax'
+        });
+
+        req.id=user.id;
+        next();
+
+    })
 }
 
 exports.signup=signup;
 exports.login=login;
 exports.verifyToken=verifyToken;
 exports.getUser=getUser;
+exports.refreshToken=refreshToken;
