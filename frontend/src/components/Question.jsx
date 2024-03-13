@@ -4,7 +4,7 @@ import axios from "axios";
 
 const Question = () => {
 
-    const [queslist, setqueslist]= useState(" ");
+    const [queslist, setqueslist]= useState([]);
 
     const getQuestions = async () => {
         const res = await axios
@@ -14,11 +14,15 @@ const Question = () => {
           .catch((err) => console.log(err));
     
         const data = await res.data;
+        console.log(data);
+        console.log(Array.isArray(data));
+        console.log(typeof(data[0]));
+
         return data;
       };
 
       useEffect(() => {
-        getQuestions().then((data)=>setqueslist(data[0]));
+        getQuestions().then((data)=>setqueslist(data));
       }
        , []);
     
@@ -34,7 +38,14 @@ const Question = () => {
                     </li>
                 ))}
             </ul> */}
-            <h2>{queslist.title}</h2>
+           <div>
+            {queslist.map((ques) => (
+              <div key={ques.id} className="flex  border-4 border-pink-200 justify-between p-5 m-5 ">
+                <h2>{ques.title}</h2>
+                <p>{ques.level}</p>
+              </div>
+            ))}
+          </div>
         </>
        )
 
