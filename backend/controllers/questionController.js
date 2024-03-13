@@ -2,17 +2,16 @@ const Question = require('../model/Question');
 
 const addQuestion = async (req, res) => {
   console.log(req.body);
+  const {level,topics,title,likes,dislikes,content}= req.body;
+
   try {
-    // Create instances of CodeSnippet and TestCases using the request body
-    const codeSnippets = req.body.codeSnippets.map(
-      (snippet) => new CodeSnippet(snippet)
-    );
-    const testCases = new TestCases(req.body.testCases);
-    // Create a new question instance using the request body, including CodeSnippet and TestCases
     const newQuestion = new Question({
-      ...req.body,
-      codeSnippets,
-      testCases,
+      level,
+      topics,
+      title,
+      likes,
+      dislikes,
+      content,
     });
 
     // Save the question to the database
