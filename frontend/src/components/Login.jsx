@@ -7,7 +7,7 @@ const Login=()=> {
   const history=useNavigate();
   const [formData, setFormData] = useState({
     email:"",
-    password:""
+    password:"",
   });
   const handleChange = (e) => {
     setFormData((prev)=>({ ...prev, [e.target.id]: e.target.value }));
@@ -15,15 +15,15 @@ const Login=()=> {
 
   const sendRequest = async ()=>{
     const res= await axios
-    .post("http://localhost:8000/login",{
+    .post("http://localhost:5000/api/login",{
        email: formData.email,
-       password: formData.password
+       password: formData.password,
     }).catch(err=>console.log(err));
     const data = await res.data;
     return data;
   }
 
-  const handleSubmit = async (e) => {
+  const handleSubmit =  (e) => {
     e.preventDefault();
     sendRequest().then(()=>history("/user"));
     };
@@ -50,7 +50,7 @@ const Login=()=> {
           <button
             className='bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacity-95 disabled:opacity-80'
           >
-            : Login
+            Login
           </button>
         </form>
         <div className='flex gap-2 mt-5'>

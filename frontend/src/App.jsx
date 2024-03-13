@@ -1,8 +1,11 @@
 import { Route, Routes } from "react-router-dom";
 import Login from "./components/Login";
 import Signup from "./components/Signup";
-import Problems from "./components/Problems";
 import Header from "./components/Header";
+import Welcome from "./components/Welcome";
+import Question from "./components/Question";
+import AddQuestion from "./components/AddQuestion";
+
 const App=()=> {
 
   return (
@@ -12,7 +15,9 @@ const App=()=> {
         <Routes>
           <Route path="/login" element={<Login/>}/>
           <Route path="/signup" element={<Signup/>}/>
-          <Route path="/user" element={<Problems/>}/>
+          <Route path="/user" element={<Welcome/>}/>
+          <Route path="/allquestion" element={<Question/>}/>
+          <Route path="/add" element={<AddQuestion/>}/>
         </Routes>
     </>
   )

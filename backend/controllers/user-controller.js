@@ -1,7 +1,7 @@
 const User=require('../model/User');
 const bcrypt= require("bcryptjs");
 const jwt=require("jsonwebtoken");
-const { get } = require('mongoose');
+
 const JWT_SECRET_KEY= process.env.JWT_SECRET_KEY;
 
 //creating signup functionality
@@ -22,13 +22,13 @@ const signup= async(req,res,next)=>{
     }
 
     //hashing the password before storing in db
-    const hashedPassword=bcrypt.hashSync(password,10);
+    const hashedPassword=bcrypt.hashSync(password);
     //creating new user 
 
     const user= new User({
        name,
        email,
-       password: hashedPassword
+       password: hashedPassword,
     });
 
     try {
@@ -44,6 +44,8 @@ const signup= async(req,res,next)=>{
 
 const login =async(req,res,next)=>{
 
+    console.log("login function called");
+
     const {email,password}=req.body;
 
     //check if user exists
@@ -51,7 +53,7 @@ const login =async(req,res,next)=>{
     try {
         existingUser= await User.findOne({email:email});
     } catch (error) {
-        console.log("something went wrong",error);
+        return new Error(error);
     }
     //if user does not exist throw error
     if(!existingUser){
@@ -70,7 +72,7 @@ const login =async(req,res,next)=>{
     //generate token for correct details.
 
     const token= jwt.sign({id:existingUser._id},JWT_SECRET_KEY,{
-        expiresIn:"35s"
+        expiresIn:"70s",
     });
 
     console.log("gernerated token\n", token);
@@ -82,10 +84,11 @@ const login =async(req,res,next)=>{
     //sending cookie when user logs in
 
     res.cookie(String(existingUser._id),token,{
-        path:'/',
-        expires: new Date(Date.now()+1000*30),
+        path:"/",
+        expires: new Date(Date.now()+1000*60),
         httpOnly: true,
-        sameSite: 'lax'
+        sameSite: 'lax',
+        secure:false,
     })
 
     return res.status(200).json({message:"Successfully logged in",user:existingUser,token});
@@ -95,12 +98,16 @@ const login =async(req,res,next)=>{
 
 const verifyToken = (req,res,next)=>{
 
+    console.log("verify token called");
+
     const cookies=req.headers.cookie;
+    console.log(cookies);
     
-    const token= cookies.split("=")[1];
-    console.log(token);
+    const token= cookies.split("=")[5];
+    console.log("token is",token);
+
     if(!token){
-        res.status(404).json({message:"No token "});
+        res.status(404).json({message:"No token found"});
     }
     jwt.verify(String(token),JWT_SECRET_KEY,(err,user)=>{
         if(err)
@@ -133,11 +140,12 @@ const getUser= async(req,res,next)=>{
 
 const refreshToken = (req,res,next)=>{
 
-    const cookies=req.headers.cookie;
+    console.log("called refresh function");
 
+    const cookies=req.headers.cookie;
     console.log(cookies);
     
-    const prevtoken= cookies.split("=")[1];
+    const prevtoken = cookies.split("=")[5];
     if(!prevtoken){
         return res.status(400).json({message: "Couldn't find token"});
     }
@@ -150,14 +158,14 @@ const refreshToken = (req,res,next)=>{
         res.clearCookie(`${user.id}`);
         req.cookies[`${user.id}`]="";
         const token = jwt.sign({id:user.id},JWT_SECRET_KEY,{
-            expiresIn:"30s"
+            expiresIn:"70s"
         })
 
         console.log("Regenerated token\n",token);
 
         res.cookie(String(user.id),token,{
-            path:'/',
-            expires: new Date(Date.now()+1000*30),
+            path:"/",
+            expires: new Date(Date.now()+1000*60),
             httpOnly: true,
             sameSite: 'lax'
         });

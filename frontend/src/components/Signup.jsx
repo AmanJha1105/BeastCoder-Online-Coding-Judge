@@ -14,14 +14,14 @@ export default function SignUp() {
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.id]: e.target.value });
+    setFormData((prev)=>({ ...prev, [e.target.id]: e.target.value }));
   };
 
   const sendRequest = async ()=>{
     setLoading(true);
     setError(false);
     const res= await axios
-    .post("http://localhost:8000/signup",{
+    .post("http://localhost:5000/api/signup",{
        name: formData.name,
        email: formData.email,
        password: formData.password
@@ -35,7 +35,7 @@ export default function SignUp() {
     return data;
   }
 
-  const handleSubmit = async (e) => {
+  const handleSubmit =  (e) => {
     e.preventDefault();
     sendRequest().then(()=>history("/login"));
     };
