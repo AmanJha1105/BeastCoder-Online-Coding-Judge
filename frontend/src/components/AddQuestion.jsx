@@ -8,7 +8,7 @@ const AddQuestion= ()=> {
   const history=useNavigate();
   const [formData, setFormData] = useState({
     level:"",
-    toics:"",
+    topics:"",
     title:"",
     likes:"",
     dislikes:"",
@@ -22,7 +22,7 @@ const AddQuestion= ()=> {
     const res= await axios
     .post("http://localhost:5000/ques/add",{
       level:formData.level,
-      toics:formData.topics,
+      topics:formData.topics,
       title:formData.title,
       likes:0,
       dislikes:0,
