@@ -15,6 +15,13 @@ const questionSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+
+  titleslug: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+
   likes: {
     type: Number,
     default: 0,

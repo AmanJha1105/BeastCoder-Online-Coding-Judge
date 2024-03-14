@@ -14,10 +14,6 @@ const Question = () => {
           .catch((err) => console.log(err));
     
         const data = await res.data;
-        console.log(data);
-        console.log(Array.isArray(data));
-        console.log(typeof(data[0]));
-
         return data;
       };
 
@@ -28,16 +24,10 @@ const Question = () => {
     
        return(
         <>
-           <Link to="/add"><button>Add Questions </button>
-           </Link>
+           <Link to="/add"><button className="border-2 border-black-300 bg-gray-300 text-cyan-950 rounded-lg p-1.5 m-5"> Add Questions </button></Link>
+
           <h1>hello you can solve these questions</h1>
-          {/* <ul>
-                {queslist.map((ques) => (
-                    <li key={queslist._id}>
-                    Name: {queslist.title}, Level: {queslist.level}
-                    </li>
-                ))}
-            </ul> */}
+
            <div>
             {queslist.map((ques) => (
               <div key={ques.id} className="flex  border-4 border-pink-200 justify-between p-5 m-5 ">

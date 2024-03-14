@@ -5,6 +5,7 @@ import Header from "./components/Header";
 import Welcome from "./components/Welcome";
 import Question from "./components/Question";
 import AddQuestion from "./components/AddQuestion";
+import QuestionDescription from "./components/QuestionDescription";
 
 const App=()=> {
 
@@ -18,6 +19,7 @@ const App=()=> {
           <Route path="/user" element={<Welcome/>}/>
           <Route path="/allquestion" element={<Question/>}/>
           <Route path="/add" element={<AddQuestion/>}/>
+          <Route path="/question/:quesID" element={<QuestionDescription/>}/>
         </Routes>
     </>
   )
