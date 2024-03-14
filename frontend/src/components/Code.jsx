@@ -37,7 +37,7 @@ const Code = ()=> {
     <div className="container mx-auto py-8 flex flex-col lg:flex-row items-stretch">
       {/* Left side: Compiler editor */}
       <div className="lg:w-1/2 lg:pr-4 mb-4 lg:mb-0">
-        <h1 className="text-3xl font-bold mb-3">AlgoU Online Code Compiler</h1>
+        <h1 className="text-3xl font-bold mb-3">Beast Coder Online Code Compiler</h1>
         <div className="bg-gray-100 shadow-md w-full max-w-lg mb-4" style={{ height: '300px', overflowY: 'auto' }}>
           <Editor
             value={code}
