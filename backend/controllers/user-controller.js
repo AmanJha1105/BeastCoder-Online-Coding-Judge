@@ -72,7 +72,7 @@ const login =async(req,res,next)=>{
     //generate token for correct details.
 
     const token= jwt.sign({id:existingUser._id},JWT_SECRET_KEY,{
-        expiresIn:"70s",
+        expiresIn:"2hr",
     });
 
     console.log("gernerated token\n", token);
@@ -85,7 +85,7 @@ const login =async(req,res,next)=>{
 
     res.cookie(String(existingUser._id),token,{
         path:"/",
-        expires: new Date(Date.now()+1000*60),
+        expires: new Date(Date.now()+1000*60*60*2),
         httpOnly: true,
         sameSite: 'lax',
         secure:false,
@@ -158,14 +158,14 @@ const refreshToken = (req,res,next)=>{
         res.clearCookie(`${user.id}`);
         req.cookies[`${user.id}`]="";
         const token = jwt.sign({id:user.id},JWT_SECRET_KEY,{
-            expiresIn:"70s"
+            expiresIn:"2hr"
         })
 
         console.log("Regenerated token\n",token);
 
         res.cookie(String(user.id),token,{
             path:"/",
-            expires: new Date(Date.now()+1000*60),
+            expires: new Date(Date.now()+1000*60*60*2),
             httpOnly: true,
             sameSite: 'lax'
         });

@@ -28,13 +28,14 @@ const Question = () => {
 
           <h1>hello you can solve these questions</h1>
 
-           <div>
+           <div> 
             {queslist.map((ques) => (
-              <div key={ques.id} className="flex  border-4 border-pink-200 justify-between p-5 m-5 ">
+              <Link key={ques.id} to ={"/question/"+ques.titleslug}>
+              <div className="flex  border-4 border-pink-200 justify-between p-5 m-5 ">
                 <h2>{ques.title}</h2>
                 <p>{ques.level}</p>
               </div>
-            ))}
+            </Link>))}
           </div>
         </>
        )

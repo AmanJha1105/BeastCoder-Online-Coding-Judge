@@ -32,7 +32,7 @@ const Welcome = () => {
     }
     let interval = setInterval(() => {
       refreshToken().then((data) => setUser(data.user));
-    }, 1000 * 59);
+    }, 1000 * 59*2*59);
     return () => clearInterval(interval);
   }, []);
 

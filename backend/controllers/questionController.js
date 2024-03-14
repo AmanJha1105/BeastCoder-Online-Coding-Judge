@@ -1,7 +1,6 @@
 const Question = require('../model/Question');
 
 const addQuestion = async (req, res) => {
-  console.log(req.body);
   const {level,topics,title,likes,dislikes,content}= req.body;
 
   const slug= title.split(" ").join("-");
@@ -29,9 +28,7 @@ const addQuestion = async (req, res) => {
 
 const getQuestion = async (req, res) => {
   try {
-    console.log("this is slug",req.params.slug);
     const question = await Question.findOne({ "titleslug": req.params.slug });
-    console.log(question);
 
     if (!question) {
       res.status(404).json({ error: "Question not found" });
@@ -47,10 +44,8 @@ const getQuestion = async (req, res) => {
 
 const getMutipleQuestions = async (req, res) => {
     try {
-      console.log("questions called");
       const questions = await Question.find({});
       res.status(200).json(questions);
-      console.log(questions);
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: `${error}` });

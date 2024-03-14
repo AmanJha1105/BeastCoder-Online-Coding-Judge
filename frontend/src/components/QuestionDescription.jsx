@@ -1,14 +1,15 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 
 export default function QuestionDescription() {
 
+    const [ques,setques]=useState([]);
+
     const {quesID}= useParams();
-    console.log("this is param",quesID);
 
   useEffect(()=>{
-     getQuestionDescription();
+     getQuestionDescription().then((data)=>setques(data));
   },[])
 
   const getQuestionDescription=async()=>{
@@ -17,12 +18,10 @@ export default function QuestionDescription() {
       })
 
       const data = await res.data;
-
-      console.log("this is data",data);
       return data;
   }
   
   return (
-    <div>Title of Question</div>
+    <div>{ques.title}</div>
   )
 }
