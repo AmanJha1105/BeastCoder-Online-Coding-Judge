@@ -7,6 +7,7 @@ const cors=require("cors");
 
 const {ConnectDB}= require('./database/db');
 const { generateFile } = require("./utils/generateFile");
+const {executeCpp} = require("./utils/executeCpp");
 const app=express();
 
 app.use(cors({ credentials: true,  origin: "http://localhost:5173"}));
@@ -32,14 +33,12 @@ app.post("/run", async (req, res) => {
     }
     try {
         const filePath = await generateFile(language, code);
-        // const inputPath = await generateInputFile(input);
-        // const output = await executeCpp(filePath, inputPath);
-        // res.json({ filePath, inputPath, output });
+        // // const inputPath = await generateInputFile(input);
+          const output = await executeCpp(filePath);
+          res.json({ filePath, output });
     } catch (error) {
-        res.status(500).json({ error: error });
+       res.status(500).json({ error: error });
     }
-
-    res.json({language,code});
 });
 
 app.listen(5000);
