@@ -11,6 +11,19 @@ const questionSchema = new mongoose.Schema({
     required: true,
   },
 
+  sampleTestcases:[
+    {
+        input :{
+            type: String,
+            required: true,
+        },
+        output:{
+            type: String,
+            required: true,
+        }
+    }
+  ],
+
   title: {
     type: String,
     required: true,

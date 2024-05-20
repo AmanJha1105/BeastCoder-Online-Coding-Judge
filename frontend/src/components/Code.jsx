@@ -1,9 +1,11 @@
 import React,{useState} from 'react'
 import Editor from 'react-simple-code-editor';
+import axios from'axios';
 import { highlight, languages } from 'prismjs/components/prism-core';
 import 'prismjs/components/prism-clike';
 import 'prismjs/components/prism-javascript';
 import 'prismjs/themes/prism.css';
+
 
 const Code = ()=> {
 
@@ -17,6 +19,23 @@ const Code = ()=> {
   const [input, setInput] = useState('');
   const [output, setOutput] = useState('');
   
+  const handleRun = async () => {
+    const payload = {
+      language: 'cpp',
+      code,
+      input
+    };
+
+    try {
+      // console.log("inside try block in code");
+      const { data } = await axios.post('http://localhost:5000/ques/run', payload);
+      //console.log("data received",data);
+      setOutput(data.output);
+    } catch (error) {
+      console.log(error.response);
+    }
+  }
+
   const handleSubmit = async () => {
     const payload = {
       language: 'cpp',
@@ -25,8 +44,9 @@ const Code = ()=> {
     };
 
     // try {
-    //   const { data } = await axios.post(import.meta.env.VITE_BACKEND_URL, payload);
-    //   console.log(data);
+    //   console.log("inside try block in code");
+    //   const { data } = await axios.post('http://localhost:5000/submit', payload);
+    //   console.log("data received",data);
     //   setOutput(data.output);
     // } catch (error) {
     //   console.log(error.response);
@@ -57,13 +77,23 @@ const Code = ()=> {
         </div>
 
         {/* Run button */}
-        <button onClick={handleSubmit} type="button" className="w-full text-center mt-4 bg-gradient-to-br from-pink-500 to-orange-400 hover:from-pink-600 hover:to-orange-500 focus:outline-none text-white font-medium rounded-lg text-sm px-5 py-2.5">
+        <button onClick={handleRun} type="button" className="w-full text-center mt-4 bg-gradient-to-br from-pink-500 to-orange-400 hover:from-pink-600 hover:to-orange-500 focus:outline-none text-white font-medium rounded-lg text-sm px-5 py-2.5">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-5 h-5 inline-block align-middle me-2">
             <path strokeLinecap="round" strokeLinejoin="round" d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
             <path strokeLinecap="round" strokeLinejoin="round" d="M15.91 11.672a.375.375 0 0 1 0 .656l-5.603 3.113a.375.375 0 0 1-.557-.328V8.887c0-.286.307-.466.557-.327l5.603 3.112Z" />
           </svg>
           Run
         </button>
+
+        {/* Run button */}
+        <button onClick={handleSubmit} type="button" className="w-full text-center mt-4 bg-gradient-to-br from-pink-500 to-orange-400 hover:from-pink-600 hover:to-orange-500 focus:outline-none text-white font-medium rounded-lg text-sm px-5 py-2.5">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-5 h-5 inline-block align-middle me-2">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+            <path strokeLinecap="round" strokeLinejoin="round" d="M15.91 11.672a.375.375 0 0 1 0 .656l-5.603 3.113a.375.375 0 0 1-.557-.328V8.887c0-.286.307-.466.557-.327l5.603 3.112Z" />
+          </svg>
+          Submit
+        </button>
+
       </div>
 
       {/* Right side: Input and Output */}
