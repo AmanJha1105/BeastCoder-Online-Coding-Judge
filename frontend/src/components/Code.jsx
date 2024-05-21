@@ -1,13 +1,14 @@
 import React,{useState} from 'react'
 import Editor from 'react-simple-code-editor';
 import axios from'axios';
+import toast from"react-hot-toast";
 import { highlight, languages } from 'prismjs/components/prism-core';
 import 'prismjs/components/prism-clike';
 import 'prismjs/components/prism-javascript';
 import 'prismjs/themes/prism.css';
 
 
-const Code = ()=> {
+const Code = ({quesID})=> {
 
     const [code, setCode] = useState(`#include <iostream> 
     using namespace std;
@@ -36,21 +37,33 @@ const Code = ()=> {
     }
   }
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     const payload = {
       language: 'cpp',
       code,
-      input
+      quesID,
     };
 
-    // try {
-    //   console.log("inside try block in code");
-    //   const { data } = await axios.post('http://localhost:5000/submit', payload);
-    //   console.log("data received",data);
-    //   setOutput(data.output);
-    // } catch (error) {
-    //   console.log(error.response);
-    // }
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+
+    try {
+      console.log("inside try block in code");
+      const { data } = await axios.post('http://localhost:5000/ques/submit', payload,config);
+      console.log("data received",data.finalVerdict);
+      if(data.finalVerdict==="AC")
+      {
+        console.log("accepted");
+        toast.success("All testcases passed");
+      }
+      setOutput(data.finalVerdict);
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   return (

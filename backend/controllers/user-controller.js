@@ -75,7 +75,7 @@ const login =async(req,res,next)=>{
         expiresIn:"2hr",
     });
 
-    console.log("gernerated token\n", token);
+    //console.log("gernerated token\n", token);
 
     if(req.cookies[`${existingUser._id}`]){
         req.cookies[`${existingUser._id}`]="";
@@ -98,13 +98,13 @@ const login =async(req,res,next)=>{
 
 const verifyToken = (req,res,next)=>{
 
-    console.log("verify token called");
+    //console.log("verify token called");
 
     const cookies=req.headers.cookie;
     console.log(cookies);
     
     const token= cookies.split("=")[5];
-    console.log("token is",token);
+   // console.log("token is",token);
 
     if(!token){
         res.status(404).json({message:"No token found"});
@@ -140,7 +140,7 @@ const getUser= async(req,res,next)=>{
 
 const refreshToken = (req,res,next)=>{
 
-    console.log("called refresh function");
+   // console.log("called refresh function");
 
     const cookies=req.headers.cookie;
     console.log(cookies);
@@ -161,7 +161,7 @@ const refreshToken = (req,res,next)=>{
             expiresIn:"2hr"
         })
 
-        console.log("Regenerated token\n",token);
+        //console.log("Regenerated token\n",token);
 
         res.cookie(String(user.id),token,{
             path:"/",

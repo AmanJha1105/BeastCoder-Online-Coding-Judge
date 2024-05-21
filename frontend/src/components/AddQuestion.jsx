@@ -11,6 +11,7 @@ const AddQuestion= ()=> {
     topics:"",
     title:"",
     likes:"",
+    testcases:"",
     dislikes:"",
     content:"",
   });
@@ -25,6 +26,7 @@ const AddQuestion= ()=> {
       topics:formData.topics,
       title:formData.title,
       likes:0,
+      testcases:formData.testcases,
       dislikes:0,
       content:formData.content,
     }).catch(err=>console.log(err));
@@ -70,6 +72,14 @@ const AddQuestion= ()=> {
             id='likes'
             className='bg-slate-100 p-3 rounded-lg'
             value={formData.likes}
+            onChange={handleChange}
+          />
+          <input
+            type='text'
+            placeholder='TestCases'
+            id='testcases'
+            className='bg-slate-100 p-3 rounded-lg'
+            value={formData.testcases}
             onChange={handleChange}
           />
           <input
