@@ -25,7 +25,7 @@ export default function QuestionDescription() {
   return (
     <div>
         {ques.title};
-         {quesID}
+        
         <Code quesID={quesID}/>
     </div>
   )

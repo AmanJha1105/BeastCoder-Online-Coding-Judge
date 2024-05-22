@@ -7,8 +7,6 @@ const cookieParser= require('cookie-parser');
 const cors=require("cors");
 
 const {ConnectDB}= require('./database/db');
-const { generateFile } = require("./utils/generateFile");
-const {executeCpp} = require("./utils/executeCpp");
 const app=express();
 
 app.use(cors({ credentials: true,  origin: "http://localhost:5173"}));

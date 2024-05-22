@@ -10,28 +10,46 @@ import 'prismjs/themes/prism.css';
 
 const Code = ({quesID})=> {
 
-    const [code, setCode] = useState(`#include <iostream> 
+  const demoCode =[`#include <iostream> 
     using namespace std;
     // Define the main function
     int main() { 
         //Write your code here
         return 0;  
-    }`);
+    }`,
+    `#include <stdio.h> 
+    // Define the main function
+    int main() { 
+        //Write your code here
+        return 0;  
+    }`,
+    `import java.util.Scanner;
+
+    public class Main {
+      public static void main(String[] args) 
+      {
+        //write your code here
+      }
+    }`,
+    `# write your code here`  
+  ]
   const [input, setInput] = useState('');
   const [output, setOutput] = useState('');
+  const[language,setLanguage]=useState('cpp');
+  const [code, setCode] = useState(demoCode[0]);
   
   const handleRun = async () => {
     const payload = {
-      language: 'cpp',
+      language,
       code,
       input
     };
 
     try {
       // console.log("inside try block in code");
-      const { data } = await axios.post('http://localhost:5000/ques/run', payload);
-      //console.log("data received",data);
-      setOutput(data.output);
+      const  outputContent = await axios.post('http://localhost:5000/ques/run', payload);
+      console.log(outputContent);
+      setOutput(outputContent.data);
     } catch (error) {
       console.log(error.response);
     }
@@ -40,7 +58,7 @@ const Code = ({quesID})=> {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const payload = {
-      language: 'cpp',
+      language,
       code,
       quesID,
     };
@@ -66,12 +84,46 @@ const Code = ({quesID})=> {
     }
   }
 
+  const handleOptionChange = (e)=>{
+    const selectedLanguage = e.target.value;
+    setLanguage(selectedLanguage);
+
+    let newChoice;
+    switch (selectedLanguage) {
+      case 'py':
+        newChoice = 3;
+        break;
+      case 'java':
+        newChoice = 2;
+        break;
+      case 'c':
+        newChoice = 1;
+        break;
+      case 'cpp':
+      default:
+        newChoice = 0;
+        break;
+    }
+    setCode(demoCode[newChoice]);
+  }
+
   return (
     <div className="container mx-auto py-8 flex flex-col lg:flex-row items-stretch">
       {/* Left side: Compiler editor */}
       <div className="lg:w-1/2 lg:pr-4 mb-4 lg:mb-0">
         <h1 className="text-3xl font-bold mb-3">Beast Coder Online Code Compiler</h1>
-        <div className="bg-gray-100 shadow-md w-full max-w-lg mb-4" style={{ height: '300px', overflowY: 'auto' }}>
+        <div className="bg-gray-100 shadow-md w-full max-w-lg mb-4" style={{ width: '100%', 
+      height: '100vh', overflowY: 'auto',resize:'both' }}>
+
+        <select onChange={handleOptionChange}>
+        <optgroup label="Language">
+            <option name="table1" value="cpp">c++</option>
+            <option name="table2" value="py">python</option>
+            <option name="table3" value="java">Java</option>
+            <option name="table4" value="c">C</option>
+        </optgroup>
+    </select>
+
           <Editor
             value={code}
             onValueChange={code => setCode(code)}
@@ -83,7 +135,9 @@ const Code = ({quesID})=> {
               outline: 'none',
               border: 'none',
               backgroundColor: '#f7fafc',
-              height: '100%',
+              // height: '100%',
+              minHeight: '100%',
+              resize:'both',
               overflowY: 'auto'
             }}
           />
@@ -127,10 +181,18 @@ const Code = ({quesID})=> {
 
         {/* Output box */}
         {(
-          <div className="bg-gray-100 rounded-sm shadow-md p-4 h-28">
-            <h2 className="text-lg font-semibold mb-2">Output</h2>
-            <div style={{ fontFamily: '"Fira code", "Fira Mono", monospace', fontSize: 12 }}>{output}</div>
-          </div>
+          <div className="mb-4">
+          <h2 className="text-lg font-semibold mb-2">Output</h2>
+          <textarea
+            rows='5'
+            cols='15'
+            value={output}
+            placeholder='Output'
+            onChange={(e) => setOutput(e.target.value)}
+            className="border border-gray-300 rounded-sm py-1.5 px-4 mb-1 focus:outline-none focus:border-indigo-500 resize-none w-full"
+            style={{ minHeight: '100px' }}
+          ></textarea>
+        </div>
         )}
       </div>
     </div>
