@@ -61,7 +61,47 @@ const getMutipleQuestions = async (req, res) => {
       res.status(500).json({ error: `${error}` });
     }
   };
+
+  const likeQuestion =async(req,res)=>{
+      try {
+        const ques_slug = req.params.slug;
+        const question = await Question.findOne({ titleslug: ques_slug });
+
+        if (!question) {
+            return res.status(404).json({ message: "Question not found" });
+        }
+
+        question.likes += 1;
+        await question.save();
+
+        return res.status(200).json({ likes: question.likes });
+    } catch (error) {
+        console.error("Error liking the question:", error);
+        return res.status(500).json({ message: "Server error" });
+    }
+  }
+
+  const dislikeQuestion = async(req,res)=>{
+      try {
+        const ques_slug = req.params.slug;
+        const question = await Question.findOne({ titleslug: ques_slug });
+
+        if (!question) {
+            return res.status(404).json({ message: "Question not found" });
+        }
+
+        question.dislikes += 1;
+        await question.save();
+
+        return res.status(200).json({ dislikes: question.dislikes });
+    } catch (error) {
+        console.error("Error disliking the question:", error);
+        return res.status(500).json({ message: "Server error" });
+    }
+  }
   
 exports.getMutipleQuestions= getMutipleQuestions;
 exports.addQuestion=addQuestion;
 exports.getQuestion=getQuestion;
+exports.likeQuestion=likeQuestion;
+exports.dislikeQuestion=dislikeQuestion;
