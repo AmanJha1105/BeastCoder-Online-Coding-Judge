@@ -47,7 +47,7 @@ const login =async(req,res,next)=>{
     console.log("login function called");
 
     const {email,password}=req.body;
-
+   // console.log(email,password);
     //check if user exists
     let existingUser;
     try {

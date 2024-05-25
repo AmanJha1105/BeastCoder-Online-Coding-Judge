@@ -123,18 +123,13 @@ const Code = ({quesID})=> {
 
         <select onChange={handleOptionChange} value={language}>
         <optgroup label="Language">
-            <option name="table1" value="cpp">c++</option>
-            <option name="table2" value="py">python</option>
+            <option name="table1" value="cpp">C++</option>
+            <option name="table2" value="py">Python</option>
             <option name="table3" value="java">Java</option>
             <option name="table4" value="c">C</option>
         </optgroup>
     </select>
-
-    <div className="mb-4">
-              <h2 className="text-lg font-semibold mb-2">Submissions</h2>
-              
-          </div>
-
+    
           <Editor
             value={code}
             onValueChange={code => setCode(code)}

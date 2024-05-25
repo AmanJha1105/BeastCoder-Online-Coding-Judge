@@ -2,12 +2,15 @@ import { Link } from 'react-router-dom';
 
 const Header=() =>{
   return (
-    <div className='bg-slate-200'>
-      <div className='flex justify-between items-center max-w-6xl mx-auto p-3'>
+    <div className='bg-slate-400 rounded-b-lg shadow-lg'>
+      <div className='flex justify-between max-w-7.5xl mx-auto p-3'>
         <Link to='/'>
-          <h1 className='font-bold'>Beast Coder Online Judge</h1>
+          <h1 className='font-bold'><strong>Beast Coder Online Judge</strong></h1>
         </Link>
         <ul className='flex gap-4'>
+          <Link to='/allsubmissions'>
+            <li>Submissions</li>
+          </Link>
           <Link to='/login'>
             <li>Login</li>
           </Link>
