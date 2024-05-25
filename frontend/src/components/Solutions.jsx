@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
 import axios from 'axios';
-
-const Solutions = () => {
+import '../index.css'
+import SolutionCard from './SolutionCard';
+const Solutions = ({quesID}) => {
   const [solutions, setSolutions] = useState([]);
   const [selectedSolution, setSelectedSolution] = useState(null);
-  const { quesID } = useParams();
 
   useEffect(() => {
     fetchSolutions();
@@ -15,6 +14,7 @@ const Solutions = () => {
     try {
       const response = await axios.get(`http://localhost:5000/ques/solutions/${quesID}`);
       setSolutions(response.data);
+      console.log(response.data);
     } catch (error) {
       console.error('Error fetching solutions:', error);
     }
@@ -25,51 +25,33 @@ const Solutions = () => {
   };
 
   return (
-    <div className="solutions-container">
+    <div className="p-4 w-full">
       {!selectedSolution && (
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead>
-            <tr>
-              <th className="px-6 py-3 bg-gray-50">Name</th>
-              <th className="px-6 py-3 bg-gray-50">Author</th>
-              <th className="px-6 py-3 bg-gray-50">Language</th>
-              <th className="px-6 py-3 bg-gray-50">Time of Publish</th>
-              <th className="px-6 py-3 bg-gray-50">Likes</th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {solutions.map((solution) => (
-              <tr key={solution._id} onClick={() => handleSolutionClick(solution)} className="cursor-pointer">
-                <td className="px-6 py-4">{solution.name}</td>
-                <td className="px-6 py-4">{solution.userId.username}</td>
-                <td className="px-6 py-4">{solution.language}</td>
-                <td className="px-6 py-4">{new Date(solution.timeOfPublish).toLocaleString()}</td>
-                <td className="px-6 py-4">{solution.likes}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
-      {selectedSolution && (
-        <div className="solution-details mt-4 p-4 w-full bg-gray-100 rounded">
-          <button onClick={() => setSelectedSolution(null)}>Back to Solutions</button>
-          <h3 className="text-lg font-semibold">{selectedSolution.name}</h3>
-          <p><strong>Author:</strong> {selectedSolution.userId.username}</p>
-          <p><strong>Language:</strong> {selectedSolution.language}</p>
-          <p><strong>Topics:</strong> {selectedSolution.topics.join(', ')}</p>
-          <p><strong>Time of Publish:</strong> {new Date(selectedSolution.timeOfPublish).toLocaleString()}</p>
-          <p><strong>Likes:</strong> {selectedSolution.likes}</p>
-          <h4 className="text-md font-semibold">Code:</h4>
-          <pre className="bg-gray-100 p-4 rounded"><code>{selectedSolution.code}</code></pre>
-          <h4 className="text-md font-semibold">Replies:</h4>
-          {selectedSolution.replies.map((reply) => (
-            <div key={reply._id} className="reply bg-white p-2 mb-2 rounded shadow">
-              <p><strong>{reply.username}:</strong> {reply.content}</p>
-              <p><small>{new Date(reply.createdAt).toLocaleString()}</small></p>
+        <div className="space-y-4">
+          {solutions.map((solution) => (
+            <div
+              key={solution._id}
+              onClick={() => handleSolutionClick(solution)}
+              className="p-4 bg-white shadow-md rounded cursor-pointer hover:shadow-lg"
+            >
+              <div className="flex pr-10 mb-2">
+                <div className="text-sm text-gray-500 w-12">{solution.username +"   "}</div>
+                <div className="text-sm text-gray-500">{new Date(solution.timeOfPublish).toLocaleDateString()}</div>
+              </div>
+              <div className="font-bold text-lg mb-2">{solution.name}</div>
+              <div className="flex text-sm text-gray-700">
+                <span className="mr-4">{solution.language}</span>
+                <span>{solution.topics.join(', ')}</span>
+              </div>
+              <div className="text-sm text-gray-500 mt-1">{solution.content}</div>
             </div>
           ))}
         </div>
       )}
+        {selectedSolution && (<button onClick={() => setSelectedSolution(null)} className="mb-4 text-blue-500 hover:underline">
+            All Solutions
+        </button>)}
+      {selectedSolution && <SolutionCard selectedSolution={selectedSolution}/>}
     </div>
   );
 };

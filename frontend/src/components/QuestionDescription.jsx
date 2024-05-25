@@ -15,6 +15,7 @@ export default function QuestionDescription() {
     const [liked, setLiked] = useState(false);
     const [disliked, setDisliked] = useState(false);
     const [selectedSubmission, setSelectedSubmission] = useState(null);
+    const[showSolutions,setShowSolutions]=useState(false);
     const navigate = useNavigate();
     //console.log(likes);
 
@@ -40,6 +41,7 @@ export default function QuestionDescription() {
     setDescription(true);
     setShowSubmissions(false);
     setSelectedSubmission(null);
+    setShowSolutions(false);
   }
 
   const handleClickonSubmissions = async()=>{
@@ -57,6 +59,7 @@ export default function QuestionDescription() {
       setShowSubmissions(true);
       setDescription(false);
       setSelectedSubmission(null);
+      setShowSolutions(false);
     } catch (error) {
       console.error('Error fetching submissions:', error);
     }
@@ -104,10 +107,9 @@ const handlePublishSolution = () => {
 };
 
 const handleClickonSolutions =()=>{
-  console.log(selectedSubmission);
-  navigate(`/solutions/${ques._id}`);
-  console.log(submissions);
-  console.log(ques);
+  setShowSolutions(true);
+  setShowSubmissions(false);
+  setDescription(false);
 }
 
   
@@ -116,11 +118,12 @@ const handleClickonSolutions =()=>{
     
       <div className='flex items-center px-4'><img src="https://th.bing.com/th/id/OIP.q0vS1-Y6CkeeDknw8ahLDAHaHa?rs=1&pid=ImgDetMain" alt="page icon" height={15} width={15} onClick={handleClickonDescription}/>
         <button className='px-2'onClick={handleClickonDescription}>Description</button>
-        <button className='px-2'onClick={handleClickonSolutions}>Solutions</button>
+        <button className='px-2'onClick={handleClickonSolutions}>🧪Solutions</button>
         <button className='px-2'onClick={handleClickonSubmissions}>▼ Submissions</button>
       </div>
     
     <div className="mx-auto flex flex-col lg:flex-row">
+      {showSolutions && <div className="flex-1 p-4"><Solutions quesID={ques._id}/></div>}
       {description && <div className="flex-1 p-4">
         <div><strong>{ques.title}</strong></div>
         <div>{ques.content}</div>

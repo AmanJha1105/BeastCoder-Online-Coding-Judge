@@ -26,7 +26,7 @@ const signup= async(req,res,next)=>{
     //creating new user 
 
     const user= new User({
-       name,
+       username:name,
        email,
        password: hashedPassword,
     });

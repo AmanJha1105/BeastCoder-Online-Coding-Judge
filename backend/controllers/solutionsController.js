@@ -6,7 +6,7 @@ const Question = require('../model/Question');
 const getSolutions = async(req,res)=>{
      try {
         const quesId = req.params.slug;
-        const solutions = await Solution.find({ quesID: quesId });
+        const solutions = await Solution.find({ quesID: quesId }).sort({timeOfPublish:-1});
         res.status(200).json(solutions);
      } catch (error) {
         console.error('Error fetching solutions:', error);
@@ -19,13 +19,13 @@ const publishSolution =async(req,res)=>{
         const quesId = req.params.slug;
         const { userId, submissionId, name, code,language, timeOfPublish,likes,topics } = req.body;
 
-        // const submission = await Submission.findById(submissionId);
-        // if (!submission) {
-        // return res.status(404).json({ message: 'Submission not found' });
-        // }
+         const user = await User.findById(userId);
+         const username = user.username;
+         console.log(username);
 
         const newSolution = new Solution({
             userId: userId,
+            username:username,
             quesID: quesId,
             submissionId: submissionId,
             name: name,
@@ -47,5 +47,37 @@ const publishSolution =async(req,res)=>{
    }
 }
 
+const replySolution = async(req,res)=>{
+
+    console.log("inside reply solution ");
+
+    const  solutionId  = req.params.slug;
+    const { userId, username, content } = req.body;
+  
+    try {
+
+      const solution = await Solution.findById(solutionId);
+      if (!solution) {
+        return res.status(404).json({ message: 'Solution not found' });
+      }
+  
+      const newReply = {
+        userId,
+        username,
+        content,
+      };
+  
+      solution.replies.push(newReply);
+      await solution.save();
+
+      solution.replies.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+  
+      return res.status(201).json(solution);
+    } catch (error) {
+      res.status(500).json({ message: 'Server error', error });
+    }
+}
+
 exports.getSolutions=getSolutions;
 exports.publishSolution=publishSolution;
+exports.replySolution = replySolution;

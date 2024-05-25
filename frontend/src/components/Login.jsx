@@ -21,6 +21,7 @@ const Login=()=> {
     }).catch(err=>console.log(err));
     const data = await res.data;
     localStorage.setItem('userId',data.user._id);
+    localStorage.setItem('username',data.user.username);
     return data;
   }
 

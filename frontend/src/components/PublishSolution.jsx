@@ -43,8 +43,6 @@ export default function PublishSolution() {
         timeOfPublish: new Date(),
         topics: topics.split(',').map(topic => topic.trim()), // Split and trim topics
       });
-      //console.log('Published solution:', response.data);
-      navigate(`/solutions/${submission.quesID}`); // Navigate to the solutions page of the question
     } catch (error) {
       console.error('Error publishing solution:', error);
     }

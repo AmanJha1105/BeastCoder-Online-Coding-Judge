@@ -1,3 +1,36 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.solutions-container {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  
+  .solution-card {
+    background: #fff;
+    padding: 16px;
+    margin-bottom: 16px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    cursor: pointer;
+  }
+  
+  .solution-card:hover {
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+  }
+  
+  .solution-details {
+    background: #f7fafc;
+    padding: 16px;
+    border-radius: 8px;
+  }
+  
+  .reply {
+    background: #fff;
+    padding: 8px;
+    margin-bottom: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+  }
+  
