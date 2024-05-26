@@ -3,27 +3,22 @@ import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import Code from './Code';
 import Solutions from './Solutions';
+import Description from './Description';
 
 export default function QuestionDescription() {
 
-    const [ques,setques]=useState([]);
+    const [ques,setques]=useState(20);
     const[description,setDescription]=useState(true);
     const[showSubmissions, setShowSubmissions]=useState(false);
     const [submissions,setSubmissions]=useState([]);
-    const [likes, setLikes] = useState(ques.likes);
-    const [dislikes, setDislikes] = useState(ques.dislikes);
-    const [liked, setLiked] = useState(false);
-    const [disliked, setDisliked] = useState(false);
     const [selectedSubmission, setSelectedSubmission] = useState(null);
     const[showSolutions,setShowSolutions]=useState(false);
     const navigate = useNavigate();
-    //console.log(likes);
+    console.log(ques);
 
     const {quesID}= useParams();
 
   useEffect(()=>{
-    setLiked(false);
-    setDisliked(false);
     getQuestionDescription().then((data)=>setques(data));
   },[])
 
@@ -66,32 +61,6 @@ export default function QuestionDescription() {
     //setShowSubmissions(!showSubmissions);
   }
 
-  const handleLike = async () => {
-    try {
-        const response = await axios.post(`http://localhost:5000/ques/like/${quesID}`);
-        setLikes(response.data.likes);
-        setLiked(true);
-        if (disliked) {
-            setDisliked(false);
-        }
-    } catch (error) {
-        console.error('Error liking the question:', error);
-    }
-};
-
-const handleDislike = async () => {
-    try {
-        const response = await axios.post(`http://localhost:5000/ques/dislike/${quesID}`);
-        setDislikes(response.data.dislikes);
-        setDisliked(true);
-        if (liked) {
-            setLiked(false);
-        }
-    } catch (error) {
-        console.error('Error disliking the question:', error);
-    }
-};
-
 const handleRowClick = (submission) => {
   setSelectedSubmission(submission);
   setShowSubmissions(false);
@@ -110,6 +79,7 @@ const handleClickonSolutions =()=>{
   setShowSolutions(true);
   setShowSubmissions(false);
   setDescription(false);
+  setSelectedSubmission(null);
 }
 
   
@@ -124,19 +94,7 @@ const handleClickonSolutions =()=>{
     
     <div className="mx-auto flex flex-col lg:flex-row">
       {showSolutions && <div className="flex-1 p-4"><Solutions quesID={ques._id}/></div>}
-      {description && <div className="flex-1 p-4">
-        <div><strong>{ques.title}</strong></div>
-        <div>{ques.content}</div>
-        <div>{ques.level}</div>
-        <div>
-              <button onClick={handleLike} style={{ color: liked ? 'blue' : 'black' }}>
-              👍 {likes} {liked && <span>&#x2665;</span>}
-              </button>
-              <button onClick={handleDislike} style={{ color: disliked ? 'red' : 'black' }}>
-              👎 {disliked && <span>&#x1F44E;</span>}
-              </button>
-          </div>
-      </div>}
+      {description && <div className="flex-1 p-4"><Description ques={ques}/></div>}
       {showSubmissions && <div className="flex-1 p-4">
        <table className="min-w-full divide-y divide-gray-200">
         <thead>

@@ -63,18 +63,34 @@ const getMutipleQuestions = async (req, res) => {
   };
 
   const likeQuestion =async(req,res)=>{
+    console.log("inside like question");
       try {
         const ques_slug = req.params.slug;
+        const { userId } = req.body;
         const question = await Question.findOne({ titleslug: ques_slug });
 
         if (!question) {
             return res.status(404).json({ message: "Question not found" });
         }
 
-        question.likes += 1;
-        await question.save();
+        const likedIndex = question.likedBy.indexOf(userId);
+        const dislikedIndex = question.dislikedBy.indexOf(userId);
 
-        return res.status(200).json({ likes: question.likes });
+        if (likedIndex === -1) {
+          question.likedBy.push(userId);
+          question.likes += 1;
+          if (dislikedIndex !== -1) {
+            question.dislikedBy.splice(dislikedIndex, 1);
+            question.dislikes -= 1;
+          }
+        } else {
+          question.likedBy.splice(likedIndex, 1);
+          question.likes -= 1;
+        }
+
+        await question.save();
+        return res.json({ likes: question.likes, dislikes: question.dislikes });
+
     } catch (error) {
         console.error("Error liking the question:", error);
         return res.status(500).json({ message: "Server error" });
@@ -84,16 +100,31 @@ const getMutipleQuestions = async (req, res) => {
   const dislikeQuestion = async(req,res)=>{
       try {
         const ques_slug = req.params.slug;
+        const { userId } = req.body;
         const question = await Question.findOne({ titleslug: ques_slug });
 
         if (!question) {
             return res.status(404).json({ message: "Question not found" });
         }
 
-        question.dislikes += 1;
-        await question.save();
+        const likedIndex = question.likedBy.indexOf(userId);
+        const dislikedIndex = question.dislikedBy.indexOf(userId);
 
-        return res.status(200).json({ dislikes: question.dislikes });
+        if (dislikedIndex === -1) {
+          question.dislikedBy.push(userId);
+          question.dislikes += 1;
+          if (likedIndex !== -1) {
+            question.likedBy.splice(likedIndex, 1);
+            question.likes -= 1;
+          }
+        } else {
+          question.dislikedBy.splice(dislikedIndex, 1);
+          question.dislikes -= 1;
+        }
+
+        await question.save();
+       return res.json({ likes: question.likes, dislikes: question.dislikes });
+
     } catch (error) {
         console.error("Error disliking the question:", error);
         return res.status(500).json({ message: "Server error" });

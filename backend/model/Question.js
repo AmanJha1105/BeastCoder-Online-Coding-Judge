@@ -9,6 +9,7 @@ const questionSchema = new mongoose.Schema({
   topics: {
     type: String,
     required: true,
+    default:'',
   },
 
   sampleTestcases:[
@@ -16,11 +17,14 @@ const questionSchema = new mongoose.Schema({
         input :{
             type: String,
             required: true,
+            default: '',
         },
         output:{
             type: String,
             required: true,
-        }
+            default: '',
+        },
+        default:{}
     }
   ],
 
@@ -48,6 +52,8 @@ const questionSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  likedBy: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+  dislikedBy: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
 });
 
 module.exports=mongoose.model('question',questionSchema);

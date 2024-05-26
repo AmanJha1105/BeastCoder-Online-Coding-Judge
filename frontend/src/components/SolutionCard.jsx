@@ -5,6 +5,9 @@ const SolutionCard = ({selectedSolution}) => {
 
     const [replyContent, setReplyContent] = useState('');
     const [replies, setReplies] = useState(selectedSolution.replies);
+    const [solutionLikes, setSolutionLikes] = useState(selectedSolution.likes);
+    //const [liked, setLiked] = useState(false);
+    console.log(replies);
 
     replies.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
@@ -27,6 +30,34 @@ const SolutionCard = ({selectedSolution}) => {
         }
     };
 
+    const handleLikeReply = async (replyId, index) => {
+      const userId = localStorage.getItem('userId');
+      try {
+        const response = await axios.post(`http://localhost:5000/ques/solutions/${selectedSolution._id}/reply/${replyId}/like`, {
+          userId
+        });
+        const updatedReplies = [...replies];
+        updatedReplies[index] = response.data.replies.find(reply => reply._id === replyId);
+        const sortedReplies = updatedReplies.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        setReplies(sortedReplies);
+      } catch (error) {
+        console.error('Error liking reply:', error);
+      }
+    };
+
+    const handleLikeSolution = async () => {
+    const userId = localStorage.getItem('userId');
+    try {
+      const response = await axios.post(`http://localhost:5000/ques/solution/${selectedSolution._id}/like`, {
+        userId
+      });
+      setSolutionLikes(response.data.likes);
+      //setLiked(!liked); // Toggle liked state
+    } catch (error) {
+      console.error('Error liking solution:', error);
+    }
+  };
+
   return (
     <>
       
@@ -43,6 +74,7 @@ const SolutionCard = ({selectedSolution}) => {
           <pre className="bg-white p-4 rounded shadow mb-4">
             <code>{selectedSolution.code}</code>
           </pre>
+          <button onClick={handleLikeSolution}>Like {solutionLikes}</button>
           <div className='py-2'>Comments ({replies.length})</div>
           <div className="flex flex-col items-end">
             <textarea 
@@ -57,11 +89,13 @@ const SolutionCard = ({selectedSolution}) => {
           </div>
 
           {replies.length > 0 && (
-            replies.map((reply) => (
+            replies.map((reply,index) => (
                 <div key={reply._id} className="reply bg-white p-2 mb-2 rounded shadow">
                 <strong>{reply.username}:</strong>
                 <pre className="bg-gray-100 p-2 rounded whitespace-pre-wrap">{reply.content}</pre>
                 <p className="text-sm text-gray-500">{new Date(reply.createdAt).toLocaleString()}</p>
+                <button onClick={() => handleLikeReply(reply._id, index)}>Like {reply.likedBy.length}</button>
+
                 </div>
             ))
           )}

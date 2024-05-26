@@ -5,6 +5,7 @@ const replySchema = new mongoose.Schema({
   username:{ type: String, required: true },
   content: { type: String, required: true },
   createdAt: { type: Date, default: Date.now },
+  likedBy: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }]
 });
 
 const solutionSchema = new mongoose.Schema({
@@ -17,6 +18,7 @@ const solutionSchema = new mongoose.Schema({
   language: { type: String, required: true },
   timeOfPublish: { type: Date, default: Date.now },
   likes: { type: Number, default: 0 },
+  likedBy: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
   topics: { type: [String] },
   replies: { type: [replySchema], default: [] },
 });
