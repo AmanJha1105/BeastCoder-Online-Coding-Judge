@@ -66,7 +66,7 @@ const Question = () => {
                 <Link key={ques.id} to={"/question/" + ques.titleslug}>
                   <div className="flex justify-between p-5 m-5 border border-gray-800 rounded-lg hover:border-gray-700 transition duration-300 hover:shadow-md">
                     <h2 className="text-white"><strong>{ques.title}</strong></h2>
-                    <p className={`text-white ${ques.level === 'easy' ? 'text-green-500' : ques.level === 'medium' ? 'text-orange-500' : 'text-red-500'}`}>
+                    <p className={` ${ques.level === "easy" ? "text-green-500" : ques.level === "medium" ? "text-orange-500" : "text-red-500"}`}>
                       <strong>{ques.level}</strong>
                     </p>
                   </div>

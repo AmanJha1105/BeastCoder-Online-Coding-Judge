@@ -63,7 +63,6 @@ const getMutipleQuestions = async (req, res) => {
   };
 
   const likeQuestion =async(req,res)=>{
-    console.log("inside like question");
       try {
         const ques_slug = req.params.slug;
         const { userId } = req.body;

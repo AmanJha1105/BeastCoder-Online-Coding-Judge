@@ -4,18 +4,19 @@ import axios from 'axios';
 import Code from './Code';
 import Solutions from './Solutions';
 import Description from './Description';
+import Discussions from './Discussions';
+import { FaRegPenToSquare } from "react-icons/fa6";
 
 export default function QuestionDescription() {
 
     const [ques,setques]=useState(20);
     const[description,setDescription]=useState(true);
+    const[discussions,setDiscussions]=useState(false);
     const[showSubmissions, setShowSubmissions]=useState(false);
     const [submissions,setSubmissions]=useState([]);
     const [selectedSubmission, setSelectedSubmission] = useState(null);
     const[showSolutions,setShowSolutions]=useState(false);
     const navigate = useNavigate();
-    console.log(ques);
-
     const {quesID}= useParams();
 
   useEffect(()=>{
@@ -37,6 +38,7 @@ export default function QuestionDescription() {
     setShowSubmissions(false);
     setSelectedSubmission(null);
     setShowSolutions(false);
+    setDiscussions(false);
   }
 
   const handleClickonSubmissions = async()=>{
@@ -55,6 +57,7 @@ export default function QuestionDescription() {
       setDescription(false);
       setSelectedSubmission(null);
       setShowSolutions(false);
+      setDiscussions(false);
     } catch (error) {
       console.error('Error fetching submissions:', error);
     }
@@ -64,7 +67,7 @@ export default function QuestionDescription() {
 const handleRowClick = (submission) => {
   setSelectedSubmission(submission);
   setShowSubmissions(false);
-  console.log(submission);
+  setDiscussions(false);
 };
 
 const handlePublishSolution = () => {
@@ -80,7 +83,16 @@ const handleClickonSolutions =()=>{
   setShowSubmissions(false);
   setDescription(false);
   setSelectedSubmission(null);
+  setDiscussions(false);
 }
+
+  const handleClickonDiscussions =()=>{
+    setDiscussions(true);
+    setShowSubmissions(false);
+    setDescription(false);
+    setSelectedSubmission(null);
+    setShowSolutions(false);
+  }
 
   
   return (
@@ -90,11 +102,13 @@ const handleClickonSolutions =()=>{
         <button className='px-2'onClick={handleClickonDescription}>Description</button>
         <button className='px-2'onClick={handleClickonSolutions}>🧪Solutions</button>
         <button className='px-2'onClick={handleClickonSubmissions}>▼ Submissions</button>
+        <button className='px-2'onClick={handleClickonDiscussions}>🗨️ Discuss</button>
       </div>
     
     <div className="mx-auto flex flex-col lg:flex-row">
       {showSolutions && <div className="flex-1 p-4"><Solutions quesID={ques._id}/></div>}
       {description && <div className="flex-1 p-4"><Description ques={ques}/></div>}
+      {discussions && <div className="flex-1 p-4"><Discussions ques={ques}/></div>}
       {showSubmissions && <div className="flex-1 p-4">
        <table className="min-w-full divide-y divide-gray-200">
         <thead>
@@ -159,7 +173,7 @@ const handleClickonSolutions =()=>{
         <pre className="bg-gray-100 p-4 rounded">
           {selectedSubmission.code}
         </pre>
-        <div><button onClick={() => handlePublishSolution(selectedSubmission._id)}>Publish</button></div>
+        {selectedSubmission.verdict === "AC" && <button onClick={() => handlePublishSolution(selectedSubmission._id)} className="bg-green-500 text-white font-medium py-2 px-4 flex items-center cursor-pointer border rounded-lg"><FaRegPenToSquare className="mr-2"/>Solution</button>}
       </div>
       )}
       <div className="flex-1 p-4">

@@ -136,7 +136,7 @@ const likeSolution = async(req,res)=>{
     }
 
     await solution.save();
-    res.status(200).json({ likes: solution.likes });
+    res.status(200).json(solution);
   } catch (error) {
     console.error('Error liking solution:', error);
     res.status(500).json({ error: 'Internal server error' });

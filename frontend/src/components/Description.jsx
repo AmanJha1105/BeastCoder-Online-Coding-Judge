@@ -13,6 +13,22 @@ const Description = ({ques}) => {
     useEffect(()=>{
          setLikes(ques.likes);
          setDislikes(ques.dislikes);
+         const userId = localStorage.getItem('userId');
+         const likedBy = ques.likedBy;
+         const dislikedBy = ques.dislikedBy;
+         const likedIndex = likedBy && ques.likedBy.includes(userId);
+
+         if(!likedIndex)
+            setLiked(false)
+        else
+            setLiked(true);
+
+        const dislikedIndex =dislikedBy &&  ques.dislikedBy.includes(userId);
+
+        if(!dislikedIndex)
+            setDisliked(false)
+        else
+            setDisliked(true);
     },[ques])
 
     const handleLike = async () => {

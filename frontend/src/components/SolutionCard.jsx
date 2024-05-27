@@ -1,13 +1,14 @@
 import React ,{useState}from 'react'
 import axios from 'axios';
+import { FaThumbsUp} from 'react-icons/fa';
 
 const SolutionCard = ({selectedSolution}) => {
 
     const [replyContent, setReplyContent] = useState('');
+    const [sol,setSol]=useState(selectedSolution);
     const [replies, setReplies] = useState(selectedSolution.replies);
-    const [solutionLikes, setSolutionLikes] = useState(selectedSolution.likes);
-    //const [liked, setLiked] = useState(false);
-    console.log(replies);
+
+    const userId = localStorage.getItem('userId');
 
     replies.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
@@ -21,9 +22,7 @@ const SolutionCard = ({selectedSolution}) => {
             username,
             content: replyContent,
           });
-          console.log(response.data.replies);
           setReplies(response.data.replies);
-          console.log(response.data.replies);
           setReplyContent('');
         } catch (error) {
           console.error('Error adding reply:', error);
@@ -40,6 +39,7 @@ const SolutionCard = ({selectedSolution}) => {
         updatedReplies[index] = response.data.replies.find(reply => reply._id === replyId);
         const sortedReplies = updatedReplies.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
         setReplies(sortedReplies);
+
       } catch (error) {
         console.error('Error liking reply:', error);
       }
@@ -51,8 +51,8 @@ const SolutionCard = ({selectedSolution}) => {
       const response = await axios.post(`http://localhost:5000/ques/solution/${selectedSolution._id}/like`, {
         userId
       });
+      setSol(response.data);
       setSolutionLikes(response.data.likes);
-      //setLiked(!liked); // Toggle liked state
     } catch (error) {
       console.error('Error liking solution:', error);
     }
@@ -74,7 +74,8 @@ const SolutionCard = ({selectedSolution}) => {
           <pre className="bg-white p-4 rounded shadow mb-4">
             <code>{selectedSolution.code}</code>
           </pre>
-          <button onClick={handleLikeSolution}>Like {solutionLikes}</button>
+          <div className='flex flex-row'><button onClick={handleLikeSolution} className={`flex items-center mr-1 ${sol.likedBy.includes(userId) ? 'text-blue-500' : 'text-gray-500'}`}><FaThumbsUp /></button><span>{sol.likes}</span>
+</div>
           <div className='py-2'>Comments ({replies.length})</div>
           <div className="flex flex-col items-end">
             <textarea 
@@ -94,8 +95,9 @@ const SolutionCard = ({selectedSolution}) => {
                 <strong>{reply.username}:</strong>
                 <pre className="bg-gray-100 p-2 rounded whitespace-pre-wrap">{reply.content}</pre>
                 <p className="text-sm text-gray-500">{new Date(reply.createdAt).toLocaleString()}</p>
-                <button onClick={() => handleLikeReply(reply._id, index)}>Like {reply.likedBy.length}</button>
-
+                <div className='flex flex-row'>
+                  <button onClick={() => handleLikeReply(reply._id, index)} className={`flex items-center mr-1 ${reply.likedBy.includes(userId) ? 'text-blue-500' : 'text-gray-500'}`}><FaThumbsUp /></button> <span>{reply.likedBy.length}</span>
+                </div>
                 </div>
             ))
           )}
