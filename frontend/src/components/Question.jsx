@@ -2,12 +2,47 @@ import { useEffect, useState } from "react";
 import {Link} from "react-router-dom";
 import { HiSearch } from "react-icons/hi";
 import axios from "axios";
+import Select from "react-select";
+
 
 const Question = () => {
 
     const [queslist, setqueslist]= useState([]);
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedQuestion, setSelectedQuestion] = useState(null);
+    const [selectedTopics, setSelectedTopics] = useState([]);
+
+    const topics = [
+      { label: 'BFS', value: 'bfs' },
+      { label: 'DFS', value: 'dfs' },
+      { label: 'Graphs', value: 'graphs' },
+      { label: 'Arrays', value: 'arrays' },
+      { label: 'Mathematics', value: 'mathematics' },
+      { label: 'Dynamic Programming', value: 'dp' },
+      { label: 'Stacks', value: 'stacks' },
+      { label: 'String', value: 'string' },
+      { label: 'Matrix', value: 'matrix' },
+      { label: 'Backtracking', value: 'backtracking' },
+      { label: 'Linked List', value: 'linkedlist' },
+      { label: 'Heaps', value: 'heaps' },
+      { label: 'Tree', value: 'tree' },
+      { label: 'BST', value: 'bst' },
+      { label: 'Tree', value: 'tree' },
+      { label: 'Binary Tree', value: 'bt' },
+      { label: 'Greedy', value: 'greedy' },
+      { label: 'Sorting', value: 'sorting' },
+      { label: 'Recursion', value: 'recursion' },
+      { label: 'Hash Table', value: 'hashtable' },
+    ];
+
+    const handleTopicChange = (selectedOptions) => {
+      setSelectedTopics(selectedOptions || []);
+    };
+
+    const filteredQuestions = queslist.filter((ques) =>
+      ques.title.toLowerCase().includes(searchQuery.toLowerCase().trim()) &&
+      (selectedTopics.length === 0 || selectedTopics.every(topic => ques.topics.includes(topic.value)))
+    );
 
     const getQuestions = async () => {
         const res = await axios
@@ -55,12 +90,23 @@ const Question = () => {
                   <HiSearch />
                 </div>
               </div>
+
+            <div className="ml-4 w-72">
+            <Select
+              isMulti
+              options={topics}
+              value={selectedTopics}
+              onChange={handleTopicChange}
+              placeholder="Select topics..."
+            />
+          </div>
+
             </div>
     
             <h1 className="px-5 text-blue-600 text-center mb-5"><strong>Try Questions!!!</strong></h1>
     
             <div>
-              {queslist.filter((ques) =>
+              {filteredQuestions.filter((ques) =>
                 ques.title.toLowerCase().includes(searchQuery.toLowerCase().trim())
               ).map((ques) => (
                 <Link key={ques.id} to={"/question/" + ques.titleslug}>
@@ -73,7 +119,7 @@ const Question = () => {
                 </Link>
               ))}
               {queslist.length > 0 &&
-                queslist.filter((ques) =>
+                filteredQuestions.filter((ques) =>
                   ques.title.toLowerCase().includes(searchQuery.toLowerCase().trim())
                 ).length === 0 && <p className="text-white">No questions found</p>}
             </div>

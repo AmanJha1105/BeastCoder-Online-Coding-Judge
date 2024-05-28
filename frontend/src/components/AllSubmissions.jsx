@@ -46,7 +46,7 @@ const AllSubmissions = () => {
                 </Link>
               </td>
               <td className={`py-2 px-4 border-b ${submission.verdict === 'AC' ? 'text-green-600' : 'text-red-600'}`}>
-              <Link to={`/question/${submission.titleslug}`}>{submission.verdict === 'AC' ? 'Accepted' : 'Wrong Answer'}</Link>
+              <Link to={`/submissions/${submission._id}`}>{submission.verdict === 'AC' ? 'Accepted' : 'Wrong Answer'}</Link>
               </td>
               <td className="py-2 px-4 border-b">{submission.executionTime.toFixed(1)+"ms"}</td>
               <td className="py-2 px-4 border-b">{submission.language}</td>

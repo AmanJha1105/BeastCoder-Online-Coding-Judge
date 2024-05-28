@@ -4,9 +4,7 @@ const user = require("../model/User");
 
 const getSubmissions =async(req,res)=>{
     try {
-        console.log("inside get submissions");
         const userId = req.query.userId;
-        console.log("req query is",req.query.userId);
         const ques_slug = req.params.slug;
     
         const question = await Question.findOne({ "titleslug": ques_slug });
@@ -31,8 +29,6 @@ const getSubmissions =async(req,res)=>{
 
 const getAllSubmissions = async(req,res)=>{
     const userId = req.query.userId;
-   console.log("user id is",userId);
-
    try {
     const submissions = await Submission.find({ userId: userId }).sort({ submittedAt: -1 });
 

@@ -9,6 +9,7 @@ import QuestionDescription from "./components/QuestionDescription";
 import AllSubmissions from "./components/AllSubmissions";
 import PublishSolution from "./components/PublishSolution";
 import Solutions from "./components/Solutions";
+import SubmissionPage from "./pages/SubmissionPage";
 
 const App=()=> {
 
@@ -26,6 +27,7 @@ const App=()=> {
           <Route path="/pubhlishSolution/:submissionID" element={<PublishSolution/>}/>
           <Route path="/solutions/:quesID" element={<Solutions/>}/>
           <Route path="/question/:quesID" element={<QuestionDescription/>}/>
+          <Route path="/submissions/:submissionID" element={<SubmissionPage/>}/>
         </Routes>
     </>
   )
