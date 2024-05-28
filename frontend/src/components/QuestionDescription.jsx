@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import axios from 'axios';
 import Code from './Code';
 import Solutions from './Solutions';
@@ -15,6 +15,9 @@ export default function QuestionDescription() {
     const[showSubmissions, setShowSubmissions]=useState(false);
     const[showSolutions,setShowSolutions]=useState(false);
     const {quesID}= useParams();
+
+    const location = useLocation();
+    const { showSolutions: showSolutionsProp } = location.state || {};
 
   useEffect(()=>{
     getQuestionDescription().then((data)=>setques(data));

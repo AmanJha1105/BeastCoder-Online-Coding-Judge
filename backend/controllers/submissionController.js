@@ -32,7 +32,7 @@ const runprogram = async (req,res) => {
     fs.writeFileSync(inputFilePath, input);
     fs.writeFileSync(codeFilePath, code);
 
-    let {compileCmd, executeCmd} = getCommands({language,codeFilePath,inputFilePath,outputFilePath,execFilePath});
+    let {compileCmd, executeCmd} = getCommands({language,codeFilePath,inputFilePath,outputFilePath,execFilePath,dirOutputs});
 
     try {
         await execPromise(compileCmd);
@@ -87,7 +87,7 @@ const submitProgram = async (req, res) => {
         fs.writeFileSync(codeFilePath, code);
         fs.writeFileSync(inputFilePath, test.input);
 
-        let { compileCmd, executeCmd } = getCommands({ language, codeFilePath, inputFilePath, outputFilePath, execFilePath });
+        let { compileCmd, executeCmd } = getCommands({ language, codeFilePath, inputFilePath, outputFilePath, execFilePath,dirOutputs });
 
         try {
             // Compile the code

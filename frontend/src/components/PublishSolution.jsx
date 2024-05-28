@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate, useParams ,useLocation} from 'react-router-dom';
+import toast from 'react-hot-toast';
 
 export default function PublishSolution() {
   const [name, setName] = useState('');
@@ -43,6 +44,12 @@ export default function PublishSolution() {
         timeOfPublish: new Date(),
         topics: topics.split(',').map(topic => topic.trim()), // Split and trim topics
       });
+      toast.success("Solution Published. Can view in solution section");
+      navigate(`/question/${selectedSubmission.quesID}`, { showSolutions: true });
+      setName('');
+      setLang('');
+      setTopics('');
+      setCode('');
     } catch (error) {
       console.error('Error publishing solution:', error);
     }

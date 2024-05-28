@@ -1,7 +1,7 @@
 const path = require("path");
 const fs = require("fs")
 
-const getCommands=({language,codeFilePath,inputFilePath,outputFilePath,execFilePath})=>{
+const getCommands=({language,codeFilePath,inputFilePath,outputFilePath,execFilePath,dirOutputs})=>{
     
     let compileCmd, executeCmd;
  
@@ -15,6 +15,7 @@ const getCommands=({language,codeFilePath,inputFilePath,outputFilePath,execFileP
             executeCmd = `"${execFilePath}" < "${inputFilePath}" > "${outputFilePath}"`;
             break;
         case 'java':
+            // Update the classpath to the current directory
             compileCmd = `javac "${codeFilePath}" -d "${dirOutputs}"`;
             executeCmd = `java -classpath "${dirOutputs}" Main < "${inputFilePath}" > "${outputFilePath}"`;
             break;

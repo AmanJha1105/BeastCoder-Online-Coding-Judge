@@ -52,7 +52,6 @@ const SolutionCard = ({selectedSolution}) => {
         userId
       });
       setSol(response.data);
-      setSolutionLikes(response.data.likes);
     } catch (error) {
       console.error('Error liking solution:', error);
     }
