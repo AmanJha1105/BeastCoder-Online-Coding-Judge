@@ -8,6 +8,9 @@ const Header=() =>{
           <h1 className='font-bold'><strong>Beast Coder Online Judge</strong></h1>
         </Link>
         <ul className='flex gap-4'>
+        <Link to='/leaderboard'>
+            <li>Leaderboard</li>
+          </Link>
           <Link to='/allsubmissions'>
             <li>Submissions</li>
           </Link>

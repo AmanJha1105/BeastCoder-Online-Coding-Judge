@@ -10,6 +10,7 @@ import AllSubmissions from "./components/AllSubmissions";
 import PublishSolution from "./components/PublishSolution";
 import Solutions from "./components/Solutions";
 import SubmissionPage from "./pages/SubmissionPage";
+import LeaderBoardPage from "./pages/LeaderBoardPage";
 
 const App=()=> {
 
@@ -28,6 +29,7 @@ const App=()=> {
           <Route path="/solutions/:quesID" element={<Solutions/>}/>
           <Route path="/question/:quesID" element={<QuestionDescription/>}/>
           <Route path="/submissions/:submissionID" element={<SubmissionPage/>}/>
+          <Route path="/leaderboard" element={<LeaderBoardPage/>}/>
         </Routes>
     </>
   )

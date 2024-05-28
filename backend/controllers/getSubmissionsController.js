@@ -12,12 +12,12 @@ const getSubmissions =async(req,res)=>{
         console.log(quesID);
         console.log("userid is",userId); 
     
-        const submissions = await Submission.find({ userId:userId, quesID:quesID});
+        const submissions = await Submission.find({ userId:userId, quesID:quesID}).sort({submittedAt:-1})
+        ;
         console.log(submissions);
         if (submissions.length === 0) {
             return res.status(200).json([]);
         }
-    
         return res.status(200).json(submissions);
 
     } catch (error) {

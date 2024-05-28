@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import {Link} from "react-router-dom";
 import { HiSearch } from "react-icons/hi";
+import { FaCheckCircle} from "react-icons/fa";
+import { FaCircleHalfStroke } from "react-icons/fa6";
 import axios from "axios";
 import Select from "react-select";
 
@@ -11,11 +13,13 @@ const Question = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedQuestion, setSelectedQuestion] = useState(null);
     const [selectedTopics, setSelectedTopics] = useState([]);
+    const [submissions, setSubmissions] = useState([]);
 
     const topics = [
       { label: 'BFS', value: 'bfs' },
       { label: 'DFS', value: 'dfs' },
       { label: 'Graphs', value: 'graphs' },
+      { label: 'Queue', value: 'queue' },
       { label: 'Arrays', value: 'arrays' },
       { label: 'Mathematics', value: 'mathematics' },
       { label: 'Dynamic Programming', value: 'dp' },
@@ -34,6 +38,20 @@ const Question = () => {
       { label: 'Recursion', value: 'recursion' },
       { label: 'Hash Table', value: 'hashtable' },
     ];
+
+    const fetchSubmissions = async () => {
+      try {
+        const userId = localStorage.getItem('userId');
+        console.log("userid",userId);
+        const response = await axios.get('http://localhost:5000/ques/allsubmissions',{
+            params: {
+                userId: userId
+            }},{ withCredentials: true });
+        setSubmissions(response.data);
+      } catch (error) {
+        console.error('Error fetching submissions', error);
+      }
+    };
 
     const handleTopicChange = (selectedOptions) => {
       setSelectedTopics(selectedOptions || []);
@@ -63,8 +81,19 @@ const Question = () => {
         setSelectedQuestion(quesId === selectedQuestion ? null : quesId);
       };
 
+      const getStatusIcon = (questionId) => {
+        const userSubmissions = submissions.filter(submission => submission.quesID === questionId);
+        const isSolved = userSubmissions.some(submission => submission.verdict === "AC");
+        const isAttempted = userSubmissions.length > 0;
+
+        if (isSolved) return <FaCheckCircle className="text-green-500 ml-2" title="Solved"/>;
+        if (isAttempted) return <FaCircleHalfStroke className="text-orange-500 ml-2" title="Attempted"/>;
+        return null;
+      };
+
       useEffect(() => {
         getQuestions().then((data)=>setqueslist(data));
+        fetchSubmissions();
       }
        , []);
     
@@ -112,6 +141,7 @@ const Question = () => {
                 <Link key={ques.id} to={"/question/" + ques.titleslug}>
                   <div className="flex justify-between p-5 m-5 border border-gray-800 rounded-lg hover:border-gray-700 transition duration-300 hover:shadow-md">
                     <h2 className="text-white"><strong>{ques.title}</strong></h2>
+                    {getStatusIcon(ques._id)}
                     <p className={` ${ques.level === "easy" ? "text-green-500" : ques.level === "medium" ? "text-orange-500" : "text-red-500"}`}>
                       <strong>{ques.level}</strong>
                     </p>
