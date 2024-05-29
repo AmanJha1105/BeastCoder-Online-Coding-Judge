@@ -88,7 +88,7 @@ const login =async(req,res,next)=>{
         expires: new Date(Date.now()+1000*60*60*2),
         httpOnly: true,
         sameSite: 'lax',
-        secure:false,
+        secure:true,
     })
 
     return res.status(200).json({message:"Successfully logged in",user:existingUser,token});
@@ -96,29 +96,38 @@ const login =async(req,res,next)=>{
 
 //verifying token
 
-const verifyToken = (req,res,next)=>{
-
-    //console.log("verify token called");
-
-    const cookies=req.headers.cookie;
-    console.log(cookies);
-    
-    const token= cookies.split("=")[5];
-   // console.log("token is",token);
-
-    if(!token){
-        res.status(404).json({message:"No token found"});
+const verifyToken = (req, res, next) => {
+    console.log("verify token called");
+  
+    const cookies = req.headers.cookie;
+    if (!cookies) {
+      return res.status(401).json({ message: "No cookies found" });
     }
-    jwt.verify(String(token),JWT_SECRET_KEY,(err,user)=>{
-        if(err)
-        {
-            return res.status(400).json({message:"Invalid token "});
-        }
-        console.log(user.id);
-        req.id=user.id;
-        next();
+    
+    console.log("verify token cookies", cookies);
+  
+    let token = cookies.split('; ').find(row => row.startsWith('token='));
+    if (token) {
+      token = token.split('=')[1];
+    }
+    if (!token) {
+      return res.status(401).json({ message: "No token found" });
+    }
+  
+    console.log("token is", token);
+  
+    jwt.verify(token, JWT_SECRET_KEY, (err, user) => {
+      if (err) {
+        console.error("JWT verification error:", err);
+        return res.status(400).json({ message: "Invalid token" });
+      }
+      console.log("userid is", user.id);
+      req.id = user.id;
+      next();
     });
 };
+
+  
 
 //getting details of user from that token
 
@@ -138,44 +147,48 @@ const getUser= async(req,res,next)=>{
    return res.status(200).json({user});
 };
 
-const refreshToken = (req,res,next)=>{
+const refreshToken = (req, res, next) => {
+    console.log("refreshToken called");
 
-   // console.log("called refresh function");
-
-    const cookies=req.headers.cookie;
-    console.log(cookies);
-    
-    const prevtoken = cookies.split("=")[5];
-    if(!prevtoken){
-        return res.status(400).json({message: "Couldn't find token"});
+    const cookies = req.headers.cookie;
+    if (!cookies) {
+      return res.status(400).json({ message: "No cookies found" });
     }
-    console.log("prev token is",prevtoken);
-    jwt.verify(String(prevtoken),JWT_SECRET_KEY,(err,user)=>{
-        if(err){
-            console.log(err);
-            return res.status(403).json({message: "Authentication failed"});
-        }
-        res.clearCookie(`${user.id}`);
-        req.cookies[`${user.id}`]="";
-        const token = jwt.sign({id:user.id},JWT_SECRET_KEY,{
-            expiresIn:"2hr"
-        })
+    
+    console.log("refreshToken cookies", cookies);
+  
+    let token = cookies.split('; ').find(row => row.startsWith('token='));
+    if (token) {
+      token = token.split('=')[1];
+    }
+    if (!token) {
+      return res.status(400).json({ message: "No token found" });
+    }
+  
+    console.log("refreshToken token is", token);
+  
+    jwt.verify(token, JWT_SECRET_KEY, (err, user) => {
+      if (err) {
+        console.error("JWT verification error:", err);
+        return res.status(403).json({ message: "Authentication failed" });
+      }
 
-        //console.log("Regenerated token\n",token);
-
-        res.cookie(String(user.id),token,{
-            path:"/",
-            expires: new Date(Date.now()+1000*60*60*2),
-            httpOnly: true,
-            sameSite: 'lax'
-        });
-
-        req.id=user.id;
-        next();
-
-    })
-}
-
+      res.clearCookie('token');
+      const newToken = jwt.sign({ id: user.id }, JWT_SECRET_KEY, {
+        expiresIn: "2h"
+      });
+  
+      res.cookie('token', newToken, {
+        path: "/",
+        expires: new Date(Date.now() + 1000 * 60 * 60 * 2),
+        httpOnly: true,
+        sameSite: 'lax'
+      });
+  
+      req.id = user.id;
+      next();
+    });
+};
 exports.signup=signup;
 exports.login=login;
 exports.verifyToken=verifyToken;

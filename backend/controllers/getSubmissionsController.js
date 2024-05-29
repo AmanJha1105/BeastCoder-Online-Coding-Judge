@@ -9,12 +9,9 @@ const getSubmissions =async(req,res)=>{
     
         const question = await Question.findOne({ "titleslug": ques_slug });
         const quesID = question._id;
-        console.log(quesID);
-        console.log("userid is",userId); 
     
         const submissions = await Submission.find({ userId:userId, quesID:quesID}).sort({submittedAt:-1})
         ;
-        console.log(submissions);
         if (submissions.length === 0) {
             return res.status(200).json([]);
         }
@@ -44,9 +41,6 @@ const getAllSubmissions = async(req,res)=>{
         titleslug: ques.titleslug,
       };
     }));
-
-    // Return the enriched submissions
-    console.log(enrichedSubmissions);
     return res.json(enrichedSubmissions);
   } catch (error) {
     return res.status(500).json({ error: 'Internal Server Error' });

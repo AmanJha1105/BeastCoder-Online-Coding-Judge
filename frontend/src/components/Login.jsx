@@ -20,6 +20,7 @@ const Login=()=> {
        password: formData.password,
     }).catch(err=>console.log(err));
     const data = await res.data;
+    console.log(data);
     localStorage.setItem('userId',data.user._id);
     localStorage.setItem('username',data.user.username);
     return data;
