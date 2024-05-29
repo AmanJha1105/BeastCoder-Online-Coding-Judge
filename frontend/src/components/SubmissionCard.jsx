@@ -7,11 +7,27 @@ const SubmissionCard = ({selectedSubmission}) => {
     const navigate = useNavigate();
 
     const handlePublishSolution = () => {
-        navigate(`/pubhlishSolution/${selectedSubmission._id}`,{
-          state:{
-            selectedSubmission,
+        try {
+          const userId = localStorage.getItem('userId'); // Assume user ID is stored in localStorage
+          if (!userId) {
+            toast.error("Please login to publish solution.");
+            return;
           }
-        });
+          navigate(`/pubhlishSolution/${selectedSubmission._id}`,{
+            state:{
+              selectedSubmission,
+            }
+          });
+
+        } catch (error) {
+          if (error.response && error.response.data) {
+            toast.error(error.response.data.message || "An error occurred");
+          } else if (error.message) {
+            toast.error(error.message);
+          } else {
+            toast.error("An unknown error occurred");
+          }
+        }
       };
 
   return (

@@ -1,7 +1,7 @@
 import React,{useEffect, useState} from 'react'
 import Editor from 'react-simple-code-editor';
 import axios from'axios';
-import toast from"react-hot-toast";
+import  {toast}  from 'react-hot-toast';
 import { highlight, languages } from 'prismjs/components/prism-core';
 import 'prismjs/components/prism-clike';
 import 'prismjs/components/prism-javascript';
@@ -55,6 +55,7 @@ const Code = ({quesID})=> {
     }
   }, [language, quesID, setCode, demoCode]);
   const handleRun = async () => {
+
     const payload = {
       language,
       code,
@@ -63,11 +64,16 @@ const Code = ({quesID})=> {
 
     try {
       // console.log("inside try block in code");
+      const userId = localStorage.getItem('userId');
+      if (!userId) {
+        toast.error("Login is required to run or submit code.");
+        return;
+      }
       const  outputContent = await axios.post('http://localhost:5000/ques/run', payload);
       console.log(outputContent);
       setOutput(outputContent.data);
     } catch (error) {
-      console.log(error.response);
+      toast.error(error.response);
     }
   }
 
@@ -89,6 +95,10 @@ const Code = ({quesID})=> {
     };
 
     try {
+      if (!userId) {
+        toast.error("Login is required to run or submit code.");
+        return;
+      }
       console.log("inside try block in code");
       const { data } = await axios.post('http://localhost:5000/ques/submit', payload,config);
       console.log("data received",data.finalVerdict);
@@ -99,7 +109,13 @@ const Code = ({quesID})=> {
       }
       setOutput(data.finalVerdict);
     } catch (error) {
-      console.log(error);
+      if (error.response && error.response.data) {
+        toast.error(error.response.data.message || "An error occurred");
+      } else if (error.message) {
+        toast.error(error.message);
+      } else {
+        toast.error("An unknown error occurred");
+      }
     }
   }
 

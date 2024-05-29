@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { FaThumbsUp, FaThumbsDown, FaReply} from 'react-icons/fa';
+import  {toast}  from 'react-hot-toast';
 
 const Discussions = ({ques}) => {
  // const { questionId } = useParams();
@@ -28,6 +29,10 @@ const Discussions = ({ques}) => {
   const handleAddComment = async () => {
     try {
       const userId = localStorage.getItem('userId');
+      if (!userId) {
+        toast.error("Please login to comment");
+        return;
+      }
       const response = await axios.post(`http://localhost:5000/ques/${ques.titleslug}/discussions/comment`, { 
         content: newComment ,
         userId:userId,
@@ -43,6 +48,10 @@ const Discussions = ({ques}) => {
   const handleAddReply = async (commentId) => {
     try {
       const userId = localStorage.getItem('userId');
+      if (!userId) {
+        toast.error("Please login to reply");
+        return;
+      }
       const response = await axios.post(`http://localhost:5000/ques/${ques.titleslug}/discussions/comment/${commentId}/reply`, { 
         content: newReply[commentId],
         userId:userId,
@@ -57,6 +66,10 @@ const Discussions = ({ques}) => {
 
   const handleLikeComment = async (commentId) => {
     try {
+      if (!userId) {
+        toast.error("Login is required");
+        return;
+      }
       const response = await axios.post(`http://localhost:5000/ques/${ques.titleslug}/discussions/${commentId}/like`,{
         userId:userId,
       });
@@ -68,6 +81,10 @@ const Discussions = ({ques}) => {
 
   const handleLikeReply = async (commentId, replyId) => {
     try {
+      if (!userId) {
+        toast.error("Please login to like");
+        return;
+      }
       const response = await axios.post(`http://localhost:5000/ques/${ques.titleslug}/discussions/${commentId}/${replyId}/like`,{
         userId:userId,
       });
@@ -85,10 +102,18 @@ const Discussions = ({ques}) => {
   };
 
   const toggleReplyBox = (commentId) => {
-    setReplyBoxes((prevState) => ({
-      ...prevState,
-      [commentId]: !prevState[commentId],
-    }));
+    try {
+      if (!userId) {
+        toast.error("Login is required");
+        return;
+      }
+      setReplyBoxes((prevState) => ({
+        ...prevState,
+        [commentId]: !prevState[commentId],
+      }));
+    } catch (error) {
+       toast.error(error.message);
+    }
   };
 
   const handleReplyChange = (e, commentId) => {

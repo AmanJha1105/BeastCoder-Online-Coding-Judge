@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { FaThumbsUp, FaThumbsDown } from 'react-icons/fa';
 import axios from 'axios';
+import  {toast}  from 'react-hot-toast';
 
 const Description = ({ques}) => {
 
@@ -35,6 +36,11 @@ const Description = ({ques}) => {
         try {
             const userId = localStorage.getItem('userId');
 
+            if (!userId) {
+                toast.error("Login is required to vote");
+                return;
+              }
+
             const response = await axios.post(`http://localhost:5000/ques/like/${ques.titleslug}`,{
                 userId:userId,
             });
@@ -46,14 +52,24 @@ const Description = ({ques}) => {
                 setDisliked(false);
             }
         } catch (error) {
-            console.error('Error liking the question:', error);
-        }
+            if (error.response && error.response.data) {
+                toast.error(error.response.data.message || "An error occurred");
+              } else if (error.message) {
+                toast.error(error.message);
+              } else {
+                toast.error("An unknown error occurred");
+              }     
+       }
     };
     
     const handleDislike = async () => {
         try {
 
             const userId = localStorage.getItem('userId');
+            if (!userId) {
+                toast.error("Login is required to vote");
+                return;
+              }
 
             const response = await axios.post(`http://localhost:5000/ques/dislike/${ques.titleslug}`,{
                 userId:userId,
@@ -65,7 +81,13 @@ const Description = ({ques}) => {
                 setLiked(false);
             }
         } catch (error) {
-            console.error('Error disliking the question:', error);
+            if (error.response && error.response.data) {
+                toast.error(error.response.data.message || "An error occurred");
+              } else if (error.message) {
+                toast.error(error.message);
+              } else {
+                toast.error("An unknown error occurred");
+              }    
         }
     };
     

@@ -11,6 +11,7 @@ import PublishSolution from "./components/PublishSolution";
 import Solutions from "./components/Solutions";
 import SubmissionPage from "./pages/SubmissionPage";
 import LeaderBoardPage from "./pages/LeaderBoardPage";
+import { Toaster } from "react-hot-toast";
 
 const App=()=> {
 
@@ -21,7 +22,7 @@ const App=()=> {
         <Routes>
           <Route path="/login" element={<Login/>}/>
           <Route path="/signup" element={<Signup/>}/>
-          <Route path="/user" element={<Welcome/>}/>
+          <Route path="/" element={<Welcome/>}/>
           <Route path="/allquestion" element={<Question/>}/>
           <Route path="/add" element={<AddQuestion/>}/>
           <Route path="/allsubmissions" element={<AllSubmissions/>}/>
@@ -31,6 +32,7 @@ const App=()=> {
           <Route path="/submissions/:submissionID" element={<SubmissionPage/>}/>
           <Route path="/leaderboard" element={<LeaderBoardPage/>}/>
         </Routes>
+        <Toaster />
     </>
   )
 }

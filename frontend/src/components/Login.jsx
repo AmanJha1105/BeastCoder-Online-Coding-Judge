@@ -27,7 +27,7 @@ const Login=()=> {
 
   const handleSubmit =  (e) => {
     e.preventDefault();
-    sendRequest().then(()=>history("/user"));
+    sendRequest().then(()=>history("/"));
     };
     return (
       <div className='p-3 max-w-lg mx-auto'>

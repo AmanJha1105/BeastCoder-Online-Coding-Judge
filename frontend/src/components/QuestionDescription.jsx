@@ -17,11 +17,20 @@ export default function QuestionDescription() {
     const {quesID}= useParams();
 
     const location = useLocation();
-    const { showSolutions: showSolutionsProp } = location.state || {};
 
   useEffect(()=>{
     getQuestionDescription().then((data)=>setques(data));
   },[])
+
+  useEffect(() => {
+    const state = location.state || {};
+    if (state.showSolutions) {
+      setShowSolutions(true);
+      setDescription(false);
+      setDiscussions(false);
+      setShowSubmissions(false);
+    }
+  }, [location.state, setShowSolutions]);
 
   const getQuestionDescription=async()=>{
       const res= await axios.get(`http://localhost:5000/ques/question/${quesID}`,{

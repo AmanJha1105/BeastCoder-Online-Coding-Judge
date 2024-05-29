@@ -1,6 +1,7 @@
 import React ,{useState}from 'react'
 import axios from 'axios';
 import { FaThumbsUp} from 'react-icons/fa';
+import  {toast}  from 'react-hot-toast';
 
 const SolutionCard = ({selectedSolution}) => {
 
@@ -14,6 +15,10 @@ const SolutionCard = ({selectedSolution}) => {
 
     const handleReply = async () => {
         const userId = localStorage.getItem('userId'); // Assume user ID is stored in localStorage
+        if (!userId) {
+          toast.error("Please login to comment");
+          return;
+        }
         const username = localStorage.getItem('username'); // Replace with actual username
     
         try {
@@ -25,12 +30,22 @@ const SolutionCard = ({selectedSolution}) => {
           setReplies(response.data.replies);
           setReplyContent('');
         } catch (error) {
-          console.error('Error adding reply:', error);
+          if (error.response && error.response.data) {
+            toast.error(error.response.data.message || "An error occurred");
+          } else if (error.message) {
+            toast.error(error.message);
+          } else {
+            toast.error("An unknown error occurred");
+          }
         }
     };
 
     const handleLikeReply = async (replyId, index) => {
       const userId = localStorage.getItem('userId');
+      if (!userId) {
+        toast.error("Please login to like ");
+        return;
+      }
       try {
         const response = await axios.post(`http://localhost:5000/ques/solutions/${selectedSolution._id}/reply/${replyId}/like`, {
           userId
@@ -41,12 +56,22 @@ const SolutionCard = ({selectedSolution}) => {
         setReplies(sortedReplies);
 
       } catch (error) {
-        console.error('Error liking reply:', error);
+        if (error.response && error.response.data) {
+          toast.error(error.response.data.message || "An error occurred");
+        } else if (error.message) {
+          toast.error(error.message);
+        } else {
+          toast.error("An unknown error occurred");
+        }
       }
     };
 
     const handleLikeSolution = async () => {
     const userId = localStorage.getItem('userId');
+    if (!userId) {
+      toast.error("Please login to like");
+      return;
+    }
     try {
       const response = await axios.post(`http://localhost:5000/ques/solution/${selectedSolution._id}/like`, {
         userId

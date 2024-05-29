@@ -146,6 +146,7 @@ const submitProgram = async (req, res) => {
     const newSubmission = new Submission({
         userId,
         quesID:ques._id,
+        titleslug:ques.titleslug,
         language,
         code,
         verdict: finalVerdict,

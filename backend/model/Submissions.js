@@ -13,6 +13,7 @@ const testCaseResultSchema = new mongoose.Schema({
   const submissionSchema = new mongoose.Schema({
     userId: { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'User' },
     quesID: { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'Question' },
+    titleslug:{ type: String, required: true },
     language: { type: String, required: true },
     code: { type: String, required: true },
     verdict: { type: String, required: true },

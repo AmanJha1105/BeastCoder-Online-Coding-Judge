@@ -1,5 +1,6 @@
 import React, { useEffect ,useState} from 'react'
 import axios from 'axios';
+import { Link } from 'react-router-dom';
 import SubmissionCard from './SubmissionCard';
 
 const Submissions = ({ques}) => {
@@ -16,8 +17,6 @@ const Submissions = ({ques}) => {
         //setDescription(!description);
         try {
           const userId = localStorage.getItem('userId');
-          
-          console.log(userId);
           const response = await axios.get(`http://localhost:5000/ques/submissions/${quesID}`,{
             params: {
                 userId: userId
@@ -36,7 +35,7 @@ const Submissions = ({ques}) => {
 
   return (
     <>
-    {!selectedSubmission && <div className="flex-1 p-4">
+    {!selectedSubmission && submissions.length>0 && <div className="flex-1 p-4">
        <table className="min-w-full divide-y divide-gray-200">
         <thead>
           <tr>
@@ -63,6 +62,22 @@ const Submissions = ({ques}) => {
       </div>}
 
        {selectedSubmission!== null && <SubmissionCard selectedSubmission ={selectedSubmission}/>}
+       <div className="flex h-1/3 pl-8">
+  {/* Left half */}
+  <div className="w-1/2 flex items-center justify-center ml-8">
+    {submissions.length === 0 && (
+      <div className="text-center">
+        <div>🔥 Join BeastCoder to Code!</div>
+        <div>View your Submission records here</div>
+        <div className='pl-10'><Link to="/login">
+          <button className="bg-green-500 text-white font-medium py-2 px-4 mt-4 flex items-center cursor-pointer border rounded-lg">
+            Register or Login
+          </button>
+        </Link></div>
+      </div>
+    )}
+  </div>
+</div>
     </>
   )
 }
