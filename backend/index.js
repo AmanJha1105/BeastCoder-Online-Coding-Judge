@@ -6,6 +6,7 @@ const solutionsrouter = require("./routes/solutionsRoutes");
 const submissionrouter= require("./routes/submissionRoutes");
 const discussionrouter = require("./routes/discussionRoutes");
 const leaderboardrouter = require("./routes/leaderboardRoutes");
+const profilerouter = require("./routes/profileRoutes");
 const cookieParser= require('cookie-parser');
 const cors=require("cors");
 
@@ -21,7 +22,8 @@ app.use("/ques",quesrouter);
 app.use("/ques",submissionrouter);
 app.use("/ques",solutionsrouter);
 app.use("/ques",discussionrouter);
-app.use("/api",leaderboardrouter)
+app.use("/api",leaderboardrouter);
+app.use("/profile",profilerouter);
 
 ConnectDB();
 

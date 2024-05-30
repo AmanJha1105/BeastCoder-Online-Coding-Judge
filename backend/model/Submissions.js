@@ -19,7 +19,7 @@ const testCaseResultSchema = new mongoose.Schema({
     verdict: { type: String, required: true },
     submittedAt: { type: Date, default: Date.now },
     executionTime: { type: Number }, // in milliseconds 
-    memoryUsed: { type: Number }, // in KB
+    memoryUsed: { type: Number }, // in MB
     testCases: [testCaseResultSchema],
   });
   

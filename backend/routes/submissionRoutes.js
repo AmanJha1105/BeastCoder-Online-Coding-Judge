@@ -11,6 +11,7 @@ router.get("/submissions/:slug",getSubmissions);
 
 router.get("/allsubmissions",getAllSubmissions);
 
-router.get("/singleSubmission/:slug",getSingleSubmission)
+router.get("/singleSubmission/:slug",getSingleSubmission);
+
 
 module.exports=router;

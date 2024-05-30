@@ -31,6 +31,9 @@ const Header = () => {
                 <li>Submissions</li>
               </Link>
               <li>Hi {user.username}</li>
+              <Link to={`/profile/${user.username}`}>
+                <li>profile</li>
+              </Link>
               <li onClick={handleLogoutClick} className='cursor-pointer'>Logout</li>
             </>
           ) : (

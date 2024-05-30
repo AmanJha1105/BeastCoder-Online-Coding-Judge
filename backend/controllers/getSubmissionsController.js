@@ -1,10 +1,11 @@
 const Submission = require("../model/Submissions")
 const Question = require('../model/Question');
-const user = require("../model/User");
+const User = require('../model/User');
 
 const getSubmissions =async(req,res)=>{
     try {
         const userId = req.query.userId;
+        
         const ques_slug = req.params.slug;
     
         const question = await Question.findOne({ "titleslug": ques_slug });
@@ -25,12 +26,21 @@ const getSubmissions =async(req,res)=>{
 } 
 
 const getAllSubmissions = async(req,res)=>{
-    const userId = req.query.userId;
+    let userId = req.query.userId;
+
+    const username = req.query.username;
+
+    if(username!==undefined){
+      const user = await User.findOne({username:username});
+    
+      userId = user._id;
+    }
+
    try {
     const submissions = await Submission.find({ userId: userId }).sort({ submittedAt: -1 });
 
     if(submissions.length===0)
-        return res.json([]);
+      return res.json([]);
 
     // Use Promise.all to fetch question details for each submission
     const enrichedSubmissions = await Promise.all(submissions.map(async (submission) => {
@@ -49,6 +59,7 @@ const getAllSubmissions = async(req,res)=>{
 
 const getSingleSubmission = async(req,res)=>{
    try {
+
     const submissionId = req.params.slug;
 
     const submission = await Submission.find({_id : submissionId});
@@ -59,6 +70,7 @@ const getSingleSubmission = async(req,res)=>{
      console.error("Error getting submission:",error);
    }
 }
+
 
 exports.getSubmissions=getSubmissions;
 exports.getAllSubmissions=getAllSubmissions;

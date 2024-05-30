@@ -34,3 +34,15 @@
     border-radius: 4px;
   }
   
+  /* styles.css */
+.color-empty rect {
+  fill: #374151; /* Tailwind's bg-gray-200 */
+}
+
+.color-filled rect {
+  fill: #10b981; /* Tailwind's bg-green-500 */
+}
+
+.color-morefilled rect {
+  fill: #16a34a;
+}
