@@ -1,10 +1,14 @@
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { AuthContext } from '../context/AuthContext';
 
 const Login=()=> {
 
-  const history=useNavigate();
+  const navigate=useNavigate();
+
+  const {user,setUser}=useContext(AuthContext);
+
   const [formData, setFormData] = useState({
     email:"",
     password:"",
@@ -20,16 +24,20 @@ const Login=()=> {
        password: formData.password,
     }).catch(err=>console.log(err));
     const data = await res.data;
-    console.log(data);
+    setUser(data.user);
     localStorage.setItem('userId',data.user._id);
     localStorage.setItem('username',data.user.username);
     return data;
   }
 
-  const handleSubmit =  (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    sendRequest().then(()=>history("/"));
-    };
+    await sendRequest();
+    const lastVisitedPage = localStorage.getItem('lastVisitedPage') || '/';
+    localStorage.removeItem('lastVisitedPage');
+    navigate(lastVisitedPage);
+  };
+  
     return (
       <div className='p-3 max-w-lg mx-auto'>
         <h1 className='text-3xl text-center font-semibold my-7'>Sign In</h1>

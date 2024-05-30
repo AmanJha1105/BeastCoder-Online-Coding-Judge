@@ -42,74 +42,61 @@ const signup= async(req,res,next)=>{
 
 //creating login route
 
-const login =async(req,res,next)=>{
-
+const login = async (req, res, next) => {
     console.log("login function called");
-
-    const {email,password}=req.body;
-   // console.log(email,password);
-    //check if user exists
+  
+    const { email, password } = req.body;
+  
+    // Check if user exists
     let existingUser;
     try {
-        existingUser= await User.findOne({email:email});
+      existingUser = await User.findOne({ email: email });
     } catch (error) {
-        return new Error(error);
+      return new Error(error);
     }
-    //if user does not exist throw error
-    if(!existingUser){
-        return res.status(400).json({message:"Invalid Credentials"});
+  
+    // If user does not exist, throw error
+    if (!existingUser) {
+      return res.status(400).json({ message: "Invalid Credentials" });
     }
-
-    //check password
-
-    const isPasswordCorrect= bcrypt.compareSync(password,existingUser.password);
-    
-    if(!isPasswordCorrect){
-        return res.status(400).json({message:"Invalid details"});
+  
+    // Check password
+    const isPasswordCorrect = bcrypt.compareSync(password, existingUser.password);
+  
+    if (!isPasswordCorrect) {
+      return res.status(400).json({ message: "Invalid details" });
     }
-    
-    //if password correct then login
-    //generate token for correct details.
-
-    const token= jwt.sign({id:existingUser._id},JWT_SECRET_KEY,{
-        expiresIn:"2hr",
+  
+    // If password is correct, generate token
+    const token = jwt.sign({ id: existingUser._id }, JWT_SECRET_KEY, {
+      expiresIn: "2hr",
     });
-
-    //console.log("gernerated token\n", token);
-
-    if(req.cookies[`${existingUser._id}`]){
-        req.cookies[`${existingUser._id}`]="";
+  
+    // Clear any existing token cookie
+    if (req.cookies['token']) {
+      res.clearCookie('token');
     }
-
-    //sending cookie when user logs in
-
-    res.cookie(String(existingUser._id),token,{
-        path:"/",
-        expires: new Date(Date.now()+1000*60*60*2),
-        httpOnly: true,
-        sameSite: 'lax',
-        secure:true,
-    })
-
-    return res.status(200).json({message:"Successfully logged in",user:existingUser,token});
-};
+  
+    // Send cookie with token when user logs in
+    res.cookie('token', token, {
+      path: "/",
+      expires: new Date(Date.now() + 1000 * 60 * 60 * 2), // 2 hours
+      httpOnly: true,
+      sameSite: 'lax',
+      secure: false, // set to true if using HTTPS
+    });
+  
+    return res.status(200).json({ message: "Successfully logged in", user: existingUser, token });
+  };
+  
 
 //verifying token
 
 const verifyToken = (req, res, next) => {
     console.log("verify token called");
   
-    const cookies = req.headers.cookie;
-    if (!cookies) {
-      return res.status(401).json({ message: "No cookies found" });
-    }
-    
-    console.log("verify token cookies", cookies);
-  
-    let token = cookies.split('; ').find(row => row.startsWith('token='));
-    if (token) {
-      token = token.split('=')[1];
-    }
+    const token = req.cookies.token;
+    console.log("token is", token);
     if (!token) {
       return res.status(401).json({ message: "No token found" });
     }
@@ -125,14 +112,17 @@ const verifyToken = (req, res, next) => {
       req.id = user.id;
       next();
     });
-};
+  };
+  
 
   
 
 //getting details of user from that token
 
 const getUser= async(req,res,next)=>{
+   console.log("inside get user");
    const userId= req.id;
+   console.log("userid is",userId);
    let user;
    try {
      user=await User.findById(userId,"-password");
@@ -149,18 +139,8 @@ const getUser= async(req,res,next)=>{
 
 const refreshToken = (req, res, next) => {
     console.log("refreshToken called");
-
-    const cookies = req.headers.cookie;
-    if (!cookies) {
-      return res.status(400).json({ message: "No cookies found" });
-    }
-    
-    console.log("refreshToken cookies", cookies);
   
-    let token = cookies.split('; ').find(row => row.startsWith('token='));
-    if (token) {
-      token = token.split('=')[1];
-    }
+    const token = req.cookies.token;
     if (!token) {
       return res.status(400).json({ message: "No token found" });
     }
@@ -172,7 +152,7 @@ const refreshToken = (req, res, next) => {
         console.error("JWT verification error:", err);
         return res.status(403).json({ message: "Authentication failed" });
       }
-
+  
       res.clearCookie('token');
       const newToken = jwt.sign({ id: user.id }, JWT_SECRET_KEY, {
         expiresIn: "2h"
@@ -180,17 +160,27 @@ const refreshToken = (req, res, next) => {
   
       res.cookie('token', newToken, {
         path: "/",
-        expires: new Date(Date.now() + 1000 * 60 * 60 * 2),
+        expires: new Date(Date.now() + 1000 * 60 * 60 * 2), // 2 hours
         httpOnly: true,
-        sameSite: 'lax'
+        sameSite: 'lax',
+        secure: false, // set to true if using HTTPS
       });
   
       req.id = user.id;
       next();
     });
-};
+  };
+  
+
+const logout = (req, res, next) => {
+    res.clearCookie('token', { path: '/' });
+    return res.status(200).json({ message: 'Successfully logged out' });
+  };
+  
+
 exports.signup=signup;
 exports.login=login;
 exports.verifyToken=verifyToken;
 exports.getUser=getUser;
 exports.refreshToken=refreshToken;
+exports.logout = logout;

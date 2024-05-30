@@ -9,7 +9,6 @@ const AllSubmissions = () => {
     const fetchSubmissions = async () => {
       try {
         const userId = localStorage.getItem('userId');
-        console.log("userid",userId);
         const response = await axios.get('http://localhost:5000/ques/allsubmissions',{
             params: {
                 userId: userId

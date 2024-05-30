@@ -42,7 +42,6 @@ const Question = () => {
     const fetchSubmissions = async () => {
       try {
         const userId = localStorage.getItem('userId');
-        console.log("userid",userId);
         const response = await axios.get('http://localhost:5000/ques/allsubmissions',{
             params: {
                 userId: userId
@@ -133,12 +132,11 @@ const Question = () => {
             </div>
     
             <h1 className="px-5 text-blue-600 text-center mb-5"><strong>Try Questions!!!</strong></h1>
-    
-            <div>
+
               {filteredQuestions.filter((ques) =>
                 ques.title.toLowerCase().includes(searchQuery.toLowerCase().trim())
               ).map((ques) => (
-                <Link key={ques.id} to={"/question/" + ques.titleslug}>
+                <Link key={ques._id} to={"/question/" + ques.titleslug}>
                   <div className="flex justify-between p-5 m-5 border border-gray-800 rounded-lg hover:border-gray-700 transition duration-300 hover:shadow-md">
                     <h2 className="text-white"><strong>{ques.title}</strong></h2>
                     {getStatusIcon(ques._id)}
@@ -152,7 +150,6 @@ const Question = () => {
                 filteredQuestions.filter((ques) =>
                   ques.title.toLowerCase().includes(searchQuery.toLowerCase().trim())
                 ).length === 0 && <p className="text-white">No questions found</p>}
-            </div>
           </div>
         </div>
       );

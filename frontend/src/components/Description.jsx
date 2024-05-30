@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { FaThumbsUp, FaThumbsDown } from 'react-icons/fa';
 import axios from 'axios';
 import  {toast}  from 'react-hot-toast';
+import { AuthContext } from '../context/AuthContext';
 
 const Description = ({ques}) => {
 
@@ -9,7 +10,8 @@ const Description = ({ques}) => {
     const [dislikes, setDislikes] = useState(ques.dislikes);
     const [liked, setLiked] = useState(false);
     const [disliked, setDisliked] = useState(false);
-    console.log(likes);
+
+    const { user} = useContext(AuthContext);
 
     useEffect(()=>{
          setLikes(ques.likes);
@@ -36,8 +38,9 @@ const Description = ({ques}) => {
         try {
             const userId = localStorage.getItem('userId');
 
-            if (!userId) {
+            if (!user) {
                 toast.error("Login is required to vote");
+                setLiked(false);
                 return;
               }
 
@@ -66,8 +69,9 @@ const Description = ({ques}) => {
         try {
 
             const userId = localStorage.getItem('userId');
-            if (!userId) {
+            if (!user) {
                 toast.error("Login is required to vote");
+                setDisliked(false);
                 return;
               }
 
@@ -98,7 +102,7 @@ const Description = ({ques}) => {
         <div>{ques.content}</div>
         <div>{ques.level}</div>
         <div>
-            <button onClick={handleLike} className={`mr-2 ${liked ? 'text-blue-500' : 'text-gray-500'}`}>
+            <button onClick={handleLike} className={`mr-2 ${(liked &&user) ? 'text-blue-500' : 'text-gray-500'}`}>
                 <FaThumbsUp />
             </button>{likes}
             

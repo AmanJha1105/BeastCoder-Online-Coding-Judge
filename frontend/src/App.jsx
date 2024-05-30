@@ -1,4 +1,4 @@
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useLocation } from "react-router-dom";
 import Login from "./components/Login";
 import Signup from "./components/Signup";
 import Header from "./components/Header";
@@ -12,9 +12,21 @@ import Solutions from "./components/Solutions";
 import SubmissionPage from "./pages/SubmissionPage";
 import LeaderBoardPage from "./pages/LeaderBoardPage";
 import { Toaster } from "react-hot-toast";
+//import Logout from "./pages/Logout";
+import { useEffect } from "react";
 
 const App=()=> {
 
+  const location = useLocation();
+
+  useEffect(() => {
+    const currentPath = location.pathname + location.search;
+    if (currentPath !== '/login' && currentPath !== '/logout') {
+      localStorage.setItem('lastVisitedPage', currentPath);
+    }
+  }, [location]);
+
+  
   return (
     <>
         <Header/>
@@ -31,6 +43,7 @@ const App=()=> {
           <Route path="/question/:quesID" element={<QuestionDescription/>}/>
           <Route path="/submissions/:submissionID" element={<SubmissionPage/>}/>
           <Route path="/leaderboard" element={<LeaderBoardPage/>}/>
+          {/* <Route path="/logout" element={<Logout/>}/> */}
         </Routes>
         <Toaster />
     </>
