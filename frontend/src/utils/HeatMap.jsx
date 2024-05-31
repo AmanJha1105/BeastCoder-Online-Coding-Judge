@@ -68,7 +68,7 @@ const MonthlySubmissionsHeatmap = ({ username }) => {
 
   return (
     <div className="w-3/4 mx-auto">
-      <h1 className="text-2xl font-bold mb-6"><strong>{submissionData.length} submissions in past one year</strong></h1>
+      <h1 className="text-2xl font-bold mb-6"><strong>{submissionData.length} submissions in the past one year</strong></h1>
       <ReactCalendarHeatmap
         startDate={startDate}
         endDate={endDate}

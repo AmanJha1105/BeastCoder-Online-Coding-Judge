@@ -1,10 +1,11 @@
-const User=require('../model/User');
+const User = require('../model/User'); // Assuming you have a User model
+const uploadImage = require('../utils/cloudinary');
 const bcrypt= require("bcryptjs");
 const jwt=require("jsonwebtoken");
+const path = require('path')
 
 const JWT_SECRET_KEY= process.env.JWT_SECRET_KEY;
 
-//creating signup functionality
 const signup= async(req,res,next)=>{
 
     const {name,email,password}=req.body;
@@ -21,9 +22,7 @@ const signup= async(req,res,next)=>{
         return res.status(400).json({message:"Email already exists"});
     }
 
-    //hashing the password before storing in db
-    const hashedPassword=bcrypt.hashSync(password);
-    //creating new user 
+    const hashedPassword=bcrypt.hashSync(password); 
 
     const user= new User({
        username:name,
@@ -32,7 +31,7 @@ const signup= async(req,res,next)=>{
     });
 
     try {
-        await user.save();//saving the user using save method given by mongoose
+        await user.save();
     } catch (error) {
         console.log(error);
     }
@@ -40,14 +39,10 @@ const signup= async(req,res,next)=>{
     return res.status(201).json({message:user});
 }
 
-//creating login route
-
 const login = async (req, res, next) => {
-    console.log("login function called");
-  
+    
     const { email, password } = req.body;
   
-    // Check if user exists
     let existingUser;
     try {
       existingUser = await User.findOne({ email: email });
@@ -55,29 +50,24 @@ const login = async (req, res, next) => {
       return new Error(error);
     }
   
-    // If user does not exist, throw error
     if (!existingUser) {
       return res.status(400).json({ message: "Invalid Credentials" });
     }
   
-    // Check password
     const isPasswordCorrect = bcrypt.compareSync(password, existingUser.password);
   
     if (!isPasswordCorrect) {
       return res.status(400).json({ message: "Invalid details" });
     }
   
-    // If password is correct, generate token
     const token = jwt.sign({ id: existingUser._id }, JWT_SECRET_KEY, {
       expiresIn: "2hr",
     });
-  
-    // Clear any existing token cookie
+
     if (req.cookies['token']) {
       res.clearCookie('token');
     }
-  
-    // Send cookie with token when user logs in
+
     res.cookie('token', token, {
       path: "/",
       expires: new Date(Date.now() + 1000 * 60 * 60 * 2), // 2 hours
@@ -89,40 +79,26 @@ const login = async (req, res, next) => {
     return res.status(200).json({ message: "Successfully logged in", user: existingUser, token });
   };
   
-
-//verifying token
-
 const verifyToken = (req, res, next) => {
-    console.log("verify token called");
-  
+   
     const token = req.cookies.token;
-    console.log("token is", token);
     if (!token) {
       return res.status(401).json({ message: "No token found" });
     }
-  
-    console.log("token is", token);
   
     jwt.verify(token, JWT_SECRET_KEY, (err, user) => {
       if (err) {
         console.error("JWT verification error:", err);
         return res.status(400).json({ message: "Invalid token" });
       }
-      console.log("userid is", user.id);
       req.id = user.id;
       next();
     });
   };
   
 
-  
-
-//getting details of user from that token
-
 const getUser= async(req,res,next)=>{
-   console.log("inside get user");
    const userId= req.id;
-   console.log("userid is",userId);
    let user;
    try {
      user=await User.findById(userId,"-password");
@@ -138,14 +114,12 @@ const getUser= async(req,res,next)=>{
 };
 
 const refreshToken = (req, res, next) => {
-    console.log("refreshToken called");
   
     const token = req.cookies.token;
     if (!token) {
       return res.status(400).json({ message: "No token found" });
     }
-  
-    console.log("refreshToken token is", token);
+
   
     jwt.verify(token, JWT_SECRET_KEY, (err, user) => {
       if (err) {
@@ -160,10 +134,10 @@ const refreshToken = (req, res, next) => {
   
       res.cookie('token', newToken, {
         path: "/",
-        expires: new Date(Date.now() + 1000 * 60 * 60 * 2), // 2 hours
+        expires: new Date(Date.now() + 1000 * 60 * 60 * 2), 
         httpOnly: true,
         sameSite: 'lax',
-        secure: false, // set to true if using HTTPS
+        secure: false,
       });
   
       req.id = user.id;
@@ -177,6 +151,68 @@ const logout = (req, res, next) => {
     return res.status(200).json({ message: 'Successfully logged out' });
   };
   
+  const updateProfile = async (req, res) => {
+    try {
+
+      console.log("insdie update profile");
+
+      const username = req.params.username;
+      const user = await User.findOne({username:username});
+    
+      const userId = user._id;
+
+      const {
+        fullName,
+        location,
+        githubUsername,
+        linkedinUsername,
+        skills,
+        education,
+      } = req.body;
+  
+      let imageUrl;
+      if (req.file) {
+        imageUrl = await uploadImage(req.file.path);
+      }
+      console.log(req.file);
+      console.log("image is",imageUrl);
+      const updatedUser = await User.findByIdAndUpdate(
+        userId,
+        {
+          fullName,
+          location,
+          githubUsername,
+          linkedinUsername,
+          skills,
+          education,
+          ...(imageUrl && { profilePicture: imageUrl }),
+        },
+        { new: true }
+      );
+  
+      res.status(200).json(updatedUser);
+    } catch (error) {
+      console.error('Error updating user profile:', error);
+      res.status(500).json({ message: 'Internal server error' });
+    }
+  };
+
+const getUserfromUsername = async(req,res)=>{
+   try {
+    console.log("inside getuserfrom username");
+     const username = req.query.username;
+     console.log("username is",username);
+     const user = await User.findOne({username:username});
+     if(!user)
+      return res.status(404).json({message:"No user found"});
+
+    return res.status(200).json(user);
+
+   } catch (error) {
+    console.error('Error getting user details:', error);
+    res.status(500).json({ message: 'Internal server error' });
+   }
+}
 
 exports.signup=signup;
 exports.login=login;
@@ -184,3 +220,5 @@ exports.verifyToken=verifyToken;
 exports.getUser=getUser;
 exports.refreshToken=refreshToken;
 exports.logout = logout;
+exports.updateProfile = updateProfile;
+exports.getUserfromUsername = getUserfromUsername;

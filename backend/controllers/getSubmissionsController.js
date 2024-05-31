@@ -46,7 +46,7 @@ const getAllSubmissions = async(req,res)=>{
     const enrichedSubmissions = await Promise.all(submissions.map(async (submission) => {
       const ques = await Question.findById(submission.quesID);
       return {
-        ...submission.toObject(), // Convert the Mongoose document to a plain object
+        ...submission.toObject(), 
         title: ques.title,
         titleslug: ques.titleslug,
       };

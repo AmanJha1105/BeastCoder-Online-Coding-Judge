@@ -10,8 +10,6 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        console.log("AuthProvider useEffect is executed");
-
         const response = await axios.get('http://localhost:5000/api/user', { withCredentials: true });
         setUser(response.data.user);
       } catch (error) {

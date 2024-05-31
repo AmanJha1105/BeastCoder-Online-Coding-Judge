@@ -8,7 +8,9 @@ const discussionrouter = require("./routes/discussionRoutes");
 const leaderboardrouter = require("./routes/leaderboardRoutes");
 const profilerouter = require("./routes/profileRoutes");
 const cookieParser= require('cookie-parser');
+const bodyParser = require('body-parser');
 const cors=require("cors");
+const path = require('path');
 
 const {ConnectDB}= require('./database/db');
 const app=express();
@@ -16,7 +18,10 @@ const app=express();
 app.use(cors({ credentials: true,  origin: "http://localhost:5173"}));
 app.use(cookieParser());
 app.use(express.json());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.urlencoded({ extended: true }));
+app.use('/profile', express.static(path.join(__dirname, 'uploads'))); // Serve uploaded files
 app.use("/api", router);
 app.use("/ques",quesrouter);
 app.use("/ques",submissionrouter);

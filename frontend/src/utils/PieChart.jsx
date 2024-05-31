@@ -15,7 +15,7 @@ ChartJS.register(
 
 const PieChart = ({ data }) => {
   return (
-    <div className="mt-10 mx-auto w-52 h-52">
+    <div className="mt-1 w-52 h-52">
       <Pie data={data} />
     </div>
   );

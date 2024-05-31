@@ -25,19 +25,13 @@ const getDiscussions = async(req,res)=>{
 
 const AddComment = async(req,res)=>{
 
-    console.log("inside add comment");
-
     try {
         const { questionId } = req.params;
         const { content ,userId} = req.body;
-        console.log("content",content);
-        console.log("userid is",userId);
 
         const user = await User.findById(userId);
-        console.log(user);
 
         const username = user.username;
-        console.log("username is",username);
 
         const ques = await Question.findOne({ titleslug: questionId });
 
@@ -65,8 +59,6 @@ const AddComment = async(req,res)=>{
 }
 
 const addReply = async(req,res)=>{
-
-  console.log("inside add reply");
 
   try {
     const { questionId, commentId } = req.params;
@@ -128,10 +120,8 @@ const likeComment = async (req,res)=>{
     const userIndex = comment.likes.indexOf(userId);
 
     if (userIndex === -1) {
-      // User has not liked this reply yet, so we add their like
       comment.likes.push(userId);
     } else {
-      // User has already liked this reply, so we remove their like
       comment.likes.splice(userIndex, 1);
     }
 

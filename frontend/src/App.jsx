@@ -15,6 +15,7 @@ import { Toaster } from "react-hot-toast";
 //import Logout from "./pages/Logout";
 import { useEffect } from "react";
 import ProfilePage from "./pages/ProfilePage";
+import ProfileUpdatePage from "./pages/ProfileUpatePage";
 
 const App=()=> {
 
@@ -45,6 +46,7 @@ const App=()=> {
           <Route path="/submissions/:submissionID" element={<SubmissionPage/>}/>
           <Route path="/leaderboard" element={<LeaderBoardPage/>}/>
           <Route path="/profile/:username" element={<ProfilePage/>}/>
+          <Route path="/editprofile/:username" element={<ProfileUpdatePage/>}/>
           {/* <Route path="/logout" element={<Logout/>}/> */}
         </Routes>
         <Toaster />
