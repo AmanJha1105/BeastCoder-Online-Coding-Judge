@@ -153,9 +153,6 @@ const logout = (req, res, next) => {
   
   const updateProfile = async (req, res) => {
     try {
-
-      console.log("insdie update profile");
-
       const username = req.params.username;
       const user = await User.findOne({username:username});
     
@@ -199,9 +196,7 @@ const logout = (req, res, next) => {
 
 const getUserfromUsername = async(req,res)=>{
    try {
-    console.log("inside getuserfrom username");
      const username = req.query.username;
-     console.log("username is",username);
      const user = await User.findOne({username:username});
      if(!user)
       return res.status(404).json({message:"No user found"});

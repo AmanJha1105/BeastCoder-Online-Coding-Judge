@@ -21,7 +21,6 @@ const publishSolution =async(req,res)=>{
 
          const user = await User.findById(userId);
          const username = user.username;
-         console.log(username);
 
         const newSolution = new Solution({
             userId: userId,
@@ -36,8 +35,6 @@ const publishSolution =async(req,res)=>{
             topics: topics,
             replies:[],
           });
-      
-          // Save the solution to the database
           const savedSolution = await newSolution.save();
       
           res.status(201).json(savedSolution);
@@ -79,7 +76,6 @@ const replySolution = async(req,res)=>{
 }
 
 const likeReply = async(req,res)=>{
-  console.log("like reply called");
   const { solutionId, replyId } = req.params;
   const { userId } = req.body;
 
@@ -97,18 +93,15 @@ const likeReply = async(req,res)=>{
     const userIndex = reply.likedBy.indexOf(userId);
 
     if (userIndex === -1) {
-      // User has not liked this reply yet, so we add their like
       reply.likes += 1;
       reply.likedBy.push(userId);
     } else {
-      // User has already liked this reply, so we remove their like
       reply.likes -= 1;
       reply.likedBy.splice(userIndex, 1);
     }
 
     await solution.save();
 
-    // Sort replies by createdAt in descending order before sending the response
     solution.replies.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
     res.status(200).json(solution);
@@ -122,15 +115,12 @@ const likeSolution = async(req,res)=>{
     const { solutionId } = req.params;
     const { userId } = req.body;
 
-    // Check if the user has already liked the solution
     const solution = await Solution.findById(solutionId);
     const likedIndex = solution.likedBy.indexOf(userId);
     if (likedIndex === -1) {
-        // User hasn't liked the solution, add their ID to the likedBy array
         solution.likes+=1;
         solution.likedBy.push(userId);
     } else {
-        // User already liked the solution, remove their ID from the likedBy array
         solution.likes-=1;
         solution.likedBy.splice(likedIndex, 1);
     }
@@ -143,8 +133,22 @@ const likeSolution = async(req,res)=>{
   }
 }
 
+const getSolutionsfromName = async(req,res)=>{
+  try {
+    const titleslug = req.params.titleslug;
+    const ques = await Question.findOne({titleslug:titleslug});
+    const quesId = ques._id;
+    const solutions = await Solution.find({ quesID: quesId }).sort({timeOfPublish:-1});
+    res.status(200).json(solutions);
+ } catch (error) {
+    console.error('Error fetching solutions:', error);
+    res.status(500).json({ message: 'Server error' });
+ }
+}
+
 exports.getSolutions=getSolutions;
 exports.publishSolution=publishSolution;
 exports.replySolution = replySolution;
 exports.likeReply=likeReply;
 exports.likeSolution=likeSolution;
+exports.getSolutionsfromName = getSolutionsfromName;

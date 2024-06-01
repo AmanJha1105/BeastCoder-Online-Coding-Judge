@@ -6,27 +6,27 @@ import { AuthContext } from '../context/AuthContext';
 
 const Description = ({ques}) => {
 
-    const [likes, setLikes] = useState(ques.likes);
-    const [dislikes, setDislikes] = useState(ques.dislikes);
+    const [likes, setLikes] = useState(ques?.likes);
+    const [dislikes, setDislikes] = useState(ques?.dislikes);
     const [liked, setLiked] = useState(false);
     const [disliked, setDisliked] = useState(false);
 
     const { user} = useContext(AuthContext);
 
     useEffect(()=>{
-         setLikes(ques.likes);
-         setDislikes(ques.dislikes);
+         setLikes(ques?.likes);
+         setDislikes(ques?.dislikes);
          const userId = localStorage.getItem('userId');
-         const likedBy = ques.likedBy;
-         const dislikedBy = ques.dislikedBy;
-         const likedIndex = likedBy && ques.likedBy.includes(userId);
+         const likedBy = ques?.likedBy;
+         const dislikedBy = ques?.dislikedBy;
+         const likedIndex = likedBy && ques?.likedBy.includes(userId);
 
          if(!likedIndex)
             setLiked(false)
         else
             setLiked(true);
 
-        const dislikedIndex =dislikedBy &&  ques.dislikedBy.includes(userId);
+        const dislikedIndex =dislikedBy &&  ques?.dislikedBy.includes(userId);
 
         if(!dislikedIndex)
             setDisliked(false)
@@ -98,9 +98,9 @@ const Description = ({ques}) => {
 
   return (
     <div className="flex-1 p-4">
-        <div><strong>{ques.title}</strong></div>
-        <div>{ques.content}</div>
-        <div>{ques.level}</div>
+        <div><strong>{ques?.title}</strong></div>
+        <div>{ques?.content}</div>
+        <div>{ques?.level}</div>
         <div>
             <button onClick={handleLike} className={`mr-2 ${(liked &&user) ? 'text-blue-500' : 'text-gray-500'}`}>
                 <FaThumbsUp />

@@ -4,8 +4,8 @@ import PieChart from "../utils/PieChart";
 import MonthlySubmissionsHeatmap from "../utils/HeatMap";
 import { formatDistanceToNow } from "date-fns";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { FaUser } from "react-icons/fa"; // Import user icon
-import Skeleton from "react-loading-skeleton";
+import { FaUser,FaLinkedinIn ,FaGithub } from "react-icons/fa";
+import { SlLocationPin } from "react-icons/sl";
 
 const ProfilePage = () => {
   const [counts, setCounts] = useState({
@@ -21,6 +21,7 @@ const ProfilePage = () => {
   const [userData, setUserData] = useState(null);
   const navigate = useNavigate();
   const { username } = useParams();
+  
 
   useEffect(() => {
     const fetchSubmissions = async () => {
@@ -130,7 +131,7 @@ const ProfilePage = () => {
           {userData && (
             <div className="mb-8 pr-8">
               <div className="flex items-start">
-              {userData.profilePicture ? (
+                {userData.profilePicture ? (
                   <div className="flex-shrink-0 mr-4">
                     <img
                       src={userData.profilePicture}
@@ -155,38 +156,67 @@ const ProfilePage = () => {
                 </div>
               </div>
               <div className="mt-4">
-                <p className="text-lg">
-                  <strong>Location:</strong> {userData?.location}
+                {userData?.location && <p className="text-lg flex items-center">
+                <SlLocationPin className="mr-2" />{" "}
+                    {userData?.location}
                 </p>
-                <p className="text-lg">
-                  <strong>Github Username:</strong>{" "}
-                  {userData?.githubUsername}
+                }
+
+                {userData?.githubUsername && <p className="text-lg flex items-center">
+                  <a
+                    href={`https://github.com/${userData?.githubUsername}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center text-gray-800 hover:text-black"
+                  >
+                    <FaGithub className="mr-2" />{" "}
+                    {userData?.githubUsername}
+                  </a>
                 </p>
-                <p className="text-lg">
-                  <strong>LinkedIn Username:</strong>{" "}
-                  {userData?.linkedinUsername}
-                </p>
-                <p className="text-lg">
+                }
+                {userData?.linkedinUsername && <p className="text-lg flex items-center">
+                  <a
+                    href={`https://www.linkedin.com/in/${userData?.linkedinUsername}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center text-gray-800 hover:text-black"
+                  >
+                    <FaLinkedinIn className="mr-2" />{" "}
+                    {userData?.linkedinUsername}
+                  </a>
+                </p>}
+
+                {userData?.education && <p className="text-lg">
                   <strong>Education:</strong> {userData?.education}
-                </p>
-                <p className="text-lg">
+                </p>}
+                {userData?.skills && <p className="text-lg">
                   <strong>Skills:</strong>
-                </p>
+                </p>}
                 <ul className="list-disc list-inside">
                   {userData?.skills &&
-                    userData?.skills.split(",").map((skill, index) => (
-                      <li key={index}>{skill.trim()}</li>
-                    ))}
+                    userData?.skills
+                      .split(",")
+                      .map((skill, index) => (
+                        <li key={index}>{skill.trim()}</li>
+                      ))}
                 </ul>
               </div>
             </div>
           )}
-        <div className="flex items-center">
-          <div className="flex flex-col items-center">
-            <div><strong>Solved :{counts.easyCount+counts.mediumCount+counts.hardCount}/{counts.totalEasyCount+counts.totalMediumCount+counts.totalHardCount}</strong></div>
-            <PieChart data={solvedProblemsData} />
-          </div>
-          <div className="ml-6">
+          <div className="flex items-center">
+            <div className="flex flex-col items-center">
+              <div>
+                <strong>
+                  Solved :
+                  {counts.easyCount + counts.mediumCount + counts.hardCount}/
+                  {counts.totalEasyCount +
+                    counts.totalMediumCount +
+                    counts.totalHardCount}
+                </strong>
+              </div>
+              <PieChart data={solvedProblemsData} />
+            </div>
+            <div className="ml-6">
               <div>
                 <p>
                   <span className="text-green-600">Easy</span>
@@ -204,7 +234,7 @@ const ProfilePage = () => {
                   {counts.hardCount}/{counts.totalHardCount}
                 </p>
               </div>
-          </div>
+            </div>
           </div>
         </div>
         <MonthlySubmissionsHeatmap username={username} />
@@ -232,8 +262,6 @@ const ProfilePage = () => {
           </ul>
         </div>
       </div>
-   
-
     </>
   );
 };
