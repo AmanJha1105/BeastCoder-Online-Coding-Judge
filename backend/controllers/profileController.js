@@ -26,6 +26,9 @@ const getDifficultyCounts = async (req,res) => {
 
 
                 const question = await Question.findById(submission.quesID);
+                if (!question) {
+                    continue;
+                }
                 const difficulty = question.level;
 
                 if (difficulty === "easy") {

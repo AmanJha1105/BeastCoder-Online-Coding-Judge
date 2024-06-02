@@ -1,11 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import PieChart from "../utils/PieChart";
 import MonthlySubmissionsHeatmap from "../utils/HeatMap";
-import { formatDistanceToNow } from "date-fns";
+import { formatDistanceToNowStrict } from "date-fns";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { FaUser,FaLinkedinIn ,FaGithub } from "react-icons/fa";
 import { SlLocationPin } from "react-icons/sl";
+import { AuthContext } from '../context/AuthContext';
 
 const ProfilePage = () => {
   const [counts, setCounts] = useState({
@@ -17,11 +18,12 @@ const ProfilePage = () => {
     totalHardCount: 0,
   });
 
+  const {user} = useContext(AuthContext);
+
   const [recentSubmissions, setRecentSubmissions] = useState([]);
   const [userData, setUserData] = useState(null);
   const navigate = useNavigate();
   const { username } = useParams();
-  
 
   useEffect(() => {
     const fetchSubmissions = async () => {
@@ -37,23 +39,23 @@ const ProfilePage = () => {
         );
         const submissions = response.data;
 
-        const acceptedSubmissions = submissions.filter(
-          (submission) => submission.verdict === "AC"
+        const acceptedSubmissions = submissions?.filter(
+          (submission) => submission?.verdict === "AC"
         );
 
         const uniqueQuestionsMap = new Map();
         acceptedSubmissions.forEach((submission) => {
-          if (!uniqueQuestionsMap.has(submission.quesID)) {
-            uniqueQuestionsMap.set(submission.quesID, submission);
+          if (!uniqueQuestionsMap.has(submission?.quesID)) {
+            uniqueQuestionsMap.set(submission?.quesID, submission);
           } else {
-            const existingSubmission = uniqueQuestionsMap.get(
-              submission.quesID
+            const existingSubmission = uniqueQuestionsMap?.get(
+              submission?.quesID
             );
             if (
-              new Date(submission.submittedAt) >
-              new Date(existingSubmission.submittedAt)
+              new Date(submission?.submittedAt) >
+              new Date(existingSubmission?.submittedAt)
             ) {
-              uniqueQuestionsMap.set(submission.quesID, submission);
+              uniqueQuestionsMap.set(submission?.quesID, submission);
             }
           }
         });
@@ -101,7 +103,6 @@ const ProfilePage = () => {
           { withCredentials: true }
         );
         setUserData(response.data);
-        console.log("response is ", response.data);
       } catch (error) {
         console.error("Error fetching user details:", error);
       }
@@ -147,12 +148,12 @@ const ProfilePage = () => {
                     {userData?.fullName}
                   </h1>
                   <p className="text-xl text-gray-500 mb-2">@{username}</p>
-                  <button
+                  {user?.username === username && <button
                     onClick={handleEditProfile}
                     className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded"
                   >
                     Edit Profile
-                  </button>
+                  </button>}
                 </div>
               </div>
               <div className="mt-4">
@@ -186,11 +187,11 @@ const ProfilePage = () => {
                   </a>
                 </p>}
 
-                {userData?.education && <p className="text-lg">
-                  <strong>Education:</strong> {userData?.education}
+                {userData?.education && <p className="text-lg flex items-center">
+               <p> 🎓</p><p>{userData?.education}</p>
                 </p>}
                 {userData?.skills && <p className="text-lg">
-                  <strong>Skills:</strong>
+                  <strong>Skills</strong>
                 </p>}
                 <ul className="list-disc list-inside">
                   {userData?.skills &&
@@ -255,7 +256,7 @@ const ProfilePage = () => {
                   to={`/submissions/${submission._id}`}
                   className="text-gray-500 text-right"
                 >
-                  {formatDistanceToNow(new Date(submission.submittedAt))} ago
+                 {formatDistanceToNowStrict(new Date(submission.submittedAt))} ago
                 </Link>
               </li>
             ))}

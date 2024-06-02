@@ -15,7 +15,7 @@ const questionSchema = new mongoose.Schema({
   sampleTestcases:[
     {
         input :{
-            type: String,
+          type: mongoose.Schema.Types.Mixed,
             required: true,
             default: '',
         },
@@ -54,6 +54,10 @@ const questionSchema = new mongoose.Schema({
   },
   likedBy: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
   dislikedBy: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+
+  constraints:{
+    type:String,
+  }
 });
 
 module.exports=mongoose.model('question',questionSchema);

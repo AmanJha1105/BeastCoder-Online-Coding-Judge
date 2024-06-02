@@ -1,4 +1,4 @@
-import React,{useEffect, useState} from 'react'
+import React,{useContext, useEffect, useState} from 'react'
 import Editor from 'react-simple-code-editor';
 import axios from'axios';
 import  {toast}  from 'react-hot-toast';
@@ -11,6 +11,7 @@ import 'prismjs/components/prism-c';
 import 'prismjs/components/prism-cpp';
 import 'prismjs/themes/prism.css';
 import { useLocalStorageState } from '../../hooks/useLocalStorageState';
+import { AuthContext } from '../context/AuthContext';
 
 
 
@@ -45,6 +46,7 @@ const Code = ({quesID})=> {
   const [output, setOutput] = useState('');
   const [language, setLanguage] = useLocalStorageState(`selectedLanguage-${quesID}`, 'cpp');
   const [code, setCode] = useLocalStorageState(`code-${quesID}-${language}`, demoCode[language]);
+  const {user} = useContext(AuthContext);
 
   useEffect(() => {
     const storedCode = localStorage.getItem(`code-${quesID}-${language}`);
@@ -54,6 +56,7 @@ const Code = ({quesID})=> {
       setCode(JSON.parse(storedCode));
     }
   }, [language, quesID, setCode, demoCode]);
+
   const handleRun = async () => {
 
     const payload = {
@@ -63,17 +66,29 @@ const Code = ({quesID})=> {
     };
 
     try {
-      // console.log("inside try block in code");
       const userId = localStorage.getItem('userId');
-      if (!userId) {
+      if (!user) {
         toast.error("Login is required to run or submit code.");
         return;
       }
-      const  outputContent = await axios.post('http://localhost:5000/ques/run', payload);
-      console.log(outputContent);
-      setOutput(outputContent.data);
+      const  response= await axios.post('http://localhost:5000/ques/run', payload);
+
+      if(response.data.outputContent)
+      {
+        if(response.data.outputContent==="Please provide valid input.")
+        {
+          toast.error("Input is empty");
+        }
+        setOutput(response.data.outputContent);
+      }
+      if(response.data.result)
+      {
+        setOutput(response.data.result);
+        toast.error("Runtime Error!!!");
+      }
+      
     } catch (error) {
-      toast.error(error.response);
+      toast.error("An error occured");
     }
   }
 
@@ -95,19 +110,27 @@ const Code = ({quesID})=> {
     };
 
     try {
-      if (!userId) {
+      if (!user) {
         toast.error("Login is required to run or submit code.");
         return;
       }
-      console.log("inside try block in code");
+
       const { data } = await axios.post('http://localhost:5000/ques/submit', payload,config);
-      console.log("data received",data.finalVerdict);
       if(data.finalVerdict==="AC")
       {
-        console.log("accepted");
         toast.success("All testcases passed");
+        setOutput("Accepted")
       }
-      setOutput(data.finalVerdict);
+      if(data.finalVerdict==="WA")
+      {
+        toast.error("Wrong Answer!!!")
+        setOutput("Wrong Answer.See failed testcases in submissions.")
+      }
+      if(data.finalVerdict==="RE")
+      {
+        toast.error("Runtime Error!!!")
+        setOutput("Runtime Error. Please check your code again");
+      }
     } catch (error) {
       if (error.response && error.response.data) {
         toast.error(error.response.data.message || "An error occurred");
@@ -122,10 +145,8 @@ const Code = ({quesID})=> {
   const handleOptionChange = (e) => {
     const newLanguage = e.target.value;
 
-    // Save current code before changing language
     localStorage.setItem(`code-${quesID}-${language}`, JSON.stringify(code));
 
-    // Update language and set code for the new language
     setLanguage(newLanguage);
     const newCode = localStorage.getItem(`code-${quesID}-${newLanguage}`);
     setCode(newCode ? JSON.parse(newCode) : demoCode[newLanguage]);

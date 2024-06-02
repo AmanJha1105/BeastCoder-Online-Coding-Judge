@@ -29,7 +29,6 @@ const getAllSubmissions = async(req,res)=>{
     let userId = req.query.userId;
 
     const username = req.query.username;
-
     if(username!==undefined){
       const user = await User.findOne({username:username});
     
@@ -45,13 +44,20 @@ const getAllSubmissions = async(req,res)=>{
     // Use Promise.all to fetch question details for each submission
     const enrichedSubmissions = await Promise.all(submissions.map(async (submission) => {
       const ques = await Question.findById(submission.quesID);
-      return {
-        ...submission.toObject(), 
-        title: ques.title,
-        titleslug: ques.titleslug,
-      };
+      if (ques) {
+        return {
+            ...submission.toObject(),
+            title: ques.title,
+            titleslug: ques.titleslug,
+        };
+    } else {
+        return null; // Return null if question details are not found
+    }
+      
     }));
-    return res.json(enrichedSubmissions);
+    const filteredSubmissions = enrichedSubmissions.filter(submission => submission !== null);
+    return res.status(200).json(filteredSubmissions);
+
   } catch (error) {
     return res.status(500).json({ error: 'Internal Server Error' });
   }
@@ -70,7 +76,6 @@ const getSingleSubmission = async(req,res)=>{
      console.error("Error getting submission:",error);
    }
 }
-
 
 exports.getSubmissions=getSubmissions;
 exports.getAllSubmissions=getAllSubmissions;

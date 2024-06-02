@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import axios from 'axios';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import { AuthContext } from '../context/AuthContext';
 
 const ProfileUpdatePage = () => {
   const [formData, setFormData] = useState({
@@ -13,6 +14,12 @@ const ProfileUpdatePage = () => {
     image: null
   });
 
+  const{user}= useContext(AuthContext);
+  const navigate = useNavigate();
+  useEffect(()=>{
+   setFormData({...user})
+  },[user])
+
   const {username} = useParams();
 
   const handleChange = (e) => {
@@ -20,7 +27,6 @@ const ProfileUpdatePage = () => {
   };
 
   const handleImageChange = (e) => {
-    console.log(e.target.files[0]);
     setFormData({ ...formData, image: e.target.files[0] });
   };
 
@@ -36,8 +42,6 @@ const ProfileUpdatePage = () => {
           'Content-Type': 'multipart/form-data'
         }
       });
-      console.log('User profile updated:', res.data);
-      // Reset form after successful submission
       setFormData({
         fullName: '',
         location: '',
@@ -53,7 +57,8 @@ const ProfileUpdatePage = () => {
   };
 
   return (
-    <div className="flex justify-center items-center h-screen">
+    <>
+    {user?.username===username && <div className="flex justify-center items-center h-screen">
       <form onSubmit={handleSubmit} className="w-1/2 bg-gray-100 p-8 rounded-lg shadow-lg" encType="multipart/form-data">
       <h2 className="text-2xl font-bold mb-4 text-center">Update Your Profile</h2>
         <div className="mb-4">
@@ -88,7 +93,11 @@ const ProfileUpdatePage = () => {
           Save
         </button>
       </form>
-    </div>
+    </div>}
+    {user?.username!==username &&
+      navigate(`/profile/${username}`)
+    }
+    </>
   );
 };
 

@@ -49,7 +49,7 @@ export default function QuestionDescription() {
     
     <div className="mx-auto flex flex-col lg:flex-row">
       <div className="flex-1 p-4"><Description ques={ques}/></div>
-      <div className="flex-1 p-4">
+      <div className="flex-1 p-4 min-h-[100%]">
         <Code quesID={quesID} />
       </div>
     </div>

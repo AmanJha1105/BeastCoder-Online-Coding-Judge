@@ -45,7 +45,7 @@ export default function PublishSolution() {
         topics: topics.split(',').map(topic => topic.trim()), // Split and trim topics
       });
       toast.success("Solution Published. Can view in solution section");
-      navigate(`/question/${selectedSubmission.titleslug}`, { state: { showSolutions: true } });
+      navigate(`/question/${selectedSubmission.titleslug}/solutions`);
       setName('');
       setLang('');
       setTopics('');

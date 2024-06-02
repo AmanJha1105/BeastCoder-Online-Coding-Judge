@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import { FaThumbsUp, FaThumbsDown, FaReply } from "react-icons/fa";
 import { toast } from "react-hot-toast";
 import { Link, useParams } from "react-router-dom";
 import Code from "./Code";
+import { AuthContext } from "../context/AuthContext";
 
 const Discussions = () => {
   const [discussion, setDiscussion] = useState(null);
@@ -14,6 +15,8 @@ const Discussions = () => {
   const userId = localStorage.getItem("userId");
 
   const { titleslug } = useParams();
+  const { user} = useContext(AuthContext);
+
 
   useEffect(() => {
     const fetchDiscussion = async () => {
@@ -33,7 +36,7 @@ const Discussions = () => {
   const handleAddComment = async () => {
     try {
       const userId = localStorage.getItem("userId");
-      if (!userId) {
+      if (!user) {
         toast.error("Please login to comment");
         return;
       }
@@ -54,7 +57,7 @@ const Discussions = () => {
   const handleAddReply = async (commentId) => {
     try {
       const userId = localStorage.getItem("userId");
-      if (!userId) {
+      if (!user) {
         toast.error("Please login to reply");
         return;
       }
@@ -74,7 +77,7 @@ const Discussions = () => {
 
   const handleLikeComment = async (commentId) => {
     try {
-      if (!userId) {
+      if (!user) {
         toast.error("Login is required");
         return;
       }
@@ -92,7 +95,7 @@ const Discussions = () => {
 
   const handleLikeReply = async (commentId, replyId) => {
     try {
-      if (!userId) {
+      if (!user) {
         toast.error("Please login to like");
         return;
       }
@@ -117,7 +120,7 @@ const Discussions = () => {
 
   const toggleReplyBox = (commentId) => {
     try {
-      if (!userId) {
+      if (!user) {
         toast.error("Login is required");
         return;
       }
@@ -217,8 +220,8 @@ const Discussions = () => {
                           <FaThumbsUp
                             className={
                               comment.likes.includes(
-                                localStorage.getItem("userId")
-                              )
+                                localStorage.getItem("userId") 
+                              ) && user!==null
                                 ? "text-blue-500"
                                 : "text-gray-500"
                             }
@@ -282,8 +285,8 @@ const Discussions = () => {
                                 <FaThumbsUp
                                   className={
                                     reply.likes.includes(
-                                      localStorage.getItem("userId")
-                                    )
+                                      localStorage.getItem("userId") 
+                                    ) && user!==null
                                       ? "text-blue-500"
                                       : "text-gray-500"
                                   }

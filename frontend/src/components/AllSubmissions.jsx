@@ -1,9 +1,15 @@
-import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useContext, useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { formatDistanceStrict, add, differenceInHours } from 'date-fns';
+import { AuthContext } from '../context/AuthContext';
 
 const AllSubmissions = () => {
   const [submissions, setSubmissions] = useState([]);
+
+  const {user} = useContext(AuthContext);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchSubmissions = async () => {
@@ -22,8 +28,28 @@ const AllSubmissions = () => {
     fetchSubmissions();
   }, []);
 
+  const formatDetailedDistance = (date) => {
+    const now = new Date();
+    const distance = formatDistanceStrict(date, now);
+    const hoursDifference = differenceInHours(now, date);
+    const remainingHours = hoursDifference % 24;
+
+    if (hoursDifference < 24) {
+      return `${distance} ago`;
+    } else {
+      const remainingTime = add(date, { days: Math.floor(hoursDifference / 24) });
+      const remainingDistance = formatDistanceStrict(remainingTime, now, { unit: 'hour' });
+      return `${distance}, ${remainingDistance} ago`;
+    }
+  };
+
+  const handleBtnClick =()=>{
+    navigate('/login');
+  }
+
   return (
-    <div className="container mx-auto p-5">
+  <>
+    {user && <div className="container mx-auto p-5">
       <h1 className="text-2xl font-bold mb-5">All My Submissions</h1>
       {submissions.length>0 && <table className="min-w-full bg-white border-collapse">
         <thead>
@@ -36,25 +62,37 @@ const AllSubmissions = () => {
           </tr>
         </thead>
         <tbody>
-          { submissions.map((submission) => (
-            <tr key={submission._id} className="hover:bg-gray-100 ">
-              <td className="py-2 px-4 border-b">{new Date(submission.submittedAt).toLocaleString()}</td>
+          { submissions?.map((submission) => (
+            <tr key={submission?._id} className="hover:bg-gray-100 ">
+              <td className="py-2 px-4 border-b text-gray-700">{formatDetailedDistance(new Date(submission?.submittedAt))}</td>
               <td className="py-2 px-4 border-b">
-                <Link to={`/question/${submission.titleslug}`} className="text-blue-600 hover:underline">
-                  {submission.title}
+                <Link to={`/question/${submission?.titleslug}`} className="text-blue-600 hover:underline">
+                  {submission?.title}
                 </Link>
               </td>
-              <td className={`py-2 px-4 border-b ${submission.verdict === 'AC' ? 'text-green-600' : 'text-red-600'}`}>
-              <Link to={`/submissions/${submission._id}`}>{submission.verdict === 'AC' ? 'Accepted' : 'Wrong Answer'}</Link>
+              <td className={`py-2 px-4 border-b ${submission?.verdict === 'AC' ? 'text-green-600' : 'text-red-600'}`}>
+              <Link to={`/submissions/${submission?._id}`}>{submission?.verdict === 'AC' ? 'Accepted' : 'Wrong Answer'}</Link>
               </td>
-              <td className="py-2 px-4 border-b">{submission.executionTime.toFixed(1)+"ms"}</td>
-              <td className="py-2 px-4 border-b">{submission.language}</td>
+              <td className="py-2 px-4 border-b text-gray-700"> {submission?.verdict === 'AC' ? `${submission?.executionTime.toFixed(1)}ms` : 'N/A'}</td>
+              <td className="py-2 px-4 border-b text-gray-700">{submission?.language}</td>
             </tr>
           ))}
         </tbody>
       </table>}
       {submissions.length===0 && <div>No Submissions Yet</div>}
     </div>
+    }
+    {user===null &&
+     <div className="flex items-center justify-center min-h-screen">
+     <button
+       className="bg-green-500 text-white py-3 px-6 rounded-md text-lg hover:bg-green-600 transition duration-300"
+       onClick={handleBtnClick}
+     >
+       Please login to view all your submissions
+     </button>
+   </div>
+    }
+  </>
   );
   
 };

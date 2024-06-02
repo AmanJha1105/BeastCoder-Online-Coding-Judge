@@ -14,6 +14,8 @@ const AddQuestion= ()=> {
     testcases:"",
     dislikes:"",
     content:"",
+    constraints:"",
+    sampleTestcases:"",
   });
   const handleChange = (e) => {
     setFormData((prev)=>({ ...prev, [e.target.id]: e.target.value }));
@@ -25,18 +27,22 @@ const AddQuestion= ()=> {
       level:formData.level,
       topics:formData.topics,
       title:formData.title,
-      likes:0,
+      likes:formData.likes,
       testcases:formData.testcases,
-      dislikes:0,
+      dislikes:formData.dislikes,
       content:formData.content,
-    }).catch(err=>console.log(err));
+      constraints:formData.constraints,
+      sampleTestcases:formData.sampleTestcases,
+    },{headers: {
+      'Content-Type': 'application/json',
+    }},).catch(err=>console.log(err));
     const data = await res.data;
     return data;
   }
 
   const handleSubmit =  (e) => {
     e.preventDefault();
-    sendRequest().then(()=>history("/user"));
+    sendRequest().then(()=>history("/"));
     };
     return (
       <div className='p-3 max-w-lg mx-auto'>
@@ -74,14 +80,15 @@ const AddQuestion= ()=> {
             value={formData.likes}
             onChange={handleChange}
           />
-          <input
-            type='text'
-            placeholder='TestCases'
-            id='testcases'
-            className='bg-slate-100 p-3 rounded-lg'
-            value={formData.testcases}
-            onChange={handleChange}
-          />
+           <textarea
+          placeholder='TestCases'
+          id='testcases'
+          className='bg-slate-100 p-3 rounded-lg'
+          value={formData.testcases}
+          onChange={handleChange}
+          rows="8"
+          cols="8"
+        />
           <input
             type='text'
             placeholder='Dislikes'
@@ -90,14 +97,33 @@ const AddQuestion= ()=> {
             value={formData.dislikes}
             onChange={handleChange}
           />
-          <input
-            type='text'
-            placeholder='Enter Content'
-            id='content'
-            className='bg-slate-100 p-3 rounded-lg'
-            value={formData.content}
-            onChange={handleChange}
-          />
+          <textarea
+          placeholder='Enter Content'
+          id='content'
+          className='px-2 py-2'
+          value={formData.content}
+          onChange={handleChange}
+          rows="10"
+          cols="10"
+        />
+         <textarea
+          placeholder='Enter Constraints'
+          id='constraints'
+          className='px-2 py-2'
+          value={formData.constraints}
+          onChange={handleChange}
+          rows="6"
+          cols="6"
+        />
+        <textarea
+          placeholder='Enter Sample TestCases'
+          id='sampleTestcases'
+          className='px-2 py-2'
+          value={formData.sampleTestcases}
+          onChange={handleChange}
+          rows={6}
+          cols={6}
+        />
           <button
             className='bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacity-95 disabled:opacity-80'
           >

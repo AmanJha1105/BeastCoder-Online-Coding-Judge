@@ -3,7 +3,8 @@ const fs = require("fs")
 
 const getCommands=({language,codeFilePath,inputFilePath,outputFilePath,execFilePath,dirOutputs})=>{
     
-    let compileCmd, executeCmd;
+    try {
+        let compileCmd, executeCmd;
  
     switch (language) {
         case 'cpp':
@@ -27,13 +28,18 @@ const getCommands=({language,codeFilePath,inputFilePath,outputFilePath,execFileP
             throw new Error("Unsupported language");
     }
 
-    return {compileCmd,executeCmd};
+       return {compileCmd,executeCmd};
+    } catch (error) {
+        console.error(`An error occured in getting commands: ${error}`);
+        return res.status(500).json({message:"Error occured in getting commands"})
+    }
 
 }
 
 const getPaths =({dirCodes,dirInputs,dirOutputs,jobID,language})=>{
 
-    let codeFilePath;
+    try {
+        let codeFilePath;
         if(language!=="java")
             codeFilePath = path.join(dirCodes, `${jobID}.${language}`);
         if(language==="java")
@@ -54,39 +60,48 @@ const getPaths =({dirCodes,dirInputs,dirOutputs,jobID,language})=>{
             execFilePath= path.join(dirOutputs, `${jobID}.exe`);
 
         return {codeFilePath,inputFilePath,outputFilePath,execFilePath};
+    } catch (error) {
+        console.error(`An error occured in getting path: ${error}`);
+        return res.status(500).json({message:"Error occured in getting path"})
+    }
 
 }
 
 const unlinkAllFiles = ({codeFilePath,inputFilePath,outputFilePath,execFilePath,dirCodes,dirOutputs,language})=>{
-    [codeFilePath, inputFilePath, outputFilePath, execFilePath].forEach(file => {
-        if (fs.existsSync(file)) {
-            fs.unlinkSync(file);
+    try {
+        [codeFilePath, inputFilePath, outputFilePath, execFilePath].forEach(file => {
+            if (fs.existsSync(file)) {
+                fs.unlinkSync(file);
+            }
+        });
+        
+        if (language === 'py') {
+            const pycacheDir = path.join(dirCodes, "__pycache__");
+            if (fs.existsSync(pycacheDir)) {
+                fs.readdirSync(pycacheDir).forEach(file => {
+                    const filePath = path.join(pycacheDir, file);
+                    if (fs.existsSync(filePath)) {
+                        fs.unlinkSync(filePath); 
+                    }
+                });
+                fs.rmdirSync(pycacheDir);
+            }
         }
-    });
     
-    if (language === 'py') {
-        const pycacheDir = path.join(dirCodes, "__pycache__");
-        if (fs.existsSync(pycacheDir)) {
-            fs.readdirSync(pycacheDir).forEach(file => {
-                const filePath = path.join(pycacheDir, file);
-                if (fs.existsSync(filePath)) {
-                    fs.unlinkSync(filePath); 
-                }
-            });
-            fs.rmdirSync(pycacheDir);
+        if (language === 'java') {
+            // Remove Main.class file for Java
+            const classFilePath = path.join(dirOutputs, "Main.class");
+            if (fs.existsSync(classFilePath)) {
+                fs.unlinkSync(classFilePath);
+            }
+        } else if (language !== 'python') {
+            if (fs.existsSync(execFilePath)) {
+                fs.unlinkSync(execFilePath);
+            }
         }
-    }
-
-    if (language === 'java') {
-        // Remove Main.class file for Java
-        const classFilePath = path.join(dirOutputs, "Main.class");
-        if (fs.existsSync(classFilePath)) {
-            fs.unlinkSync(classFilePath);
-        }
-    } else if (language !== 'python') {
-        if (fs.existsSync(execFilePath)) {
-            fs.unlinkSync(execFilePath);
-        }
+    } catch (error) {
+        console.error(`An error occured in unlinking files: ${error}`);
+        return res.status(500).json({message:"Error occured in unlinking files"})
     }
 }
 

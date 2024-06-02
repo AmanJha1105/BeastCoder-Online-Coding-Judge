@@ -2,13 +2,17 @@ const Question = require('../model/Question');
 const TestCases = require('../model/testcases');
 
 const addQuestion = async (req, res) => {
-  let {level,topics,title,likes,testcases,dislikes,content}= req.body;
-
-  const slug= title.split(" ").join("-");
-
-  testcases = JSON.parse(testcases);
-
+  
   try {
+
+    let {level,topics,title,likes,testcases,dislikes,content,constraints,sampleTestcases}= req.body;
+
+    const slug= title.split(" ").join("-");
+
+    testcases = JSON.parse(testcases);
+    sampleTestcases= JSON.parse(sampleTestcases);
+
+
     const newQuestion = new Question({
       level,
       topics,
@@ -17,10 +21,11 @@ const addQuestion = async (req, res) => {
       likes,
       testcases,
       dislikes,
-      content,
+      content: content,
+      constraints: constraints,
+      sampleTestcases: sampleTestcases,
     });
 
-    // Save the question to the database
     const savedQuestion = await newQuestion.save();
 
     const testcase = new TestCases({
@@ -28,7 +33,7 @@ const addQuestion = async (req, res) => {
       testCase: testcases,
     });
   await testcase.save();
-
+ 
     res.status(201).json(savedQuestion);
   } catch (error) {
     console.error(error);

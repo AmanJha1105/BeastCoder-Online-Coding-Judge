@@ -8,18 +8,28 @@ const { exec} = require("child_process");
 const Submission = require("../model/Submissions");
 
 const runprogram = async (req,res) => {
-
-    console.log("inside run program");
     
-    const{language,code,input} = req.body;
+    let codeFilePath, inputFilePath, outputFilePath, execFilePath;
 
-    const jobID = uuid();
-    let outputContent;
+    const{language,code,input} = req.body;
 
     const baseDir = path.join(__dirname, "../");
     const dirCodes = path.join(baseDir, "codes");
     const dirInputs = path.join(baseDir, "inputs");
     const dirOutputs = path.join(baseDir, "outputs");
+
+    let outputContent,result;
+
+    try {
+
+    const jobID = uuid();
+    
+
+    if(!input)
+    {
+        outputContent="Please provide valid input."
+        return res.json({outputContent,result});
+    }
 
      [dirCodes, dirInputs, dirOutputs].forEach(dir => {
         if (!fs.existsSync(dir)) {
@@ -27,57 +37,67 @@ const runprogram = async (req,res) => {
         }
     });
 
-    let{codeFilePath,inputFilePath,outputFilePath,execFilePath} = getPaths({dirCodes,dirInputs,dirOutputs,jobID,language});
+    ({ codeFilePath, inputFilePath, outputFilePath, execFilePath } = getPaths({ dirCodes, dirInputs, dirOutputs, jobID, language }));
 
     fs.writeFileSync(inputFilePath, input);
     fs.writeFileSync(codeFilePath, code);
 
     let {compileCmd, executeCmd} = getCommands({language,codeFilePath,inputFilePath,outputFilePath,execFilePath,dirOutputs});
 
-    try {
-        await execPromise(compileCmd);
-        await execPromise(executeCmd);
-        outputContent = fs.readFileSync(outputFilePath, 'utf-8').trim();
+    
+        try {
+            await execPromise(compileCmd);
+            await execPromise(executeCmd);
+        } catch (error) {
+            result="Runtime Error. Please recheck your code."
+            return res.json({outputContent,result});
+        }
+        outputContent = fs.readFileSync(outputFilePath, 'utf-8');
+        console.log("output content is",outputContent);
+        if(outputContent.length===0)
+        {
+            result="Runtime Error. Please recheck your code."
+        }
+        outputContent.trim();
         
     } catch (error) {
         console.error(`Error in executing program: ${error}`);
     }finally{
         unlinkAllFiles({codeFilePath,inputFilePath,outputFilePath,execFilePath,dirCodes,dirOutputs,language});
     }
-    return res.json(outputContent);
+    return res.json({outputContent,result});
 };
 
 const submitProgram = async (req, res) => {
-    console.log("inside submit program");
     const { language = 'cpp', code, quesID ,userId} = req.body;
-    console.log(userId);
 
     if (!code) {
         return res.status(404).json({ success: false, error: "Empty code!" });
     }
 
-  try{
-    
-    // Retrieve question and test cases (pseudo code, replace with actual DB queries)
-    const ques = await question.findOne({ titleslug: quesID });
-    const { testCase } = await TestCases.findOne({ problemId: ques._id });
-
-    const baseDir = path.join(__dirname, "../");
-    const dirCodes = path.join(baseDir, "codes");
-    const dirInputs = path.join(baseDir, "inputs");
-    const dirOutputs = path.join(baseDir, "outputs");
-
-    // Ensure directories exist
-    [dirCodes, dirInputs, dirOutputs].forEach(dir => {
-        if (!fs.existsSync(dir)) {
-            fs.mkdirSync(dir, { recursive: true });
-        }
-    });
     const results = [];
     let success = true;
     let finalVerdict = "AC";
     let totalExecutionTime = 0;
     let totalMemoryUsed = 0;
+
+    const ques = await question.findOne({ titleslug: quesID });
+    const { testCase } = await TestCases.findOne({ problemId: ques._id });
+
+  try{
+    
+
+    const baseDir = path.join(__dirname, "../");
+    const dirCodes = path.join(baseDir, "codes");
+    const dirInputs = path.join(baseDir, "inputs"); 
+    const dirOutputs = path.join(baseDir, "outputs");
+
+    [dirCodes, dirInputs, dirOutputs].forEach(dir => {
+        if (!fs.existsSync(dir)) {
+            fs.mkdirSync(dir, { recursive: true });
+        }
+    });
+    
 
     for (const test of testCase) {
         const jobID = uuid();
@@ -90,15 +110,13 @@ const submitProgram = async (req, res) => {
         let { compileCmd, executeCmd } = getCommands({ language, codeFilePath, inputFilePath, outputFilePath, execFilePath,dirOutputs });
 
         try {
-            // Compile the code
+            console.log("executes till here");
             await execPromise(compileCmd);
-
-            // Measure execution time and memory usage
             const startTime = process.hrtime();
             await execPromise(executeCmd);
             const endTime = process.hrtime(startTime);
 
-            const executionTime = endTime[0] * 1000 + endTime[1] / 1e6; // in milliseconds
+            const executionTime = endTime[0] * 1000 + endTime[1] / 1e6;
             const memoryUsageInMB = (process.memoryUsage().heapUsed / 1024 / 1024).toFixed(2);
 
             const outputContent = fs.readFileSync(outputFilePath, 'utf-8').trim();
@@ -125,15 +143,20 @@ const submitProgram = async (req, res) => {
 
         } catch (error) {
             console.error(`Error in executing test case: ${error}`);
-            results.push({ 
+            results.push({
                 testCase: test._id,
-                result: "RE", 
-                error: error.message 
+                input: test.input,
+                yourOutput: "",
+                ExpectedOutput: test.output,
+                result: "RE",
+                executionTime: 0,
+                memoryUsed: 0,
             });
             success = false;
             finalVerdict = "RE";
+
         } finally {
-            // Cleanup files
+            
             unlinkAllFiles({ codeFilePath, inputFilePath, outputFilePath, execFilePath, dirCodes, dirOutputs, language });
         }
     }
@@ -163,25 +186,42 @@ const submitProgram = async (req, res) => {
         })),
     });
 
-    // Save the submission
     await newSubmission.save();
 
 
     res.json({ finalVerdict, success, results });
   }catch(error){
     console.error(`Error in submitting program: ${error}`);
-    res.status(500).json({ success: false, error: 'Internal server error' });
+    const newSubmission = new Submission({
+        userId,
+        quesID: ques._id,
+        titleslug: ques.titleslug,
+        language,
+        code,
+        verdict: "RE",
+        executionTime: 0,
+        memoryUsed: 0,
+        testCases: results.map(result => ({
+            testCase: result.testCase,
+            input:result.input,
+            yourOutput:" ",
+            ExpectedOutput:result.ExpectedOutput,
+            result: result.result,
+            executionTime: result.executionTime,
+            memoryUsed: parseFloat(result.memoryUsed),
+        })),
+    });
+    await newSubmission.save();
+    res.json({ finalVerdict, success, results });
   }
 };
 
-// Helper function to use exec with promises
 const execPromise = (cmd) => {
     return new Promise((resolve, reject) => {
         try {
             exec(cmd, (error, stdout, stderr) => {
                 if (error) {
-                    console.log("error in exec");
-                    reject(error);
+                    reject(new Error(stderr || error.message));
                 } else {
                     resolve(stdout);
                 }

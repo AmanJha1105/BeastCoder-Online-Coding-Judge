@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import axios from "axios";
 import { FaThumbsUp } from "react-icons/fa";
 import { toast } from "react-hot-toast";
 import { Link } from "react-router-dom";
+import { AuthContext } from "../context/AuthContext";
 
 const SolutionCard = ({ selectedSolution }) => {
   const [replyContent, setReplyContent] = useState("");
@@ -10,16 +11,17 @@ const SolutionCard = ({ selectedSolution }) => {
   const [replies, setReplies] = useState(selectedSolution.replies);
 
   const userId = localStorage.getItem("userId");
+  const { user } = useContext(AuthContext);
 
   replies.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
   const handleReply = async () => {
-    const userId = localStorage.getItem("userId"); // Assume user ID is stored in localStorage
-    if (!userId) {
+    const userId = localStorage.getItem("userId"); 
+    if (!user) {
       toast.error("Please login to comment");
       return;
     }
-    const username = localStorage.getItem("username"); // Replace with actual username
+    const username = localStorage.getItem("username");
 
     try {
       const response = await axios.post(
@@ -45,7 +47,7 @@ const SolutionCard = ({ selectedSolution }) => {
 
   const handleLikeReply = async (replyId, index) => {
     const userId = localStorage.getItem("userId");
-    if (!userId) {
+    if (!user) {
       toast.error("Please login to like ");
       return;
     }
@@ -77,7 +79,7 @@ const SolutionCard = ({ selectedSolution }) => {
 
   const handleLikeSolution = async () => {
     const userId = localStorage.getItem("userId");
-    if (!userId) {
+    if (!user) {
       toast.error("Please login to like");
       return;
     }
@@ -97,15 +99,17 @@ const SolutionCard = ({ selectedSolution }) => {
   return (
     <>
       <div className="mt-4 p-4 w-full bg-gray-100 rounded">
-        <div className="flex mb-2">
-          <span className="text-sm w-10">
-            <Link
-              to={`/profile/${selectedSolution.username}`}
-              className=" hover:underline hover:text-blue-500"
-            >
-              <strong>{selectedSolution.username}</strong>
-            </Link>
-          </span>
+        <div className="flex items-center mb-2">
+          <div className="flex items-center">
+            <span className="text-sm">
+              <Link
+                to={`/profile/${selectedSolution.username}`}
+                className=" flex items-center whitespace-nowrap hover:underline hover:text-blue-500"
+              >
+                <pre>{selectedSolution.username}</pre>
+              </Link>
+            </span>
+          </div>
           <span className="text-sm text-gray-500">
             {new Date(selectedSolution.timeOfPublish).toLocaleDateString()}
           </span>
@@ -122,7 +126,9 @@ const SolutionCard = ({ selectedSolution }) => {
           <button
             onClick={handleLikeSolution}
             className={`flex items-center mr-1 ${
-              sol.likedBy.includes(userId) ? "text-blue-500" : "text-gray-500"
+              sol.likedBy.includes(userId) && user !== null
+                ? "text-blue-500"
+                : "text-gray-500"
             }`}
           >
             <FaThumbsUp />
@@ -164,7 +170,7 @@ const SolutionCard = ({ selectedSolution }) => {
                 <button
                   onClick={() => handleLikeReply(reply._id, index)}
                   className={`flex items-center mr-1 ${
-                    reply.likedBy.includes(userId)
+                    reply.likedBy.includes(userId) && user !== null
                       ? "text-blue-500"
                       : "text-gray-500"
                   }`}

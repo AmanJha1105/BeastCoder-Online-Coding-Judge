@@ -9,7 +9,7 @@ const testcaseSchema = new mongoose.Schema({
     testCase:[
         {
             input: {
-                type: String,
+                type: mongoose.Schema.Types.Mixed,
                 required: [true, "Please enter input"],
             },
             output: {

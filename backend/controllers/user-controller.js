@@ -171,8 +171,6 @@ const logout = (req, res, next) => {
       if (req.file) {
         imageUrl = await uploadImage(req.file.path);
       }
-      console.log(req.file);
-      console.log("image is",imageUrl);
       const updatedUser = await User.findByIdAndUpdate(
         userId,
         {
