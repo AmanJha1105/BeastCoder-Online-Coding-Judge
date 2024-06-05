@@ -1,10 +1,14 @@
 const express = require("express");
-const { getSolutions, publishSolution, replySolution, likeReply, likeSolution, getSolutionsfromName } = require("../controllers/solutionsController");
+const { getSolutions, publishSolution, replySolution, likeReply, likeSolution, getSolutionsfromName, getSolutionfromID, getSolutionsOfUser } = require("../controllers/solutionsController");
 const router = express.Router();
 
 router.get("/solutions/:slug",getSolutions);
 
 router.get("/solutionsfromName/:titleslug",getSolutionsfromName);
+
+router.get("/solutionOfUser/:username",getSolutionsOfUser);
+
+router.get("/solutionfromID/:solutionID",getSolutionfromID);
 
 router.post("/publishSolution/:slug",publishSolution)
 

@@ -46,8 +46,6 @@ const publishSolution =async(req,res)=>{
 
 const replySolution = async(req,res)=>{
 
-    console.log("inside reply solution ");
-
     const  solutionId  = req.params.slug;
     const { userId, username, content } = req.body;
   
@@ -146,9 +144,51 @@ const getSolutionsfromName = async(req,res)=>{
  }
 }
 
+const getSolutionsOfUser = async (req, res) => {
+  try {
+    const { username } = req.params;
+    const user = await User.findOne({ username: username });
+
+    if (!user) {
+      return res.json({ message: "Error fetching user" });
+    }
+
+    const questions = await Question.find({}, '_id titleslug');
+    const questionMap = new Map(questions.map(question => [question._id.toString(), question.titleslug]));
+
+    const solutions = await Solution.find({ userId: user._id });
+
+    const filteredSolutions = solutions
+      .filter(solution => questionMap.has(solution.quesID.toString()))
+      .map(solution => ({
+        ...solution.toObject(),
+        titleslug: questionMap.get(solution.quesID.toString())
+      })).sort((a, b) => new Date(b.timeOfPublish) - new Date(a.timeOfPublish)).slice(0, 10);
+
+    return res.status(200).json(filteredSolutions);
+
+  } catch (error) {
+    console.error('Error fetching solutions of user:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+}
+
+const getSolutionfromID = async(req,res)=>{
+   try {
+      const {solutionID} = req.params;
+      const solution = await Solution.find({ _id:solutionID });
+      res.status(200).json(solution);
+   } catch (error) {
+      console.error('Error fetching solutions from solutionID:', error);
+      res.status(500).json({ message: 'Server error' });
+   }
+}
+
 exports.getSolutions=getSolutions;
 exports.publishSolution=publishSolution;
 exports.replySolution = replySolution;
 exports.likeReply=likeReply;
 exports.likeSolution=likeSolution;
 exports.getSolutionsfromName = getSolutionsfromName;
+exports.getSolutionsOfUser = getSolutionsOfUser;
+exports.getSolutionfromID = getSolutionfromID;

@@ -1,6 +1,7 @@
 import React, { useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
+import { FaUser } from 'react-icons/fa';
 
 const Header = () => {
   const { user, loading, logout } = useContext(AuthContext);
@@ -30,10 +31,16 @@ const Header = () => {
               <Link to='/allsubmissions'>
                 <li>Submissions</li>
               </Link>
-              <li>Hi {user.username}</li>
-              <Link to={`/profile/${user.username}`}>
-                <li>profile</li>
-              </Link>
+              <li>Hi {user?.username}</li>
+              <li>
+                <Link to={`/profile/${user?.username}`}>
+                  {user.profilePicture ? (
+                    <img src={user?.profilePicture} alt={user?.username} className="w-8 h-8 rounded-full" />
+                  ) : (
+                    <FaUser className="w-8 h-8 text-gray-500" />
+                  )}
+                </Link>
+              </li>
               <li onClick={handleLogoutClick} className='cursor-pointer'>Logout</li>
             </>
           ) : (

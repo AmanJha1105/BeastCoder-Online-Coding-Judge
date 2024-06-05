@@ -4,9 +4,11 @@ import PieChart from "../utils/PieChart";
 import MonthlySubmissionsHeatmap from "../utils/HeatMap";
 import { formatDistanceToNowStrict } from "date-fns";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { FaUser,FaLinkedinIn ,FaGithub } from "react-icons/fa";
+import { FaUser, FaLinkedinIn, FaGithub } from "react-icons/fa";
 import { SlLocationPin } from "react-icons/sl";
-import { AuthContext } from '../context/AuthContext';
+import { AuthContext } from "../context/AuthContext";
+import toast from "react-hot-toast";
+import { FaThumbsUp } from "react-icons/fa6";
 
 const ProfilePage = () => {
   const [counts, setCounts] = useState({
@@ -18,10 +20,12 @@ const ProfilePage = () => {
     totalHardCount: 0,
   });
 
-  const {user} = useContext(AuthContext);
+  const { user } = useContext(AuthContext);
 
   const [recentSubmissions, setRecentSubmissions] = useState([]);
+  const [recentSolutions, setRecentSolutions] = useState([]);
   const [userData, setUserData] = useState(null);
+  const [view, setView] = useState("submissions"); // State to toggle between submissions and solutions
   const navigate = useNavigate();
   const { username } = useParams();
 
@@ -109,7 +113,20 @@ const ProfilePage = () => {
     };
 
     getUser();
+    getRecentSolutions();
   }, [username]);
+
+  const getRecentSolutions = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:5000/ques/solutionOfUser/${username}`
+      );
+      setRecentSolutions(response.data);
+      console.log(response.data);
+    } catch (error) {
+      toast.error("Error fetching user recent solutions");
+    }
+  };
 
   const handleEditProfile = () => {
     navigate(`/editprofile/${username}`);
@@ -148,51 +165,60 @@ const ProfilePage = () => {
                     {userData?.fullName}
                   </h1>
                   <p className="text-xl text-gray-500 mb-2">@{username}</p>
-                  {user?.username === username && <button
-                    onClick={handleEditProfile}
-                    className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded"
-                  >
-                    Edit Profile
-                  </button>}
+                  {user?.username === username && (
+                    <button
+                      onClick={handleEditProfile}
+                      className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded"
+                    >
+                      Edit Profile
+                    </button>
+                  )}
                 </div>
               </div>
               <div className="mt-4">
-                {userData?.location && <p className="text-lg flex items-center">
-                <SlLocationPin className="mr-2" />{" "}
-                    {userData?.location}
-                </p>
-                }
+                {userData?.location && (
+                  <p className="text-lg flex items-center">
+                    <SlLocationPin className="mr-2" /> {userData?.location}
+                  </p>
+                )}
 
-                {userData?.githubUsername && <p className="text-lg flex items-center">
-                  <a
-                    href={`https://github.com/${userData?.githubUsername}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center text-gray-800 hover:text-black"
-                  >
-                    <FaGithub className="mr-2" />{" "}
-                    {userData?.githubUsername}
-                  </a>
-                </p>
-                }
-                {userData?.linkedinUsername && <p className="text-lg flex items-center">
-                  <a
-                    href={`https://www.linkedin.com/in/${userData?.linkedinUsername}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center text-gray-800 hover:text-black"
-                  >
-                    <FaLinkedinIn className="mr-2" />{" "}
-                    {userData?.linkedinUsername}
-                  </a>
-                </p>}
+                {userData?.githubUsername && (
+                  <p className="text-lg flex items-center">
+                    <a
+                      href={`https://github.com/${userData?.githubUsername}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center text-gray-800 hover:text-black"
+                    >
+                      <FaGithub className="mr-2" /> {userData?.githubUsername}
+                    </a>
+                  </p>
+                )}
+                {userData?.linkedinUsername && (
+                  <p className="text-lg flex items-center">
+                    <a
+                      href={`https://www.linkedin.com/in/${userData?.linkedinUsername}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center text-gray-800 hover:text-black"
+                    >
+                      <FaLinkedinIn className="mr-2" />{" "}
+                      {userData?.linkedinUsername}
+                    </a>
+                  </p>
+                )}
 
-                {userData?.education && <p className="text-lg flex items-center">
-               <p> 🎓</p><p>{userData?.education}</p>
-                </p>}
-                {userData?.skills && <p className="text-lg">
-                  <strong>Skills</strong>
-                </p>}
+                {userData?.education && (
+                  <p className="text-lg flex items-center">
+                    <p> 🎓</p>
+                    <p>{userData?.education}</p>
+                  </p>
+                )}
+                {userData?.skills && (
+                  <p className="text-lg">
+                    <strong>Skills</strong>
+                  </p>
+                )}
                 <ul className="list-disc list-inside">
                   {userData?.skills &&
                     userData?.skills
@@ -239,29 +265,90 @@ const ProfilePage = () => {
           </div>
         </div>
         <MonthlySubmissionsHeatmap username={username} />
-        <div className="flex flex-col items-center mt-8 mb-20">
-          <h2 className="text-2xl font-bold mb-4">
-            Recent Accepted Submissions
-          </h2>
-          <ul className="w-3/4 mx-auto">
-            {recentSubmissions.map((submission) => (
-              <li key={submission._id} className="mb-4 flex justify-between">
-                <Link
-                  to={`/submissions/${submission._id}`}
-                  className="font-bold w-1/2"
-                >
-                  {submission.title}
-                </Link>
-                <Link
-                  to={`/submissions/${submission._id}`}
-                  className="text-gray-500 text-right"
-                >
-                 {formatDistanceToNowStrict(new Date(submission.submittedAt))} ago
-                </Link>
-              </li>
-            ))}
-          </ul>
+
+        <div className="flex justify-center mt-8 mb-4">
+          <button
+            onClick={() => setView("submissions")}
+            className={`mr-4 px-4 py-2 rounded ${
+              view === "submissions" ? "bg-green-500 text-white" : "bg-gray-200"
+            }`}
+          >
+            Recent Submissions
+          </button>
+          <button
+            onClick={() => setView("solutions")}
+            className={`px-4 py-2 rounded ${
+              view === "solutions" ? "bg-green-500 text-white" : "bg-gray-200"
+            }`}
+          >
+            Recent Solutions
+          </button>
         </div>
+
+        {view === "submissions" ? (
+          <div className="flex flex-col items-center mt-8 mb-20">
+            <h2 className="text-2xl font-bold mb-4">
+              Recent Accepted Submissions
+            </h2>
+            <ul className="w-3/4 mx-auto">
+              {recentSubmissions.map((submission) => (
+                <li key={submission._id} className="mb-4 flex justify-between">
+                  <Link
+                    to={`/submissions/${submission._id}`}
+                    className="font-bold w-1/2"
+                  >
+                    {submission.title}
+                  </Link>
+                  <Link
+                    to={`/submissions/${submission._id}`}
+                    className="text-gray-500 text-right"
+                  >
+                    {formatDistanceToNowStrict(
+                      new Date(submission.submittedAt)
+                    )}{" "}
+                    ago
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ) : (
+          <div className="flex flex-col items-center mt-8 mb-20">
+            <h2 className="text-2xl font-bold mb-4">Recent Solutions</h2>
+            <ul className="w-3/4 mx-auto">
+              {recentSolutions.map((solution) => (
+                <li
+                  key={solution._id}
+                  className="mb-4 flex justify-between items-center"
+                >
+                  <a
+                    href={`/question/${solution.titleslug}/solutions/${solution._id}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-bold overflow-hidden whitespace-nowrap overflow-ellipsis flex-grow"
+                    style={{ marginRight: "10px" }}
+                  >
+                    {`${solution.titleslug.replace(/-/g, " ")} - ${
+                      solution.name
+                    }`}
+                  </a>
+                  <div className="flex items-center text-gray-500">
+                    <span className="mr-2 whitespace-nowrap">
+                      {formatDistanceToNowStrict(
+                        new Date(solution.timeOfPublish)
+                      )}{" "}
+                      ago
+                    </span>
+                    <div className="flex items-center">
+                      <FaThumbsUp className="mr-1" />
+                      {solution.likes}
+                    </div>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
       </div>
     </>
   );

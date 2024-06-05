@@ -15,8 +15,7 @@ const Discussions = () => {
   const userId = localStorage.getItem("userId");
 
   const { titleslug } = useParams();
-  const { user} = useContext(AuthContext);
-
+  const { user } = useContext(AuthContext);
 
   useEffect(() => {
     const fetchDiscussion = async () => {
@@ -164,7 +163,7 @@ const Discussions = () => {
         </Link>
       </div>
       <div className="flex">
-        <div className="w-1/2 p-4">
+        <div className="w-1/2 overflow-y-auto h-screen p-4">
           <div className="discussion-page">
             <div className="flex flex-col items-end">
               <textarea
@@ -220,8 +219,8 @@ const Discussions = () => {
                           <FaThumbsUp
                             className={
                               comment.likes.includes(
-                                localStorage.getItem("userId") 
-                              ) && user!==null
+                                localStorage.getItem("userId")
+                              ) && user !== null
                                 ? "text-blue-500"
                                 : "text-gray-500"
                             }
@@ -275,7 +274,12 @@ const Discussions = () => {
                         <div className="replies">
                           {comment.replies.map((reply) => (
                             <div key={reply._id} className="reply">
-                              <p className="font-semibold">{reply.username}</p>
+                              <Link
+                                to={`/profile/${reply.username}`}
+                                className=" hover:text-blue-600"
+                              >
+                                {reply.username}
+                              </Link>
                               <p>{reply.content}</p>
                               <button
                                 onClick={() =>
@@ -285,8 +289,8 @@ const Discussions = () => {
                                 <FaThumbsUp
                                   className={
                                     reply.likes.includes(
-                                      localStorage.getItem("userId") 
-                                    ) && user!==null
+                                      localStorage.getItem("userId")
+                                    ) && user !== null
                                       ? "text-blue-500"
                                       : "text-gray-500"
                                   }
@@ -306,7 +310,7 @@ const Discussions = () => {
             )}
           </div>
         </div>
-        <div className="w-1/2 p-4">
+        <div className="w-1/2 overflow-y-auto h-screen p-4">
           <Code quesID={titleslug} />
         </div>
       </div>

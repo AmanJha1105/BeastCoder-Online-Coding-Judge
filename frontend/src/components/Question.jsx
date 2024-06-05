@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import {Link} from "react-router-dom";
 import { HiSearch } from "react-icons/hi";
 import { FaCheckCircle} from "react-icons/fa";
 import { FaCircleHalfStroke } from "react-icons/fa6";
 import axios from "axios";
 import Select from "react-select";
+import { AuthContext } from "../context/AuthContext";
 
 
 const Question = () => {
@@ -14,6 +15,8 @@ const Question = () => {
     const [selectedQuestion, setSelectedQuestion] = useState(null);
     const [selectedTopics, setSelectedTopics] = useState([]);
     const [submissions, setSubmissions] = useState([]);
+
+    const {user} = useContext(AuthContext);
 
     const topics = [
       { label: 'BFS', value: 'bfs' },
@@ -81,6 +84,7 @@ const Question = () => {
       };
 
       const getStatusIcon = (questionId) => {
+        if(!user) return null;
         const userSubmissions = submissions.filter(submission => submission.quesID === questionId);
         const isSolved = userSubmissions.some(submission => submission.verdict === "AC");
         const isAttempted = userSubmissions.length > 0;

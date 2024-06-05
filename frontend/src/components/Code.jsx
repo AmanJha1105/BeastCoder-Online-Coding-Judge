@@ -72,7 +72,6 @@ const Code = ({quesID})=> {
         return;
       }
       const  response= await axios.post('http://localhost:5000/ques/run', payload);
-
       if(response.data.outputContent)
       {
         if(response.data.outputContent==="Please provide valid input.")
@@ -81,10 +80,15 @@ const Code = ({quesID})=> {
         }
         setOutput(response.data.outputContent);
       }
-      if(response.data.result)
+      if(response.data.result==="Runtime Error. Please recheck your code.")
       {
         setOutput(response.data.result);
         toast.error("Runtime Error!!!");
+      }
+      if(response.data.result==="TLE")
+      {
+        setOutput("Time Limit Exceeded");
+        toast.error("Time Limit Exceeded");
       }
       
     } catch (error) {
@@ -116,6 +120,7 @@ const Code = ({quesID})=> {
       }
 
       const { data } = await axios.post('http://localhost:5000/ques/submit', payload,config);
+      console.log("data is",data);
       if(data.finalVerdict==="AC")
       {
         toast.success("All testcases passed");
@@ -130,6 +135,15 @@ const Code = ({quesID})=> {
       {
         toast.error("Runtime Error!!!")
         setOutput("Runtime Error. Please check your code again");
+      }
+      if(data.finalVerdict==="TLE")
+      {
+        toast.error("Time Limit Exceeded!!!")
+        setOutput("Time Limit Excedded");
+      }
+      if(data.errorMessage)
+      {
+        setOutput(`error is ${data.errorMessage}`);
       }
     } catch (error) {
       if (error.response && error.response.data) {

@@ -34,7 +34,7 @@ const SubmissionCard = ({ selectedSubmission }) => {
   return (
     <>
      <div className="mx-auto flex flex-col lg:flex-row">
-      <div className="mt-4 p-4 w-1/2 bg-gray-100 rounded">
+      <div className="mt-4 p-4 bg-gray-100 rounded">
         <h2
           className={`text-lg font-semibold mb-2 ${
             selectedSubmission?.verdict === "AC"

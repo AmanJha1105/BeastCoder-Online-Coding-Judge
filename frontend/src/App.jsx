@@ -12,12 +12,12 @@ import Solutions from "./components/Solutions";
 import SubmissionPage from "./pages/SubmissionPage";
 import LeaderBoardPage from "./pages/LeaderBoardPage";
 import { Toaster } from "react-hot-toast";
-//import Logout from "./pages/Logout";
 import { useEffect } from "react";
 import ProfilePage from "./pages/ProfilePage";
 import ProfileUpdatePage from "./pages/ProfileUpatePage";
 import Submissions from "./components/Submissions";
 import Discussions from "./components/Discussions";
+import SolutionCard from "./components/SolutionCard";
 
 const App=()=> {
 
@@ -52,7 +52,7 @@ const App=()=> {
           <Route path="/question/:titleslug/submissions" element={<Submissions/>}/>
           <Route path="/question/:titleslug/discuss" element={<Discussions/>}/>
           <Route path="/question/:titleslug/solutions" element={<Solutions/>}/>
-          {/* <Route path="/logout" element={<Logout/>}/> */}
+          <Route path="/question/:titleslug/solutions/:solutionID" element={<SolutionCard/>}/>
         </Routes>
         <Toaster />
     </>

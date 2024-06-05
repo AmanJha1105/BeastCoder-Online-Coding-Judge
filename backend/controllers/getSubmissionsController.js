@@ -17,7 +17,7 @@ const getSubmissions =async(req,res)=>{
             return res.status(200).json([]);
         }
         return res.status(200).json(submissions);
-
+ 
     } catch (error) {
         console.error("Error fetching submissions:", error);
         return res.status(500).json({ message: "Server error" });
@@ -41,7 +41,6 @@ const getAllSubmissions = async(req,res)=>{
     if(submissions.length===0)
       return res.json([]);
 
-    // Use Promise.all to fetch question details for each submission
     const enrichedSubmissions = await Promise.all(submissions.map(async (submission) => {
       const ques = await Question.findById(submission.quesID);
       if (ques) {
@@ -51,7 +50,7 @@ const getAllSubmissions = async(req,res)=>{
             titleslug: ques.titleslug,
         };
     } else {
-        return null; // Return null if question details are not found
+        return null;
     }
       
     }));

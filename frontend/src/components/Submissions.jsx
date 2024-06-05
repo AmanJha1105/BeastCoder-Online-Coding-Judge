@@ -59,7 +59,8 @@ const Submissions = () => {
         </Link>
       </div>
 
-      <div className="mx-auto flex flex-col lg:flex-row">
+    <div className="mx-auto flex flex-col lg:flex-row">
+      <div className="flex-1 lg:w-1/2 p-4 overflow-y-auto max-h-screen">
         {selectedSubmission === null && user !== null ? (
           <div className="flex-1 p-4">
             {submissions.length > 0 && (
@@ -96,7 +97,10 @@ const Submissions = () => {
                             ? "Wrong Answer"
                             : submission?.verdict === "RE"
                             ? "Runtime Error"
-                            : "Unknown Verdict"}
+                            : submission?.verdict === "TLE"
+                            ? "Time Limit Excedded"
+                            : "Unknown verdict"
+                          }
                         </td>
                         <td className="px-6 py-4">
                           {new Date(submission.submittedAt).toLocaleString()}
@@ -150,7 +154,8 @@ const Submissions = () => {
             )}
           </div>
         )}
-        <div className="flex-1 p-4">
+      </div>
+      <div className="flex-1 lg:w-1/2 p-4 overflow-y-auto max-h-screen">
           <Code quesID={titleslug} />
         </div>
       </div>
