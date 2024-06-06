@@ -76,6 +76,27 @@ const getSingleSubmission = async(req,res)=>{
    }
 }
 
+const getQuesName = async(req,res)=>{
+  try {
+
+    const {submissionId} = req.params;
+    const submission = await Submission.findById(submissionId);
+
+    const ques = await Question.findById(submission.quesID);
+
+    if(!ques)
+      return res.status(404).json({ error: 'Question not found' });
+
+    const ques_name = ques?.title;
+    return res.status(200).json(ques_name);
+
+  } catch (error) {
+    console.error("Error getting question name:",error);
+  }
+}
+
 exports.getSubmissions=getSubmissions;
 exports.getAllSubmissions=getAllSubmissions;
 exports.getSingleSubmission=getSingleSubmission;
+exports.getQuesName = getQuesName;
+ 

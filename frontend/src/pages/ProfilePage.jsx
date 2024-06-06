@@ -122,7 +122,6 @@ const ProfilePage = () => {
         `http://localhost:5000/ques/solutionOfUser/${username}`
       );
       setRecentSolutions(response.data);
-      console.log(response.data);
     } catch (error) {
       toast.error("Error fetching user recent solutions");
     }
@@ -158,11 +157,11 @@ const ProfilePage = () => {
                     />
                   </div>
                 ) : (
-                  <FaUser size={128} className="text-gray-300" /> // User icon as fallback
+                  <FaUser size={128} className="text-gray-300" />
                 )}
                 <div className="flex flex-col justify-start">
                   <h1 className="text-3xl font-bold mb-1">
-                    {userData?.fullName}
+                    {userData?.fullname}
                   </h1>
                   <p className="text-xl text-gray-500 mb-2">@{username}</p>
                   {user?.username === username && (
@@ -241,7 +240,11 @@ const ProfilePage = () => {
                     counts.totalHardCount}
                 </strong>
               </div>
-              <PieChart data={solvedProblemsData} />
+              {recentSubmissions?.length === 0 ? (
+                <div>No problems solved</div>
+              ) : (
+                <PieChart data={solvedProblemsData} />
+              )}
             </div>
             <div className="ml-6">
               <div>
@@ -293,24 +296,29 @@ const ProfilePage = () => {
             <ul className="w-3/4 mx-auto">
               {recentSubmissions.map((submission) => (
                 <li key={submission._id} className="mb-4 flex justify-between">
-                  <Link
-                    to={`/submissions/${submission._id}`}
+                  <a
+                    href={`/submissions/${submission._id}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="font-bold w-1/2"
                   >
                     {submission.title}
-                  </Link>
-                  <Link
-                    to={`/submissions/${submission._id}`}
+                  </a>
+                  <a
+                    href={`/submissions/${submission._id}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="text-gray-500 text-right"
                   >
                     {formatDistanceToNowStrict(
                       new Date(submission.submittedAt)
                     )}{" "}
                     ago
-                  </Link>
+                  </a>
                 </li>
               ))}
             </ul>
+            {recentSubmissions?.length === 0 && <div>No Submissions Yet</div>}
           </div>
         ) : (
           <div className="flex flex-col items-center mt-8 mb-20">
@@ -347,6 +355,9 @@ const ProfilePage = () => {
                 </li>
               ))}
             </ul>
+            {recentSolutions?.length === 0 && (
+              <div>No Solutions posted Yet.</div>
+            )}
           </div>
         )}
       </div>

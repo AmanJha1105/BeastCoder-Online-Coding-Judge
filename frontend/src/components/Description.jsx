@@ -45,7 +45,6 @@ const Description = ({ ques }) => {
           userId: userId,
         }
       );
-      console.log(response.data);
       setLikes(response.data.likes);
       setDislikes(response.data.dislikes);
       setLiked(!liked);

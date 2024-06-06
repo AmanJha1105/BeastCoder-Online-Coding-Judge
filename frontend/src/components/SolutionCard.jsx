@@ -28,7 +28,6 @@ const SolutionCard = () => {
         `http://localhost:5000/ques/solutionfromID/${solutionID}`
       );
       const solution = response.data[0];
-      console.log(solution);
       setSol(solution);
       setReplies(solution.replies);
       setSelectedSolution(solution);
@@ -148,6 +147,9 @@ const SolutionCard = () => {
           </div>
         </Link>
       </div>
+      <div className="mt-4 px-2">
+        <Link className=" text-blue-500" to ={`/question/${titleslug}/solutions`}>All Solutions</Link>
+      </div>
       <div className="flex">
         <div className="w-1/2 p-4 overflow-y-auto h-screen">
           <div className="mt-4 p-4 w-full bg-gray-100 rounded">
@@ -157,7 +159,7 @@ const SolutionCard = () => {
                   to={`/profile/${selectedSolution?.username}`}
                   className="flex items-center whitespace-nowrap hover:underline hover:text-blue-500"
                 >
-                  <span>{selectedSolution?.username}</span>
+                  <span><strong>{selectedSolution?.username}</strong></span>
                 </Link>
               </span>
               <span className="text-sm text-gray-500 ml-2">
@@ -211,7 +213,12 @@ const SolutionCard = () => {
                   key={reply?._id}
                   className="reply bg-white p-2 mb-2 rounded shadow"
                 >
-                  <strong>{reply?.username}:</strong>
+                  <Link
+                  to={`/profile/${reply?.username}`}
+                  className="flex items-center whitespace-nowrap hover:text-blue-500"
+                >
+                  <span><strong>{reply?.username}</strong></span>
+                </Link>
                   <pre className="bg-gray-100 p-2 rounded whitespace-pre-wrap">
                     {reply.content}
                   </pre>

@@ -168,7 +168,7 @@ const Submissions = () => {
             </div>
           )}
         </div>
-        <div className="flex-1 lg:w-1/2 p-4 overflow-y-auto max-h-screen">
+        <div className="flex-1 lg:w-1/2 overflow-y-auto max-h-screen">
           <Code quesID={titleslug} />
         </div>
       </div>

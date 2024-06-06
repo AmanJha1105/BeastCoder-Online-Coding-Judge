@@ -321,7 +321,7 @@ const Discussions = () => {
             )}
           </div>
         </div>
-        <div className="w-1/2 overflow-y-auto h-screen p-4">
+        <div className="w-1/2 overflow-y-auto h-screen">
           <Code quesID={titleslug} />
         </div>
       </div>

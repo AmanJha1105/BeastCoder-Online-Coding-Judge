@@ -266,7 +266,11 @@ const execPromisewithTLE = (cmd, timelimit,jobID,language) => {
                         killCmd = `pkill -f ${jobID}.exe`;
                     }
                 }
-                const output = execSync(killCmd);
+                try {
+                    execSync(killCmd);
+                } catch (error) {
+                    console.error("Error killing process:", error);
+                }
                 reject(new Error("TLE"));
             }, timelimit);
         } catch (error) {

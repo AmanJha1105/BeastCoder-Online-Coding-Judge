@@ -6,4 +6,4 @@ router.get("/getSubmissions/:username",getDifficultyCounts);
 
 router.get("/submissions/:username/:currentYear/:currentMonth",getPastYearSubmissions)
 
-module.exports = router;
+module.exports = router; 

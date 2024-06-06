@@ -8,7 +8,7 @@ const JWT_SECRET_KEY= process.env.JWT_SECRET_KEY;
 
 const signup= async(req,res,next)=>{
 
-    const {name,email,password}=req.body;
+    const {fullname,name,email,password}=req.body;
 
     let existingUser;
     try {
@@ -25,6 +25,7 @@ const signup= async(req,res,next)=>{
     const hashedPassword=bcrypt.hashSync(password); 
 
     const user= new User({
+       fullname:fullname,
        username:name,
        email,
        password: hashedPassword,

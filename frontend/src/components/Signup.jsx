@@ -6,6 +6,7 @@ export default function SignUp() {
 
   const history=useNavigate();
   const [formData, setFormData] = useState({
+    fullname:"",
     name:"",
     email:"",
     password:""
@@ -22,6 +23,7 @@ export default function SignUp() {
     setError(false);
     const res= await axios
     .post("http://localhost:5000/api/signup",{
+       fullname:formData.fullname,
        name: formData.name,
        email: formData.email,
        password: formData.password
@@ -45,11 +47,20 @@ export default function SignUp() {
       <form onSubmit={handleSubmit} className='flex flex-col gap-4'>
         <input
           type='text'
+          placeholder='Fullname'
+          id='fullname'
+          className='bg-slate-100 p-3 rounded-lg'
+          value={formData.fullname}
+          onChange={handleChange}
+        />
+        <input
+          type='text'
           placeholder='Username'
           id='name'
           className='bg-slate-100 p-3 rounded-lg'
           value={formData.name}
           onChange={handleChange}
+          required
         />
         <input
           type='email'
@@ -58,6 +69,7 @@ export default function SignUp() {
           className='bg-slate-100 p-3 rounded-lg'
           value={formData.email}
           onChange={handleChange}
+          required
         />
         <input
           type='password'
@@ -66,6 +78,7 @@ export default function SignUp() {
           className='bg-slate-100 p-3 rounded-lg'
           value={formData.password}
           onChange={handleChange}
+          required
         />
         <button
           disabled={loading}

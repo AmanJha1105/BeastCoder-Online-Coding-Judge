@@ -10,7 +10,7 @@ const SubmissionCard = ({ selectedSubmission }) => {
 
   const handlePublishSolution = () => {
     try {
-      const userId = localStorage.getItem("userId"); // Assume user ID is stored in localStorage
+      const userId = localStorage.getItem("userId"); 
       if (!user) {
         toast.error("Please login to publish solution.");
         return;

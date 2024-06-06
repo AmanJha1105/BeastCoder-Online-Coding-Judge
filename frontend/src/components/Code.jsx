@@ -41,21 +41,25 @@ const Code = ({quesID})=> {
     }`,
     py:`# write your code here`
   };
+  
+  const userId = localStorage.getItem('userId');
 
   const [input, setInput] = useState('');
   const [output, setOutput] = useState('');
   const [language, setLanguage] = useLocalStorageState(`selectedLanguage-${quesID}`, 'cpp');
-  const [code, setCode] = useLocalStorageState(`code-${quesID}-${language}`, demoCode[language]);
+  const [code, setCode] = useLocalStorageState(`code-${quesID}-${language}-${userId}`, demoCode[language]);
   const {user} = useContext(AuthContext);
 
+  
+
   useEffect(() => {
-    const storedCode = localStorage.getItem(`code-${quesID}-${language}`);
+    const storedCode = localStorage.getItem(`code-${quesID}-${language}-${userId}`);
     if (!storedCode) {
       setCode(demoCode[language]);
     } else {
       setCode(JSON.parse(storedCode));
     }
-  }, [language, quesID, setCode, demoCode]);
+  }, [language, quesID, setCode, demoCode,userId]);
 
   const handleRun = async () => {
 
@@ -66,7 +70,7 @@ const Code = ({quesID})=> {
     };
 
     try {
-      const userId = localStorage.getItem('userId');
+      
       if (!user) {
         toast.error("Login is required to run or submit code.");
         return;
@@ -154,15 +158,15 @@ const Code = ({quesID})=> {
         toast.error("An unknown error occurred");
       }
     }
-  }
+  } 
 
   const handleOptionChange = (e) => {
     const newLanguage = e.target.value;
 
-    localStorage.setItem(`code-${quesID}-${language}`, JSON.stringify(code));
+    localStorage.setItem(`code-${quesID}-${language}-${userId}`, JSON.stringify(code));
 
     setLanguage(newLanguage);
-    const newCode = localStorage.getItem(`code-${quesID}-${newLanguage}`);
+    const newCode = localStorage.getItem(`code-${quesID}-${newLanguage}-${userId}`);
     setCode(newCode ? JSON.parse(newCode) : demoCode[newLanguage]);
   };
 
@@ -192,8 +196,7 @@ const Code = ({quesID})=> {
               outline: 'none',
               border: 'none',
               backgroundColor: '#f7fafc',
-              // height: '100%',
-              minHeight: '100%',
+              minHeight: '24em',
               resize:'both',
               overflowY: 'auto'
             }}

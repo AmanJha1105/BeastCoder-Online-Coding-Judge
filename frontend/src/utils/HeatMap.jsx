@@ -37,23 +37,22 @@ const MonthlySubmissionsHeatmap = ({ username }) => {
     const currentDate = new Date();
     const startDate = new Date(currentDate.getFullYear() - 1, currentDate.getMonth(), 1);
     const endDate = new Date(currentDate);
-    endDate.setDate(endDate.getDate() + 1); // Add one day to include the current day in the range
+    endDate.setDate(endDate.getDate() + 1); 
 
     const dateCounts = {};
 
-    // Initialize all dates within the range to 0
     for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
       const dateStr = d.toISOString().split('T')[0];
       dateCounts[dateStr] = 0;
     }
 
-    // Increment counts for each submission date
     submissionData.forEach((submission) => {
-      // Adjust date to local time zone
-      const localDate = new Date(submission.submittedAt.getTime() - submission.submittedAt.getTimezoneOffset() * 60000);
-      const dateStr = localDate.toISOString().split('T')[0];
-      if (dateCounts[dateStr] !== undefined) {
-        dateCounts[dateStr]++;
+      if (submission.verdict === 'AC') { // Assuming 'status' is the field that indicates if a submission is accepted
+        const localDate = new Date(submission.submittedAt.getTime() - submission.submittedAt.getTimezoneOffset() * 60000);
+        const dateStr = localDate.toISOString().split('T')[0];
+        if (dateCounts[dateStr] !== undefined) {
+          dateCounts[dateStr]++;
+        }
       }
     });
 
@@ -65,14 +64,16 @@ const MonthlySubmissionsHeatmap = ({ username }) => {
     return transformedData;
   };
 
+  const acceptedSubmissionsCount = submissionData.filter(submission => submission.verdict === 'AC').length;
+
   const startDate = new Date(new Date().getFullYear() - 1, new Date().getMonth(), 1);
   const endDate = new Date();
-  endDate.setDate(endDate.getDate() + 1); // Add one day to include the current day in the range
+  endDate.setDate(endDate.getDate() + 1);
 
   return (
     <div className="w-3/4 mx-auto">
       <h1 className="text-2xl font-bold mb-6">
-        <strong>{submissionData.length} submissions in the past one year</strong>
+        <strong>{acceptedSubmissionsCount} submissions in the past one year</strong>
       </h1>
       <ReactCalendarHeatmap
         startDate={startDate}

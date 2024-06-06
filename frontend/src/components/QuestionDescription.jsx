@@ -66,7 +66,7 @@ export default function QuestionDescription() {
         <div className="flex-1 p-4 overflow-y-auto max-h-screen">
           <Description ques={ques} />
         </div>
-        <div className="flex-1 p-4 overflow-y-auto max-h-screen">
+        <div className="flex-1 overflow-y-auto max-h-screen">
           <Code quesID={quesID} />
         </div>
       </div>

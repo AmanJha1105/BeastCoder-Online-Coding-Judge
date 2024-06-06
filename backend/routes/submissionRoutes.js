@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const{ runprogram, submitProgram } = require("../controllers/submissionController.js");
-const { getSubmissions, getAllSubmissions, getSingleSubmission } = require("../controllers/getSubmissionsController.js");
+const { getSubmissions, getAllSubmissions, getSingleSubmission, getQuesName } = require("../controllers/getSubmissionsController.js");
 
 router.post("/run", runprogram);
 
@@ -12,6 +12,8 @@ router.get("/submissions/:slug",getSubmissions);
 router.get("/allsubmissions",getAllSubmissions);
 
 router.get("/singleSubmission/:slug",getSingleSubmission);
+
+router.get("/getQuesName/:submissionId",getQuesName);
 
 
 module.exports=router;
