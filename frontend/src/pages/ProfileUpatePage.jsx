@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
+import toast from 'react-hot-toast';
 
 const ProfileUpdatePage = () => {
   const [formData, setFormData] = useState({
@@ -51,6 +52,7 @@ const ProfileUpdatePage = () => {
         education: '',
         image: null
       });
+      toast.success("Profile Updated Successfully.")
     } catch (error) {
       console.error('Error updating user profile:', error);
     }

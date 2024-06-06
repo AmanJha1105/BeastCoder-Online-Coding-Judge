@@ -289,7 +289,7 @@ const Discussions = () => {
                                 to={`/profile/${reply.username}`}
                                 className=" hover:text-blue-600"
                               >
-                                {reply.username}
+                                <strong>{reply.username}</strong>
                               </Link>
                               <p>{reply.content}</p>
                               <button

@@ -9,11 +9,10 @@ cloudinary.config({
 
 const uploadImage = async (filePath) => {
     try {
-        console.log("filepth is ",filePath);
       const result = await cloudinary.uploader.upload(filePath, {
         folder: 'user_profiles',
       });
-      fs.unlinkSync(filePath); // Remove file from server after upload
+      fs.unlinkSync(filePath);
       return result.secure_url;
     } catch (error) {
       throw new Error('Failed to upload image to Cloudinary');

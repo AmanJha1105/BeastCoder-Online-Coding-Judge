@@ -75,7 +75,7 @@ const Code = ({quesID})=> {
         toast.error("Login is required to run or submit code.");
         return;
       }
-      const  response= await axios.post('http://localhost:5000/ques/run', payload);
+      const  response= await axios.post('http://localhost:8000/ques/run', payload);
       if(response.data.outputContent)
       {
         if(response.data.outputContent==="Please provide valid input.")
@@ -103,7 +103,6 @@ const Code = ({quesID})=> {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const userId = localStorage.getItem('userId');
-    console.log(userId);
     const payload = {
       language,
       code,
@@ -123,8 +122,7 @@ const Code = ({quesID})=> {
         return;
       }
 
-      const { data } = await axios.post('http://localhost:5000/ques/submit', payload,config);
-      console.log("data is",data);
+      const { data } = await axios.post('http://localhost:8000/ques/submit', payload,config);
       if(data.finalVerdict==="AC")
       {
         toast.success("All testcases passed");
