@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
-import { FaThumbsUp, FaThumbsDown, FaReply } from "react-icons/fa";
+import { FaThumbsUp, FaThumbsDown, FaReply,FaRocketchat } from "react-icons/fa";
 import { toast } from "react-hot-toast";
 import { Link, useParams } from "react-router-dom";
 import Code from "./Code";
 import { AuthContext } from "../context/AuthContext";
+import { PiClockCounterClockwiseBold } from "react-icons/pi";
+import { HiBeaker } from "react-icons/hi";
 
 const Discussions = () => {
   const [discussion, setDiscussion] = useState(null);
@@ -153,13 +155,22 @@ const Discussions = () => {
           Description
         </Link>
         <Link className="px-2" to={`/question/${titleslug}/solutions`}>
-          🧪Solutions
+          <div className="flex items-center space-x-1">
+            <HiBeaker className="text-blue-500" />
+            <span>Solutions</span>
+          </div>
         </Link>
         <Link className="px-2" to={`/question/${titleslug}/submissions`}>
-          ▼ Submissions
+          <div className="flex items-center space-x-1">
+            <PiClockCounterClockwiseBold className="text-blue-500" />
+            <span>Submissions</span>
+          </div>
         </Link>
         <Link className="px-2" to={`/question/${titleslug}/discuss`}>
-          🗨️ Discuss
+          <div className="flex items-center space-x-1">
+            <FaRocketchat className="text-grey-500" />
+            <span>Discuss</span>
+          </div>
         </Link>
       </div>
       <div className="flex">

@@ -42,7 +42,7 @@ const SubmissionCard = ({ selectedSubmission }) => {
               : "text-red-500"
           }`}
         >
-          {selectedSubmission?.verdict === "AC" ? "Accepted" : selectedSubmission?.verdict === "WA" ? "Wrong Answer" : selectedSubmission?.verdict === "RE" ? "Runtime Error" : "Unknown Verdict"}
+          {selectedSubmission?.verdict === "AC" ? "Accepted" : selectedSubmission?.verdict === "WA" ? "Wrong Answer" : selectedSubmission?.verdict === "RE" ? "Runtime Error" : selectedSubmission?.verdict === "TLE" ? "Time Limit Exceeded" : "Unknown Verdict"}
         </h2>
         {selectedSubmission?.verdict !== "AC" &&
   selectedSubmission?.testCases.length > 0 && (

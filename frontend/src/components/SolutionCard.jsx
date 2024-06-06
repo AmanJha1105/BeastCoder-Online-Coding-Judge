@@ -1,10 +1,12 @@
 import React, { useContext, useEffect, useState } from "react";
 import axios from "axios";
-import { FaThumbsUp } from "react-icons/fa";
+import { FaRocketchat, FaThumbsUp } from "react-icons/fa";
 import { toast } from "react-hot-toast";
 import { Link, useParams } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import Code from "./Code";
+import { PiClockCounterClockwiseBold } from "react-icons/pi";
+import { HiBeaker } from "react-icons/hi";
 
 const SolutionCard = () => {
   const [replyContent, setReplyContent] = useState("");
@@ -117,29 +119,37 @@ const SolutionCard = () => {
 
   return (
     <>
-    <div className="flex items-center px-4 mt-3">
-            <img
-              src="https://th.bing.com/th/id/OIP.q0vS1-Y6CkeeDknw8ahLDAHaHa?rs=1&pid=ImgDetMain"
-              alt="page icon"
-              height={15}
-              width={15}
-            />
-            <Link className="px-2" to={`/question/${titleslug}`}>
-              Description
-            </Link>
-            <Link className="px-2" to={`/question/${titleslug}/solutions`}>
-              🧪Solutions
-            </Link>
-            <Link className="px-2" to={`/question/${titleslug}/submissions`}>
-              ▼ Submissions
-            </Link>
-            <Link className="px-2" to={`/question/${titleslug}/discuss`}>
-              🗨️ Discuss
-            </Link>
+      <div className="flex items-center px-4 mt-3">
+        <img
+          src="https://th.bing.com/th/id/OIP.q0vS1-Y6CkeeDknw8ahLDAHaHa?rs=1&pid=ImgDetMain"
+          alt="page icon"
+          height={15}
+          width={15}
+        />
+        <Link className="px-2" to={`/question/${titleslug}`}>
+          Description
+        </Link>
+        <Link className="px-2" to={`/question/${titleslug}/solutions`}>
+          <div className="flex items-center space-x-1">
+            <HiBeaker className="text-blue-500" />
+            <span>Solutions</span>
           </div>
+        </Link>
+        <Link className="px-2" to={`/question/${titleslug}/submissions`}>
+          <div className="flex items-center space-x-1">
+            <PiClockCounterClockwiseBold className="text-blue-500" />
+            <span>Submissions</span>
+          </div>
+        </Link>
+        <Link className="px-2" to={`/question/${titleslug}/discuss`}>
+          <div className="flex items-center space-x-1">
+            <FaRocketchat className="text-grey-500" />
+            <span>Discuss</span>
+          </div>
+        </Link>
+      </div>
       <div className="flex">
         <div className="w-1/2 p-4 overflow-y-auto h-screen">
-          
           <div className="mt-4 p-4 w-full bg-gray-100 rounded">
             <div className="flex items-center">
               <span className="text-sm">

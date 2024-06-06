@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "../index.css";
-import SolutionCard from "./SolutionCard";
+import { HiBeaker } from "react-icons/hi";
+import { FaRocketchat } from "react-icons/fa";
+import { PiClockCounterClockwiseBold } from "react-icons/pi";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import Code from "./Code";
 
@@ -54,13 +56,22 @@ const Solutions = () => {
             Description
           </Link>
           <Link className="px-2" to={`/question/${titleslug}/solutions`}>
-            🧪Solutions
+            <div className="flex items-center space-x-1">
+              <HiBeaker className="text-blue-500" />
+              <span>Solutions</span>
+            </div>
           </Link>
           <Link className="px-2" to={`/question/${titleslug}/submissions`}>
-            ▼ Submissions
+          <div className="flex items-center space-x-1">
+              <PiClockCounterClockwiseBold className="text-blue-500" />
+              <span>Submissions</span>
+          </div>
           </Link>
           <Link className="px-2" to={`/question/${titleslug}/discuss`}>
-            🗨️ Discuss
+          <div className="flex items-center space-x-1">
+              <FaRocketchat className="text-grey-500" />
+              <span>Discuss</span>
+            </div>
           </Link>
         </div>
         <div className="p-4">
