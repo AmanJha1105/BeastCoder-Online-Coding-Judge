@@ -1,71 +1,70 @@
 const path = require("path");
-const fs = require("fs")
+const fs = require("fs");
+const os = require("os");
 
-const getCommands=({language,codeFilePath,inputFilePath,outputFilePath,execFilePath,dirOutputs})=>{
-    
+const getCommands = ({ language, codeFilePath, execFilePath, dirOutputs }) => {
     try {
-        let compileCmd, executeCmd;
- 
-    switch (language) {
-        case 'cpp':
-            compileCmd = `g++ "${codeFilePath}" -o "${execFilePath}"`;
-            executeCmd = `"${execFilePath}" < "${inputFilePath}" > "${outputFilePath}"`;
-            break;
-        case 'c':
-            compileCmd = `gcc "${codeFilePath}" -o "${execFilePath}"`;
-            executeCmd = `"${execFilePath}" < "${inputFilePath}" > "${outputFilePath}"`;
-            break;
-        case 'java':
-            // Update the classpath to the current directory
-            compileCmd = `javac "${codeFilePath}" -d "${dirOutputs}"`;
-            executeCmd = `java -classpath "${dirOutputs}" Main < "${inputFilePath}" > "${outputFilePath}"`;
-            break;
-        case 'py':
-            compileCmd = `python -m py_compile "${codeFilePath}"`;
-            executeCmd = `python "${codeFilePath}" < "${inputFilePath}" > "${outputFilePath}"`;
-            break;
-        default:
-            throw new Error("Unsupported language");
-    }
+        let compileCmd, executeCmdTemplate;
 
-       return {compileCmd,executeCmd};
+        switch (language) {
+            case 'cpp':
+                compileCmd = `g++ "${codeFilePath}" -o "${execFilePath}"`;
+                executeCmdTemplate = `"${execFilePath}" < "{inputFilePath}" > "{outputFilePath}"`;
+                break;
+            case 'c':
+                compileCmd = `gcc "${codeFilePath}" -o "${execFilePath}"`;
+                executeCmdTemplate = `"${execFilePath}" < "{inputFilePath}" > "{outputFilePath}"`;
+                break;
+            case 'java':
+                compileCmd = `javac "${codeFilePath}" -d "${dirOutputs}"`;
+                executeCmdTemplate = `java -classpath "${dirOutputs}" Main < "{inputFilePath}" > "{outputFilePath}"`;
+                break;
+            case 'py':
+                compileCmd = `python -m py_compile "${codeFilePath}"`;
+                executeCmdTemplate = `python "${codeFilePath}" < "{inputFilePath}" > "{outputFilePath}"`;
+                break;
+            default:
+                throw new Error("Unsupported language");
+        }
+
+        return { compileCmd, executeCmdTemplate };
     } catch (error) {
-        console.error(`An error occured in getting commands: ${error}`);
-        return res.status(500).json({message:"Error occured in getting commands"})
+        console.error(`An error occurred in getting commands: ${error}`);
+        throw new Error("Error occurred in getting commands");
     }
+};
 
-}
-
-const getPaths =({dirCodes,dirInputs,dirOutputs,jobID,language})=>{
-
+const getPaths = ({ dirCodes, dirOutputs, jobID, language }) => {
     try {
         let codeFilePath;
-        if(language!=="java")
+        if (language !== "java") {
             codeFilePath = path.join(dirCodes, `${jobID}.${language}`);
-        if(language==="java")
-            codeFilePath = path.join(dirCodes,"Main.java");
+        } else {
+            codeFilePath = path.join(dirCodes, "Main.java");
+        }
 
-        const inputFilePath = path.join(dirInputs, `${jobID}_input.txt`);
-        
-        let outputFilePath;
-        if(language==="java")
-            outputFilePath = path.join(dirOutputs, `${jobID}_output.class`);
-        if(language!=="java")
-            outputFilePath = path.join(dirOutputs, `${jobID}_output.txt`);
+        let execFilePath = '';
+        const platform = os.platform();
 
-        let execFilePath='';
-        if(language==="py")
-            execFilePath="";
-        else if(language!=="py")
-            execFilePath= path.join(dirOutputs, `${jobID}.exe`);
+        if (language === "py") {
+            execFilePath = ""; 
+        } else if (language === "java") {
+            execFilePath = "";
+        } else {
+            if (platform === 'win32') {
+                execFilePath = path.join(dirOutputs, `${jobID}.exe`);
+            } else {
+                execFilePath = path.join(dirOutputs, `${jobID}.out`); 
+            }
+        }
 
-        return {codeFilePath,inputFilePath,outputFilePath,execFilePath};
+        return { codeFilePath, execFilePath };
     } catch (error) {
-        console.error(`An error occured in getting path: ${error}`);
-        return res.status(500).json({message:"Error occured in getting path"})
+        console.error(`An error occurred in getting paths: ${error}`);
+        throw new Error("Error occurred in getting paths");
     }
+};
 
-}
 
 const unlinkAllFiles = ({codeFilePath,inputFilePath,outputFilePath,execFilePath,dirCodes,dirOutputs,language})=>{
     try {

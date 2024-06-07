@@ -75,29 +75,35 @@ const Code = ({quesID})=> {
         toast.error("Login is required to run or submit code.");
         return;
       }
-      const  response= await axios.post('http://localhost:8000/ques/run', payload);
-      if(response.data.outputContent)
+      const  {data}= await axios.post('http://localhost:8000/ques/run', payload);
+      if(data.outputContent)
       {
-        if(response.data.outputContent==="Please provide valid input.")
+        if(data.outputContent==="Please provide valid input.")
         {
           toast.error("Input is empty");
         }
-        setOutput(response.data.outputContent);
+        setOutput(data.outputContent);
       }
-      if(response.data.result==="Runtime Error. Please recheck your code.")
+      if(data.errorMessage.length>0)
       {
-        setOutput(response.data.result);
+        setOutput(`error is ${data.errorMessage.substring(0,500)}`);
         toast.error("Runtime Error!!!");
       }
-      if(response.data.result==="TLE")
+      if(data.result==="TLE")
       {
         setOutput("Time Limit Exceeded");
         toast.error("Time Limit Exceeded");
       }
       
     } catch (error) {
-      toast.error("An error occured");
-    }
+      if (error.response) {
+          if (error.response.status === 404) {
+              toast.error("Resource not found");
+          } else if (error.response.status === 500) {
+              toast.error("Server error");
+          }
+      }
+   }
   }
 
   const handleSubmit = async (e) => {
@@ -123,6 +129,7 @@ const Code = ({quesID})=> {
       }
 
       const { data } = await axios.post('http://localhost:8000/ques/submit', payload,config);
+      console.log(data);
       if(data.finalVerdict==="AC")
       {
         toast.success("All testcases passed");
@@ -136,16 +143,15 @@ const Code = ({quesID})=> {
       if(data.finalVerdict==="RE")
       {
         toast.error("Runtime Error!!!")
-        setOutput("Runtime Error. Please check your code again");
       }
       if(data.finalVerdict==="TLE")
       {
         toast.error("Time Limit Exceeded!!!")
         setOutput("Time Limit Excedded");
       }
-      if(data.errorMessage)
+      if(data.errorMessage.length>0)
       {
-        setOutput(`error is ${data.errorMessage}`);
+          setOutput(`error is ${data.errorMessage.substring(0,500)}`);
       }
     } catch (error) {
       if (error.response && error.response.data) {
@@ -236,7 +242,7 @@ const Code = ({quesID})=> {
           <div className="flex-1">
             <h2 className="text-lg font-semibold mb-2">Output</h2>
             <textarea
-              rows="5"
+              rows="10"
               value={output}
               placeholder="Output"
               onChange={(e) => setOutput(e.target.value)}

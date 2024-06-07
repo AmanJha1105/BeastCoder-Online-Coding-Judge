@@ -11,8 +11,7 @@ const Submission = require("../model/Submissions");
 const TIME_LIMIT = 1700;
 
 const runprogram = async (req, res) => {
-    let codeFilePath, inputFilePath, outputFilePath, execFilePath;
-
+    let codeFilePath, execFilePath, inputFilePath, outputFilePath;
     const { language, code, input } = req.body;
 
     const baseDir = path.join(__dirname, "../");
@@ -20,28 +19,36 @@ const runprogram = async (req, res) => {
     const dirInputs = path.join(baseDir, "inputs");
     const dirOutputs = path.join(baseDir, "outputs");
 
-    let outputContent, result;
+    let outputContent, result,errorMessage="";
 
     try {
         const jobID = uuid();
 
         if (!input) {
             outputContent = "Please provide valid input.";
-            return res.json({ outputContent, result });
+            return res.json({ outputContent, result,errorMessage });
         }
 
         [dirCodes, dirInputs, dirOutputs].forEach(dir => {
-            if (!fs.existsSync(dir)) {
+            if (!fs.existsSync(dir)) { 
                 fs.mkdirSync(dir, { recursive: true });
             }
         });
 
-        ({ codeFilePath, inputFilePath, outputFilePath, execFilePath } = getPaths({ dirCodes, dirInputs, dirOutputs, jobID, language }));
+        ({ codeFilePath, execFilePath } = getPaths({ dirCodes, dirOutputs, jobID, language }));
+
+         inputFilePath = path.join(dirInputs, `${jobID}_input.txt`);
+         outputFilePath = path.join(dirOutputs, `${jobID}_output.txt`);
+
+
 
         fs.writeFileSync(inputFilePath, input);
         fs.writeFileSync(codeFilePath, code);
 
-        let { compileCmd, executeCmd } = getCommands({ language, codeFilePath, inputFilePath, outputFilePath, execFilePath, dirOutputs });
+        const { compileCmd, executeCmdTemplate } = getCommands({ language, codeFilePath, execFilePath, dirOutputs });
+
+        const executeCmd = executeCmdTemplate.replace("{inputFilePath}", inputFilePath).replace("{outputFilePath}", outputFilePath);
+
 
         try {
             await execPromise(compileCmd);
@@ -52,9 +59,10 @@ const runprogram = async (req, res) => {
             if (error.message === "TLE") {
                 result = "TLE";
             } else {
-                result = "Runtime Error. Please recheck your code.";
+                errorMessage = error.stderr;
             }
-            return res.json({ outputContent, result });
+
+            return res.json({ outputContent, result,errorMessage });
         }
         outputContent = fs.readFileSync(outputFilePath, 'utf-8');
         console.log("output content is", outputContent);
@@ -69,7 +77,7 @@ const runprogram = async (req, res) => {
     } finally {
         unlinkAllFiles({ codeFilePath, inputFilePath, outputFilePath, execFilePath, dirCodes, dirOutputs, language });
     }
-    return res.json({ outputContent, result });
+    return res.json({ outputContent, result ,errorMessage});
 };
 
 const submitProgram = async (req, res) => {
@@ -84,6 +92,7 @@ const submitProgram = async (req, res) => {
     let finalVerdict = "AC";
     let totalExecutionTime = 0;
     let totalMemoryUsed = 0;
+    let errorMessage="";
 
     const ques = await question.findOne({ titleslug: quesID });
     const { testCase } = await TestCases.findOne({ problemId: ques._id });
@@ -100,20 +109,49 @@ const submitProgram = async (req, res) => {
             }
         });
 
-        for (const test of testCase) {
-            const jobID = uuid();
-            let { codeFilePath, inputFilePath, outputFilePath, execFilePath } = getPaths({ dirCodes, dirInputs, dirOutputs, jobID, language });
+        const jobID = uuid();
+        let { codeFilePath, execFilePath } = getPaths({ dirCodes, dirOutputs, jobID, language });
+        console.log(codeFilePath,execFilePath);
 
-            fs.writeFileSync(codeFilePath, code);
+        fs.writeFileSync(codeFilePath, code);
+
+        const { compileCmd, executeCmdTemplate } = getCommands({ language, codeFilePath, execFilePath, dirOutputs });
+
+        try {
+            await execPromise(compileCmd); 
+        } catch (error) {
+            unlinkAllFiles({ codeFilePath, execFilePath });
+            console.error("error in compilation",error);
+            errorMessage=error.stderr;
+            console.log("errormessage is",errorMessage);
+            return res.status(200).json({ finalVerdict:"fail",success: false, results, errorMessage });
+        }
+
+        for (const test of testCase) {
+
+            // let { codeFilePath, inputFilePath, outputFilePath, execFilePath } = getPaths({ dirCodes, dirInputs, dirOutputs, jobID, language });
+
+            // fs.writeFileSync(codeFilePath, code);
+
+            console.log("inside loop");
+
+            const inputFilePath = path.join(dirInputs, `${jobID}_${test._id}_input.txt`);
+            const outputFilePath = path.join(dirOutputs, `${jobID}_${test._id}_output.txt`);
+
+
             fs.writeFileSync(inputFilePath, test.input);
 
-            let { compileCmd, executeCmd } = getCommands({ language, codeFilePath, inputFilePath, outputFilePath, execFilePath, dirOutputs });
+            const executeCmd = executeCmdTemplate.replace("{inputFilePath}", inputFilePath).replace("{outputFilePath}", outputFilePath);
+
+            // let { compileCmd, executeCmd } = getCommands({ language, codeFilePath, inputFilePath, outputFilePath, execFilePath, dirOutputs });
+            await execPromise(compileCmd);
 
             try {
-                await execPromise(compileCmd);
-                const startTime = process.hrtime();
-                await execPromisewithTLE(executeCmd, TIME_LIMIT,jobID,language);
                 
+                const startTime = process.hrtime();
+                console.log("till here1");
+                await execPromisewithTLE(executeCmd, TIME_LIMIT,jobID,language);
+                console.log("till here2");
                 const endTime = process.hrtime(startTime);
                 const executionTime = endTime[0] * 1000 + endTime[1] / 1e6;
                 const memoryUsageInMB = (process.memoryUsage().heapUsed / 1024 / 1024).toFixed(2); 
@@ -139,7 +177,7 @@ const submitProgram = async (req, res) => {
                     memoryUsed: parseFloat(memoryUsageInMB),
                     output: outputContent 
                 });
-
+ 
             } catch (error) {
                 let verdict = "RE";
                 if (error.message === "TLE") {
@@ -148,7 +186,7 @@ const submitProgram = async (req, res) => {
                 } else {
                     finalVerdict = "RE";
                 }
-                console.log("Error in executing testcase:",{error})
+                console.log("Error in executing testcase:",error)
                 results.push({
                     testCase: test._id,
                     input: test.input,
@@ -159,11 +197,18 @@ const submitProgram = async (req, res) => {
                     memoryUsed: 0,
                 });
                 success = false;
+               
+                errorMessage = error.stderr;
+                break;
 
             } finally {
-                unlinkAllFiles({ codeFilePath, inputFilePath, outputFilePath, execFilePath, dirCodes, dirOutputs, language });
+                console.log("called");
+                unlinkAllFiles({ inputFilePath, outputFilePath });
             }
         }
+
+        unlinkAllFiles({ codeFilePath, execFilePath, dirCodes, dirOutputs, language });
+
         const newSubmission = new Submission({
             userId,
             quesID: ques._id,
@@ -185,8 +230,8 @@ const submitProgram = async (req, res) => {
         });
 
         await newSubmission.save();
-
-        return res.json({ finalVerdict, success, results });
+        console.log("error is",errorMessage);
+        return res.status(200).json({ finalVerdict, success, results,errorMessage });
     } catch (error) {
         console.error(`Error in submitting program: ${error}`);
         const newSubmission = new Submission({
@@ -209,8 +254,8 @@ const submitProgram = async (req, res) => {
             })),
         });
         await newSubmission.save();
-        console.log("error is".errorMessage);
-        return res.json({ finalVerdict, success, results });
+        console.log("error is",errorMessage);
+        return res.json({ finalVerdict, success, results ,errorMessage});
     }
 };
 
@@ -219,10 +264,15 @@ const execPromise = (cmd) => {
         try {
             exec(cmd, (error, stdout, stderr) => {
                 if (error) {
-                    reject(new Error(stderr || error.message));
-                } else {
-                    resolve(stdout);
+                    console.log("1",error)
+                    reject({ error, stderr });
                 }
+                if (stderr) {
+                    console.log("2",error)
+                    reject(stderr);
+                }
+                console.log("stdout is",stdout);
+                resolve(stdout);
             });
         } catch (error) {
             console.log(error);
@@ -230,41 +280,49 @@ const execPromise = (cmd) => {
     });
 };
 
-const execPromisewithTLE = (cmd, timelimit,jobID,language) => {
+
+const execPromisewithTLE = (cmd, timelimit, jobID, language) => {
+    console.log("inside tle promise");
     return new Promise((resolve, reject) => {
         try {
-
             let flag = true;
 
             const proc = exec(cmd, (error, stdout, stderr) => {
                 flag = false;
                 if (error) {
-                    reject(new Error(stderr || error.message));
-                } else {
-                    resolve(stdout);
+                    console.log("1",error)
+                    reject({ error, stderr });
                 }
+                if (stderr) {
+                    console.log("2",error)
+                    reject(stderr);
+                }
+                console.log("stdout is",stdout);
+                resolve(stdout);
             });
 
             setTimeout(() => {
-                if(!flag)return;
-                const WindowCmd = `taskkill /F /IM ${jobID}.exe`;
-                const OtherCMD = `pkill -f ${jobID}.exe`;
+                if (!flag) return;
                 let killCmd;
+
                 if (os.platform() === 'win32') {
                     if (language === 'py') {
                         killCmd = `taskkill /F /IM python.exe`;
-                    } else if(language==='java'){
+                    } else if (language === 'java') {
                         killCmd = `taskkill /F /IM java.exe`;
-                    }else {
+                    } else {
                         killCmd = `taskkill /F /IM ${jobID}.exe`;
                     }
-                }else { 
-                    if (language === 'python') {
-                        killCmd = `kill -9 python.exe`;
+                } else { 
+                    if (language === 'py') {
+                        killCmd = `pkill -f python`; 
+                    } else if (language === 'java') {
+                        killCmd = `pkill -f java`;
                     } else {
-                        killCmd = `pkill -f ${jobID}.exe`;
+                        killCmd = `pkill -f ${jobID}.out`;
                     }
                 }
+
                 try {
                     execSync(killCmd);
                 } catch (error) {
@@ -273,9 +331,11 @@ const execPromisewithTLE = (cmd, timelimit,jobID,language) => {
                 reject(new Error("TLE"));
             }, timelimit);
         } catch (error) {
-            console.log(error);
+            console.error(error);
+            reject(error);
         }
     });
 };
+
 exports.runprogram = runprogram;
 exports.submitProgram = submitProgram;

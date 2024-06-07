@@ -1,13 +1,13 @@
 const mongoose=require("mongoose");
 
 const testCaseResultSchema = new mongoose.Schema({
-    testCase: { type: String, required: true },
-    input:{type: String,required:true},
-    yourOutput:{type: String,required:true},
-    ExpectedOutput:{type: String,required:true},
-    result: { type: String, required: true }, // e.g., "Passed", "Failed"
-    executionTime: { type: Number }, // in milliseconds
-    memoryUsed: { type: Number }, // in KB
+    testCase: { type: String},
+    input:{type: String},
+    yourOutput:{type: String},
+    ExpectedOutput:{type: String},
+    result: { type: String}, 
+    executionTime: { type: Number }, 
+    memoryUsed: { type: Number },
   }, { _id: false });
   
   const submissionSchema = new mongoose.Schema({

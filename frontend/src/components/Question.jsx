@@ -131,7 +131,7 @@ const Question = () => {
       <div className="bg-opacity-50 bg-gray-900 min-h-screen p-5">
         <div className="flex justify-center items-center mb-5">
           {/* Add Questions button */}
-          {localStorage.getItem("username") === "aryan" && (
+          {user?.username === "aryan" && (
             <Link to="/add">
               <button className="border-2 border-black bg-pink-200 text-purple-950 rounded-lg p-1.5 m-2">
                 {" "}
