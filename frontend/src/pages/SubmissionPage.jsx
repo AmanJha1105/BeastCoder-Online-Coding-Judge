@@ -6,6 +6,9 @@ import { toast } from "react-hot-toast";
 import { AuthContext } from "../context/AuthContext";
 
 const SubmissionPage = () => {
+
+  const BackendUrl = import.meta.env.VITE_BACKEND_URL;
+
   const { submissionID } = useParams();
   const [selectedSubmission, setSelectedSubmission] = useState(null);
   const [quesname, setQuesName] = useState(" ");
@@ -22,7 +25,7 @@ const SubmissionPage = () => {
   const getSubmission = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:5000/ques/singleSubmission/${submissionID}`
+        `${BackendUrl}/ques/singleSubmission/${submissionID}`
       );
       setSelectedSubmission(response.data[0]);
     } catch (error) {
@@ -33,7 +36,7 @@ const SubmissionPage = () => {
   const getQuestionName = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:5000/ques/getQuesName/${submissionID}`
+        `${BackendUrl}/ques/getQuesName/${submissionID}`
       );
       setQuesName(response.data);
       const quesId = response.data.replace(/\s+/g, '-');

@@ -8,6 +8,9 @@ import { PiClockCounterClockwiseBold } from "react-icons/pi";
 import { FaRocketchat } from "react-icons/fa";
 
 export default function QuestionDescription() {
+
+  const BackendUrl = import.meta.env.VITE_BACKEND_URL;
+
   const [ques, setQues] = useState();
   const { quesID } = useParams();
 
@@ -18,7 +21,7 @@ export default function QuestionDescription() {
   const getQuestionDescription = async () => {
     try {
       const res = await axios.get(
-        `http://localhost:5000/ques/question/${quesID}`,
+        `${BackendUrl}/ques/question/${quesID}`,
         {
           withCredentials: true,
         }

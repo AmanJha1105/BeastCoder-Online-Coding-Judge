@@ -18,8 +18,8 @@ const testCaseResultSchema = new mongoose.Schema({
     code: { type: String, required: true },
     verdict: { type: String, required: true },
     submittedAt: { type: Date, default: Date.now },
-    executionTime: { type: Number }, // in milliseconds 
-    memoryUsed: { type: Number }, // in MB
+    executionTime: { type: Number },
+    memoryUsed: { type: Number },
     testCases: [testCaseResultSchema],
   });
   

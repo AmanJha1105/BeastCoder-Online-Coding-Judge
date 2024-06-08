@@ -11,6 +11,9 @@ import toast from "react-hot-toast";
 import { FaThumbsUp } from "react-icons/fa6";
 
 const ProfilePage = () => {
+
+  const BackendUrl = import.meta.env.VITE_BACKEND_URL;
+
   const [counts, setCounts] = useState({
     easyCount: 0,
     mediumCount: 0,
@@ -33,7 +36,7 @@ const ProfilePage = () => {
     const fetchSubmissions = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:5000/ques/allsubmissions",
+          `${BackendUrl}/ques/allsubmissions`,
           {
             params: {
               username: username,
@@ -83,7 +86,7 @@ const ProfilePage = () => {
     const fetchCounts = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5000/profile/getSubmissions/${username}`
+          `${BackendUrl}/profile/getSubmissions/${username}`
         );
         setCounts(response.data);
       } catch (error) {
@@ -98,7 +101,7 @@ const ProfilePage = () => {
     const getUser = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5000/api/getUser/${username}`,
+          `${BackendUrl}/api/getUser/${username}`,
           {
             params: {
               username: username,
@@ -119,7 +122,7 @@ const ProfilePage = () => {
   const getRecentSolutions = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:5000/ques/solutionOfUser/${username}`
+        `${BackendUrl}/ques/solutionOfUser/${username}`
       );
       setRecentSolutions(response.data);
     } catch (error) {

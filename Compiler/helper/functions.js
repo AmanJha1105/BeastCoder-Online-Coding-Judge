@@ -51,11 +51,7 @@ const getPaths = ({ dirCodes, dirOutputs, jobID, language }) => {
         } else if (language === "java") {
             execFilePath = "";
         } else {
-            if (platform === 'win32') {
-                execFilePath = path.join(dirOutputs, `${jobID}.exe`);
-            } else {
-                execFilePath = path.join(dirOutputs, `${jobID}.out`); 
-            }
+            execFilePath = path.join(dirOutputs, `${jobID}.out`); 
         }
 
         return { codeFilePath, execFilePath };

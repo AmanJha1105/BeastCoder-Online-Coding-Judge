@@ -4,13 +4,16 @@ import axios from 'axios';
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
+
+  const BackendUrl = import.meta.env.VITE_BACKEND_URL;
+
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/user', { withCredentials: true });
+        const response = await axios.get(`${BackendUrl}/api/user`,{ withCredentials: true });
         setUser(response.data.user);
       } catch (error) {
         console.error('Error fetching user', error);
@@ -24,7 +27,7 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
-      const response = await axios.post('http://localhost:5000/api/login', { email, password }, { withCredentials: true });
+      const response = await axios.post(`${BackendUrl}/api/login` ,{ email, password }, { withCredentials: true });
       setUser(response.data.user);
     } catch (error) {
       console.error('Error logging in', error);
@@ -33,7 +36,7 @@ export const AuthProvider = ({ children }) => {
 
   const logout = async () => {
     try {
-      await axios.post('http://localhost:5000/api/logout', {}, { withCredentials: true });
+      await axios.post(`${BackendUrl}/api/logout`, {}, { withCredentials: true });
       setUser(null);
     } catch (error) {
       console.error('Error logging out', error);

@@ -9,6 +9,9 @@ import { PiClockCounterClockwiseBold } from "react-icons/pi";
 import { HiBeaker } from "react-icons/hi";
 
 const SolutionCard = () => {
+
+  const BackendUrl = import.meta.env.VITE_BACKEND_URL;
+
   const [replyContent, setReplyContent] = useState("");
   const [sol, setSol] = useState();
   const [replies, setReplies] = useState();
@@ -25,7 +28,7 @@ const SolutionCard = () => {
   useEffect(() => {
     const getSolution = async () => {
       const response = await axios.get(
-        `http://localhost:5000/ques/solutionfromID/${solutionID}`
+        `${BackendUrl}/ques/solutionfromID/${solutionID}`
       );
       const solution = response.data[0];
       setSol(solution);
@@ -45,7 +48,7 @@ const SolutionCard = () => {
 
     try {
       const response = await axios.post(
-        `http://localhost:5000/ques/solution/${selectedSolution?._id}/reply`,
+        `${BackendUrl}/ques/solution/${selectedSolution?._id}/reply`,
         {
           userId,
           username,
@@ -73,7 +76,7 @@ const SolutionCard = () => {
     }
     try {
       const response = await axios.post(
-        `http://localhost:5000/ques/solutions/${selectedSolution?._id}/reply/${replyId}/like`,
+        `${BackendUrl}/ques/solutions/${selectedSolution?._id}/reply/${replyId}/like`,
         {
           userId,
         }
@@ -105,7 +108,7 @@ const SolutionCard = () => {
     }
     try {
       const response = await axios.post(
-        `http://localhost:5000/ques/solution/${selectedSolution?._id}/like`,
+        `${BackendUrl}/ques/solution/${selectedSolution?._id}/like`,
         {
           userId,
         }

@@ -9,6 +9,9 @@ import { FaRocketchat } from "react-icons/fa";
 import { HiBeaker } from "react-icons/hi";
 
 const Submissions = () => {
+
+  const BackendUrl = import.meta.env.VITE_BACKEND_URL;
+
   const [submissions, setSubmissions] = useState([]);
   const [selectedSubmission, setSelectedSubmission] = useState(null);
   const { titleslug } = useParams();
@@ -22,7 +25,7 @@ const Submissions = () => {
     try {
       const userId = localStorage.getItem("userId");
       const response = await axios.get(
-        `http://localhost:5000/ques/submissions/${titleslug}`,
+        `${BackendUrl}/ques/submissions/${titleslug}`,
         {
           params: {
             userId: userId,

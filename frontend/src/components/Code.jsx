@@ -14,8 +14,9 @@ import { useLocalStorageState } from '../../hooks/useLocalStorageState';
 import { AuthContext } from '../context/AuthContext';
 
 
-
 const Code = ({quesID})=> {
+
+  const host = import.meta.env.VITE_COMPILER_URL;
 
   const demoCode = {
     cpp:`#include <iostream> 
@@ -75,7 +76,7 @@ const Code = ({quesID})=> {
         toast.error("Login is required to run or submit code.");
         return;
       }
-      const  {data}= await axios.post('http://localhost:8000/ques/run', payload);
+      const  {data}= await axios.post(`${host}/ques/run`, payload);
       if(data.outputContent)
       {
         if(data.outputContent==="Please provide valid input.")
@@ -86,7 +87,7 @@ const Code = ({quesID})=> {
       }
       if(data.errorMessage.length>0)
       {
-        setOutput(`error is ${data.errorMessage.substring(0,500)}`);
+        setOutput(`error is ${data.errorMessage.substring(0,600)}`);
         toast.error("Runtime Error!!!");
       }
       if(data.result==="TLE")
@@ -128,7 +129,7 @@ const Code = ({quesID})=> {
         return;
       }
 
-      const { data } = await axios.post('http://localhost:8000/ques/submit', payload,config);
+      const { data } = await axios.post(`${host}/ques/submit`, payload,config);
       console.log(data);
       if(data.finalVerdict==="AC")
       {
@@ -149,9 +150,11 @@ const Code = ({quesID})=> {
         toast.error("Time Limit Exceeded!!!")
         setOutput("Time Limit Excedded");
       }
-      if(data.errorMessage.length>0)
+      if(data.errorMessage?.length>0)
       {
-          setOutput(`error is ${data.errorMessage.substring(0,500)}`);
+          if(data?.finalVerdict==="fail")
+          toast.error("Runtime Error!!!")
+          setOutput(`error is ${data.errorMessage.substring(0,600)}`);
       }
     } catch (error) {
       if (error.response && error.response.data) {

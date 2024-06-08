@@ -9,6 +9,9 @@ import { PiClockCounterClockwiseBold } from "react-icons/pi";
 import { HiBeaker } from "react-icons/hi";
 
 const Discussions = () => {
+
+  const BackendUrl = import.meta.env.VITE_BACKEND_URL;
+
   const [discussion, setDiscussion] = useState(null);
   const [newComment, setNewComment] = useState("");
   const [newReply, setNewReply] = useState({});
@@ -23,7 +26,7 @@ const Discussions = () => {
     const fetchDiscussion = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5000/ques/${titleslug}/discussions`
+          `${BackendUrl}/ques/${titleslug}/discussions`
         );
         setDiscussion(response.data);
       } catch (error) {
@@ -42,7 +45,7 @@ const Discussions = () => {
         return;
       }
       const response = await axios.post(
-        `http://localhost:5000/ques/${titleslug}/discussions/comment`,
+        `${BackendUrl}/ques/${titleslug}/discussions/comment`,
         {
           content: newComment,
           userId: userId,
@@ -63,7 +66,7 @@ const Discussions = () => {
         return;
       }
       const response = await axios.post(
-        `http://localhost:5000/ques/${titleslug}/discussions/comment/${commentId}/reply`,
+        `${BackendUrl}/ques/${titleslug}/discussions/comment/${commentId}/reply`,
         {
           content: newReply[commentId],
           userId: userId,
@@ -83,7 +86,7 @@ const Discussions = () => {
         return;
       }
       const response = await axios.post(
-        `http://localhost:5000/ques/${titleslug}/discussions/${commentId}/like`,
+        `${BackendUrl}/ques/${titleslug}/discussions/${commentId}/like`,
         {
           userId: userId,
         }
@@ -101,7 +104,7 @@ const Discussions = () => {
         return;
       }
       const response = await axios.post(
-        `http://localhost:5000/ques/${titleslug}/discussions/${commentId}/${replyId}/like`,
+        `${BackendUrl}/ques/${titleslug}/discussions/${commentId}/${replyId}/like`,
         {
           userId: userId,
         }

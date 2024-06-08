@@ -5,6 +5,8 @@ import { AuthContext } from '../context/AuthContext';
 
 const Login=()=> {
 
+  const BackendUrl = import.meta.env.VITE_BACKEND_URL;
+
   const navigate=useNavigate();
 
   const {user,setUser}=useContext(AuthContext);
@@ -19,7 +21,7 @@ const Login=()=> {
 
   const sendRequest = async ()=>{
     const res= await axios
-    .post("http://localhost:5000/api/login",{
+    .post(`${BackendUrl}/api/login`,{
        email: formData.email,
        password: formData.password,
     }).catch(err=>console.log(err));

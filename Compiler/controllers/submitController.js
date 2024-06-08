@@ -54,7 +54,6 @@ const runprogram = async (req, res) => {
             await execPromise(compileCmd);
             await execPromisewithTLE(executeCmd, TIME_LIMIT,jobID,language);
         } catch (error) {
-            console.log("called 1");
             console.log(error);
             if (error.message === "TLE") {
                 result = "TLE";
@@ -121,19 +120,33 @@ const submitProgram = async (req, res) => {
             await execPromise(compileCmd); 
         } catch (error) {
             unlinkAllFiles({ codeFilePath, execFilePath });
-            console.error("error in compilation",error);
-            errorMessage=error.stderr;
-            console.log("errormessage is",errorMessage);
+            errorMessage=error.stderr|| "Unknown Error";
+            const newSubmission = new Submission({
+                userId,
+                quesID: ques._id,
+                titleslug: ques.titleslug,
+                language,
+                code,
+                verdict: "RE",
+                executionTime: 0,
+                memoryUsed: 0,
+                testCases: results?.map(result => ({
+                    testCase: result.testCase,
+                    input: result.input,
+                    yourOutput: result.yourOutput ||"N/A",
+                    ExpectedOutput: result.ExpectedOutput,
+                    result: result.result,
+                    executionTime: result.executionTime,
+                    memoryUsed: parseFloat(result.memoryUsed),
+                })), 
+            });
+    
+            await newSubmission.save();
             return res.status(200).json({ finalVerdict:"fail",success: false, results, errorMessage });
         }
 
         for (const test of testCase) {
 
-            // let { codeFilePath, inputFilePath, outputFilePath, execFilePath } = getPaths({ dirCodes, dirInputs, dirOutputs, jobID, language });
-
-            // fs.writeFileSync(codeFilePath, code);
-
-            console.log("inside loop");
 
             const inputFilePath = path.join(dirInputs, `${jobID}_${test._id}_input.txt`);
             const outputFilePath = path.join(dirOutputs, `${jobID}_${test._id}_output.txt`);
@@ -143,15 +156,10 @@ const submitProgram = async (req, res) => {
 
             const executeCmd = executeCmdTemplate.replace("{inputFilePath}", inputFilePath).replace("{outputFilePath}", outputFilePath);
 
-            // let { compileCmd, executeCmd } = getCommands({ language, codeFilePath, inputFilePath, outputFilePath, execFilePath, dirOutputs });
-            await execPromise(compileCmd);
-
             try {
                 
                 const startTime = process.hrtime();
-                console.log("till here1");
                 await execPromisewithTLE(executeCmd, TIME_LIMIT,jobID,language);
-                console.log("till here2");
                 const endTime = process.hrtime(startTime);
                 const executionTime = endTime[0] * 1000 + endTime[1] / 1e6;
                 const memoryUsageInMB = (process.memoryUsage().heapUsed / 1024 / 1024).toFixed(2); 
@@ -160,7 +168,7 @@ const submitProgram = async (req, res) => {
 
                 const verdict = outputContent === test.output.trim() ? "AC" : "WA";
                 if (verdict === "WA") {
-                    success = false;
+                    success = false; 
                     finalVerdict = "WA";
                 }
 
@@ -202,12 +210,15 @@ const submitProgram = async (req, res) => {
                 break;
 
             } finally {
-                console.log("called");
                 unlinkAllFiles({ inputFilePath, outputFilePath });
             }
         }
 
-        unlinkAllFiles({ codeFilePath, execFilePath, dirCodes, dirOutputs, language });
+        try {
+            unlinkAllFiles({ codeFilePath, execFilePath, dirCodes, dirOutputs, language });
+        } catch (error) {
+            console.error("Error unlinking files");
+        }
 
         const newSubmission = new Submission({
             userId,
@@ -226,35 +237,13 @@ const submitProgram = async (req, res) => {
                 result: result.result,
                 executionTime: result.executionTime,
                 memoryUsed: parseFloat(result.memoryUsed),
-            })),
+            })), 
         });
-
         await newSubmission.save();
-        console.log("error is",errorMessage);
         return res.status(200).json({ finalVerdict, success, results,errorMessage });
     } catch (error) {
         console.error(`Error in submitting program: ${error}`);
-        const newSubmission = new Submission({
-            userId,
-            quesID: ques._id,
-            titleslug: ques.titleslug,
-            language,
-            code,
-            verdict: finalVerdict,
-            executionTime: 0,
-            memoryUsed: 0,
-            testCases: results.map(result => ({
-                testCase: result.testCase,
-                input: result.input,
-                yourOutput:result.yourOutput ||"N/A",
-                ExpectedOutput: result.ExpectedOutput,
-                result: result.result,
-                executionTime: result.executionTime,
-                memoryUsed: parseFloat(result.memoryUsed),
-            })),
-        });
-        await newSubmission.save();
-        console.log("error is",errorMessage);
+        
         return res.json({ finalVerdict, success, results ,errorMessage});
     }
 };
@@ -264,20 +253,17 @@ const execPromise = (cmd) => {
         try {
             exec(cmd, (error, stdout, stderr) => {
                 if (error) {
-                    console.log("1",error)
                     reject({ error, stderr });
                 }
                 if (stderr) {
-                    console.log("2",error)
-                    reject(stderr);
+                    reject({stderr});
                 }
-                console.log("stdout is",stdout);
                 resolve(stdout);
             });
         } catch (error) {
             console.log(error);
         }
-    });
+    }); 
 };
 
 
@@ -290,14 +276,11 @@ const execPromisewithTLE = (cmd, timelimit, jobID, language) => {
             const proc = exec(cmd, (error, stdout, stderr) => {
                 flag = false;
                 if (error) {
-                    console.log("1",error)
                     reject({ error, stderr });
                 }
                 if (stderr) {
-                    console.log("2",error)
                     reject(stderr);
                 }
-                console.log("stdout is",stdout);
                 resolve(stdout);
             });
 

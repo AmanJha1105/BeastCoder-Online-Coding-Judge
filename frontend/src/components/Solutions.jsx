@@ -8,6 +8,9 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import Code from "./Code";
 
 const Solutions = () => {
+
+  const BackendUrl = import.meta.env.VITE_BACKEND_URL;
+
   const [solutions, setSolutions] = useState([]);
   const [selectedSolution, setSelectedSolution] = useState(null);
   const [navigateToSolution, setNavigateToSolution] = useState(false);
@@ -29,7 +32,7 @@ const Solutions = () => {
   const fetchSolutions = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:5000/ques/solutionsfromName/${titleslug}`
+        `${BackendUrl}/ques/solutionsfromName/${titleslug}`
       );
       setSolutions(response.data);
     } catch (error) {

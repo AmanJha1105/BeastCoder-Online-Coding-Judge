@@ -5,6 +5,9 @@ import { toast } from 'react-hot-toast';
 import { AuthContext } from '../context/AuthContext';
 
 export default function PublishSolution() {
+
+  const BackendUrl = import.meta.env.VITE_BACKEND_URL;
+
   const [name, setName] = useState('');
   const [code, setCode] = useState('');
   const [topics, setTopics] = useState('');
@@ -20,7 +23,7 @@ export default function PublishSolution() {
   useEffect(() => {
     const fetchSubmission = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/ques/singleSubmission/${selectedSubmission?._id}`);
+        const response = await axios.get(`${BackendUrl}/ques/singleSubmission/${selectedSubmission?._id}`);
         setSubmission(response.data[0]);
         setCode(response.data[0].code);
         setLang(response.data[0].language);
@@ -36,7 +39,7 @@ export default function PublishSolution() {
     e.preventDefault();
     try {
       const userId = localStorage.getItem('userId');
-      await axios.post(`http://localhost:5000/ques/publishSolution/${selectedSubmission.quesID}`, {
+      await axios.post(`${BackendUrl}/ques/publishSolution/${selectedSubmission.quesID}`, {
         userId: userId,
         submissionId: submission._id,
         name: name,

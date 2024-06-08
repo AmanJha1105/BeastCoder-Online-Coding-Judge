@@ -5,6 +5,9 @@ import { toast } from "react-hot-toast";
 import { AuthContext } from "../context/AuthContext";
 
 const Description = ({ ques }) => {
+
+  const BackendUrl = import.meta.env.VITE_BACKEND_URL;
+
   const [likes, setLikes] = useState(ques?.likes);
   const [dislikes, setDislikes] = useState(ques?.dislikes);
   const [liked, setLiked] = useState(false);
@@ -40,7 +43,7 @@ const Description = ({ ques }) => {
       }
 
       const response = await axios.post(
-        `http://localhost:5000/ques/like/${ques.titleslug}`,
+        `${BackendUrl}/ques/like/${ques.titleslug}`,
         {
           userId: userId,
         }
@@ -72,7 +75,7 @@ const Description = ({ ques }) => {
       }
 
       const response = await axios.post(
-        `http://localhost:5000/ques/dislike/${ques.titleslug}`,
+        `${BackendUrl}/ques/dislike/${ques.titleslug}`,
         {
           userId: userId,
         }

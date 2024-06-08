@@ -22,7 +22,7 @@ export default function SignUp() {
     setLoading(true);
     setError(false);
     const res= await axios
-    .post("http://localhost:5000/api/signup",{
+    .post(`${BackendUrl}/api/signup`,{
        fullname:formData.fullname,
        name: formData.name,
        email: formData.email,

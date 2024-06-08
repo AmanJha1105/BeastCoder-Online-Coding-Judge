@@ -7,6 +7,9 @@ import '../index.css';
 import { format } from 'date-fns';
 
 const MonthlySubmissionsHeatmap = ({ username }) => {
+
+  const BackendUrl = import.meta.env.VITE_BACKEND_URL;
+
   const [submissionData, setSubmissionData] = useState([]);
 
   useEffect(() => {
@@ -17,7 +20,7 @@ const MonthlySubmissionsHeatmap = ({ username }) => {
         const currentMonth = currentDate.getMonth() + 1;
 
         const response = await axios.get(
-          `http://localhost:5000/profile/submissions/${username}/${currentYear}/${currentMonth}`
+          `${BackendUrl}/profile/submissions/${username}/${currentYear}/${currentMonth}`
         );
         const parsedData = response.data.map((submission) => ({
           ...submission,
@@ -47,7 +50,7 @@ const MonthlySubmissionsHeatmap = ({ username }) => {
     }
 
     submissionData.forEach((submission) => {
-      if (submission.verdict === 'AC') { // Assuming 'status' is the field that indicates if a submission is accepted
+      if (submission.verdict === 'AC') { 
         const localDate = new Date(submission.submittedAt.getTime() - submission.submittedAt.getTimezoneOffset() * 60000);
         const dateStr = localDate.toISOString().split('T')[0];
         if (dateCounts[dateStr] !== undefined) {

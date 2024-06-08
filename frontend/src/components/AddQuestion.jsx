@@ -5,6 +5,8 @@ import axios from 'axios';
 
 const AddQuestion= ()=> {
 
+  const BackendUrl = import.meta.env.VITE_BACKEND_URL;
+
   const history=useNavigate();
   const [formData, setFormData] = useState({
     level:"",
@@ -23,7 +25,7 @@ const AddQuestion= ()=> {
 
   const sendRequest = async ()=>{
     const res= await axios
-    .post("http://localhost:5000/ques/add",{
+    .post(`${BackendUrl}/ques/add`,{
       level:formData.level,
       topics:formData.topics,
       title:formData.title,

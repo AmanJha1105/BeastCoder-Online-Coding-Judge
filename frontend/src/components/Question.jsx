@@ -8,6 +8,9 @@ import Select from "react-select";
 import { AuthContext } from "../context/AuthContext";
 
 const Question = () => {
+
+  const BackendUrl = import.meta.env.VITE_BACKEND_URL;
+  
   const [queslist, setqueslist] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedQuestion, setSelectedQuestion] = useState(null);
@@ -44,7 +47,7 @@ const Question = () => {
     try {
       const userId = localStorage.getItem("userId");
       const response = await axios.get(
-        "http://localhost:5000/ques/allsubmissions",
+        `${BackendUrl}/ques/allsubmissions`,
         {
           params: {
             userId: userId,
@@ -71,7 +74,7 @@ const Question = () => {
 
   const getQuestions = async () => {
     const res = await axios
-      .get("http://localhost:5000/ques/allquestion", {
+      .get(`${BackendUrl}/ques/allquestion`, {
         withCredentials: true,
       })
       .catch((err) => console.log(err));

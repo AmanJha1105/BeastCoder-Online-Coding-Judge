@@ -5,6 +5,9 @@ import { formatDistanceStrict, add, differenceInHours } from "date-fns";
 import { AuthContext } from "../context/AuthContext";
 
 const AllSubmissions = () => {
+
+  const BackendUrl = import.meta.env.VITE_BACKEND_URL;
+
   const [submissions, setSubmissions] = useState([]);
 
   const { user } = useContext(AuthContext);
@@ -16,7 +19,7 @@ const AllSubmissions = () => {
       try {
         const userId = localStorage.getItem("userId");
         const response = await axios.get(
-          "http://localhost:5000/ques/allsubmissions",
+          `${BackendUrl}/ques/allsubmissions`,
           {
             params: {
               userId: userId,
