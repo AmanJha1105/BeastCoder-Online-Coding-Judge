@@ -68,7 +68,7 @@ const login = async (req, res, next) => {
 
     res.cookie('token', token, {
         path: "/",
-        expires: new Date(Date.now() + 1000 * 60 * 60 * 2), // 2 hours
+        expires: new Date(Date.now() + 1000 * 60 * 60 * 2),
         httpOnly: true,
         sameSite: 'None',
         secure: process.env.NODE_ENV === 'production',
