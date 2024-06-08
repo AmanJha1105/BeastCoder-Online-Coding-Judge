@@ -17,7 +17,7 @@ const app=express();
 
 const PORT = process.env.PORT || 5000;
 
-app.use(cors({ credentials: true,  origin: "http://localhost:5173"}));
+app.use(cors({ credentials: true,  origin: process.env.VITE_FRONTEND_URL}));
 app.use(cookieParser());
 app.use(express.json());
 app.use(bodyParser.json());
