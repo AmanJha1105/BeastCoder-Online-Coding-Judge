@@ -70,7 +70,7 @@ const login = async (req, res, next) => {
         path: "/",
         expires: new Date(Date.now() + 1000 * 60 * 60 * 2), // 2 hours
         httpOnly: true,
-        sameSite: 'lax',
+        sameSite: 'None',
         secure: process.env.NODE_ENV === 'production',
     });
 
@@ -130,7 +130,7 @@ const refreshToken = (req, res, next) => {
             path: "/",
             expires: new Date(Date.now() + 1000 * 60 * 60 * 2),
             httpOnly: true,
-            sameSite: 'lax',
+            sameSite: 'None',
             secure: process.env.NODE_ENV === 'production',
         });
 

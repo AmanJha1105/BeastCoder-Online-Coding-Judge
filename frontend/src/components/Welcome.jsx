@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import Question from './Question';
+import { AuthContext } from "../context/AuthContext";
 
 axios.defaults.withCredentials = true;
 
@@ -8,7 +9,7 @@ const Welcome = () => {
 
   const BackendUrl = import.meta.env.VITE_BACKEND_URL;
 
-  const [user, setUser] = useState();
+  const {user,setUser}=useContext(AuthContext);
 
   const refreshToken = async () => {
     const res = await axios.get(`${BackendUrl}/api/refresh`)
@@ -28,7 +29,7 @@ const Welcome = () => {
   
 
   useEffect(() => {
-      sendRequest().then((data) => setUser(data.user));
+      sendRequest().then((data) => setUser(data?.user));
     const interval = setInterval(() => {
       refreshToken().then((data) => setUser(data.user));
     }, 1000 * 60 * 59); // Refresh token every 59 minutes
