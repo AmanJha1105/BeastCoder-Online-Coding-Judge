@@ -5,6 +5,9 @@ import { AuthContext } from '../context/AuthContext';
 import toast from 'react-hot-toast';
 
 const ProfileUpdatePage = () => {
+
+  const BackendUrl = import.meta.env.VITE_BACKEND_URL;
+
   const [formData, setFormData] = useState({
     fullName: '',
     location: '',
@@ -38,7 +41,7 @@ const ProfileUpdatePage = () => {
       userData.append(key, formData[key]);
     }
     try {
-      const res = await axios.put(`http://localhost:5000/api/update/${username}`, userData, {
+      const res = await axios.put(`${BackendUrl}/api/update/${username}`, userData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }

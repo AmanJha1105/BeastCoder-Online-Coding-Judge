@@ -5,10 +5,13 @@ import Question from './Question';
 axios.defaults.withCredentials = true;
 
 const Welcome = () => {
+
+  const BackendUrl = import.meta.env.VITE_BACKEND_URL;
+
   const [user, setUser] = useState();
 
   const refreshToken = async () => {
-    const res = await axios.get("http://localhost:5000/api/refresh")
+    const res = await axios.get(`${BackendUrl}/api/refresh`)
       .catch((err) => console.log(err));
   
     const data = res?.data;
@@ -16,7 +19,7 @@ const Welcome = () => {
   };
   
   const sendRequest = async () => {
-    const res = await axios.get("http://localhost:5000/api/user")
+    const res = await axios.get(`${BackendUrl}/api/user`)
       .catch((err) => console.log(err));
   
     const data = res?.data;

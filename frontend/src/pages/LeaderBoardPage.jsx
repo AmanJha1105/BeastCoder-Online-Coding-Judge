@@ -2,13 +2,15 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
 const LeaderBoardPage = () => {
+
+  const BackendUrl = import.meta.env.VITE_BACKEND_URL;
     
   const [leaderboard, setLeaderboard] = useState([]);
 
   useEffect(() => {
     const fetchLeaderboard = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/leaderboard');
+        const response = await axios.get(`${BackendUrl}/api/leaderboard`);
         setLeaderboard(response.data);
       } catch (error) {
         console.error('Error fetching leaderboard data', error);
