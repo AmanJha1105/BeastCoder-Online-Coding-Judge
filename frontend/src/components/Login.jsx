@@ -10,7 +10,7 @@ const Login=()=> {
 
   const navigate=useNavigate();
 
-  const {user,setUser, login}=useContext(AuthContext);
+  const {user,setUser, login, fetchUser}=useContext(AuthContext);
 
   const [formData, setFormData] = useState({
     email:"",
@@ -22,6 +22,7 @@ const Login=()=> {
 
   const sendRequest = async ()=>{
     await login(formData.email,formData.password);
+    await fetchUser();
   }
 
   const handleSubmit = async (e) => {

@@ -10,7 +10,6 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
     const fetchUser = async () => {
       try {
         const response = await axios.get(`${BackendUrl}/api/user`,{ withCredentials: true });
@@ -21,9 +20,6 @@ export const AuthProvider = ({ children }) => {
         setLoading(false);
       }
     };
-
-    fetchUser();
-  }, []);
 
   const login = async (email, password) => {
     try {
@@ -48,7 +44,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout ,setUser}}>
+    <AuthContext.Provider value={{ user, loading, login, logout ,setUser,fetchUser}}>
       {children}
     </AuthContext.Provider>
   );
