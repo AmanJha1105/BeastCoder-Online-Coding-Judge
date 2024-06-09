@@ -28,10 +28,11 @@ const Submissions = () => {
         `${BackendUrl}/ques/submissions/${titleslug}`,
         {
           params: {
-            userId: userId,
-          },
+            userId: userId
+          }
         }
       );
+      console.log("response for submission is ",response.data);
       setSubmissions(response.data);
     } catch (error) {
       console.error("Error fetching submissions:", error);

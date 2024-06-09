@@ -4,6 +4,7 @@ const User = require('../model/User');
 
 const getSubmissions =async(req,res)=>{
     try {
+      console.log("inside get submissions");
         const userId = req.query.userId;
         
         const ques_slug = req.params.slug;

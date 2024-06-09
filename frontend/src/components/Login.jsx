@@ -2,6 +2,7 @@ import { useContext, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { AuthContext } from '../context/AuthContext';
+import toast from 'react-hot-toast';
 
 const Login=()=> {
 
@@ -25,7 +26,9 @@ const Login=()=> {
        email: formData.email,
        password: formData.password,
     }).catch(err=>console.log(err));
-    const data = await res.data;
+    const data = await res?.data;
+    if(data===null)
+      toast.error("Incorrect Email or Password");
     setUser(data.user);
     localStorage.setItem('userId',data.user._id);
     localStorage.setItem('username',data.user.username);
