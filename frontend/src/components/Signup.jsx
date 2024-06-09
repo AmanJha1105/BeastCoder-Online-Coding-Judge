@@ -4,6 +4,8 @@ import axios from 'axios';
 
 export default function SignUp() {
 
+  const BackendUrl = import.meta.env.VITE_BACKEND_URL;
+
   const history=useNavigate();
   const [formData, setFormData] = useState({
     fullname:"",
