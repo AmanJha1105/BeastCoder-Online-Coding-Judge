@@ -8,7 +8,7 @@ export const AuthProvider = ({ children }) => {
   const BackendUrl = import.meta.env.VITE_BACKEND_URL;
 
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
     const fetchUser = async () => {
       try {
@@ -16,8 +16,6 @@ export const AuthProvider = ({ children }) => {
         setUser(response.data.user);
       } catch (error) {
         console.error('Error fetching user', error);
-      } finally {
-        setLoading(false);
       }
     };
 
