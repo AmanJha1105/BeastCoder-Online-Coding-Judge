@@ -32,7 +32,7 @@ const Welcome = () => {
       sendRequest().then((data) => setUser(data?.user));
     const interval = setInterval(() => {
       refreshToken().then((data) => setUser(data.user));
-    }, 1000 * 60 * 59); // Refresh token every 59 minutes
+    }, 1000 * 60 * 59);
     return () => clearInterval(interval);
   }, []);
 

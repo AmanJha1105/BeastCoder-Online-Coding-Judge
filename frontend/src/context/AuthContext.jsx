@@ -29,6 +29,8 @@ export const AuthProvider = ({ children }) => {
     try {
       const response = await axios.post(`${BackendUrl}/api/login` ,{ email, password }, { withCredentials: true });
       setUser(response.data.user);
+      localStorage.setItem('userId',response.data.user_id);
+      localStorage.setItem('username',response.data.user.username);
     } catch (error) {
       console.error('Error logging in', error);
     }
@@ -38,6 +40,8 @@ export const AuthProvider = ({ children }) => {
     try {
       await axios.post(`${BackendUrl}/api/logout`, {}, { withCredentials: true });
       setUser(null);
+      localStorage.removeItem('userId');
+      localStorage.removeItem('username');
     } catch (error) {
       console.error('Error logging out', error);
     }

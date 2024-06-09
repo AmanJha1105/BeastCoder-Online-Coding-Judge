@@ -10,7 +10,7 @@ const Login=()=> {
 
   const navigate=useNavigate();
 
-  const {user,setUser}=useContext(AuthContext);
+  const {user,setUser, login}=useContext(AuthContext);
 
   const [formData, setFormData] = useState({
     email:"",
@@ -21,18 +21,7 @@ const Login=()=> {
   };
 
   const sendRequest = async ()=>{
-    const res= await axios
-    .post(`${BackendUrl}/api/login`,{
-       email: formData.email,
-       password: formData.password,
-    }).catch(err=>console.log(err));
-    const data = await res?.data;
-    if(data===null)
-      toast.error("Incorrect Email or Password");
-    setUser(data.user);
-    localStorage.setItem('userId',data.user._id);
-    localStorage.setItem('username',data.user.username);
-    return data;
+    await login(formData.email,formData.password);
   }
 
   const handleSubmit = async (e) => {

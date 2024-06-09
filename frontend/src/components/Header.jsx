@@ -9,7 +9,6 @@ const Header = () => {
 
   const handleLogoutClick = async () => {
     await logout();
-    // Don't navigate to /login after logout, stay on the current page
   };
 
   if (loading) {
