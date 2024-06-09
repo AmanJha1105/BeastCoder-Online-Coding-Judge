@@ -32,7 +32,6 @@ const Submissions = () => {
           }
         }
       );
-      console.log("response for submission is ",response.data);
       setSubmissions(response.data);
     } catch (error) {
       console.error("Error fetching submissions:", error);

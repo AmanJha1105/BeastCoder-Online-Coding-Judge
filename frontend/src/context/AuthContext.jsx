@@ -23,8 +23,8 @@ export const AuthProvider = ({ children }) => {
     try {
       const response = await axios.post(`${BackendUrl}/api/login` ,{ email, password }, { withCredentials: true });
       setUser(response.data.user);
-      localStorage.setItem('userId',response.data.user_id);
-      localStorage.setItem('username',response.data.user.username);
+      localStorage.setItem('userId',response.data.user?._id);
+      localStorage.setItem('username',response.data.user?.username);
     } catch (error) {
       console.error('Error logging in', error);
     }
