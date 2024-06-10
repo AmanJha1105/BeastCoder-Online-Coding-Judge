@@ -41,7 +41,7 @@ export default function SignUp() {
 
   const handleSubmit =  (e) => {
     e.preventDefault();
-    sendRequest().then(()=>history("/login"));
+    sendRequest().then(()=>history("/"));
     };
   return (
     <div className='p-3 max-w-lg mx-auto'>
