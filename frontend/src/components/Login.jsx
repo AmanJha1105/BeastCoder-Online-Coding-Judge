@@ -22,7 +22,6 @@ const Login=()=> {
 
   const sendRequest = async ()=>{
     await login(formData.email,formData.password);
-    await fetchUser();
   }
 
   const handleSubmit = async (e) => {

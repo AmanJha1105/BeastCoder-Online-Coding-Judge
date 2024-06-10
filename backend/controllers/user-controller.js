@@ -140,9 +140,10 @@ const refreshToken = (req, res, next) => {
 };
 
 const logout = (req, res, next) => {
-    res.clearCookie('token', { path: '/' });
+    res.clearCookie('token', { path: '/', sameSite: 'None', secure: true });
     return res.status(200).json({ message: 'Successfully logged out' });
 };
+
 
 const updateProfile = async (req, res) => {
     try {
