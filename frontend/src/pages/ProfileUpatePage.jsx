@@ -41,10 +41,11 @@ const ProfileUpdatePage = () => {
       userData.append(key, formData[key]);
     }
     try {
-      const res = await axios.put(`${BackendUrl}/api/update/${username}`, userData, {
+      const res = await axios.post(`${BackendUrl}/api/update/${username}`, userData, {
         headers: {
           'Content-Type': 'multipart/form-data'
-        }
+        },
+        withCredentials: true
       });
       setFormData({
         fullName: '',

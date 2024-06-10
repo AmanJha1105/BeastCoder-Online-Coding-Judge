@@ -20,13 +20,13 @@ const userSchema= new mongoose.Schema({
         required:true,
         minlength:6,
     },
-    fullName: { type: String, },
-    location: { type: String },
-    githubUsername: { type: String },
-    linkedinUsername: { type: String },
-    skills: { type: String },
-    education: { type: String },
-    profilePicture: { type: String },
+    fullName: { type: String, default: "" },
+    location: { type: String, default: "" },
+    githubUsername: { type: String, default: "" },
+    linkedinUsername: { type: String, default: "" },
+    skills: { type: String, default: "" },
+    education: { type: String, default: "" },
+    profilePicture: { type: String, default: "" },
 });
 
 module.exports=mongoose.model('user',userSchema);
