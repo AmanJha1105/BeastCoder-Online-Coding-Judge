@@ -20,7 +20,7 @@ const userSchema= new mongoose.Schema({
         required:true,
         minlength:6,
     },
-    fullName: { type: String, default: "" },
+    fullname: { type: String, default: "" },
     location: { type: String, default: "" },
     githubUsername: { type: String, default: "" },
     linkedinUsername: { type: String, default: "" },

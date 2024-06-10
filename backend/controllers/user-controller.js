@@ -167,7 +167,7 @@ const updateProfile = async (req, res) => {
         const updatedUser = await User.findByIdAndUpdate(
             userId,
             {
-                fullName,
+                fullname:fullName,
                 location,
                 githubUsername,
                 linkedinUsername,
