@@ -9,7 +9,7 @@ const ProfileUpdatePage = () => {
   const BackendUrl = import.meta.env.VITE_BACKEND_URL;
 
   const [formData, setFormData] = useState({
-    fullName: '',
+    fullname: '',
     location: '',
     githubUsername: '',
     linkedinUsername: '',
@@ -41,14 +41,14 @@ const ProfileUpdatePage = () => {
       userData.append(key, formData[key]);
     }
     try {
-      const res = await axios.post(`${BackendUrl}/api/update/${username}`, userData, {
+      const res = await axios.put(`${BackendUrl}/api/update/${username}`, userData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         },
         withCredentials: true
       });
       setFormData({
-        fullName: '',
+        fullname: '',
         location: '',
         githubUsername: '',
         linkedinUsername: '',
@@ -69,7 +69,7 @@ const ProfileUpdatePage = () => {
       <h2 className="text-2xl font-bold mb-4 text-center">Update Your Profile</h2>
         <div className="mb-4">
           <label className="block text-gray-700">Full Name</label>
-          <input type="text" name="fullName" value={formData.fullName} placeholder='full name' onChange={handleChange} className="form-input mt-1 block w-full" required />
+          <input type="text" name="fullname" value={formData.fullname} placeholder='full name' onChange={handleChange} className="form-input mt-1 block w-full" required />
         </div>
         <div className="mb-4">
           <label className="block text-gray-700">Location</label>

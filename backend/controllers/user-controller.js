@@ -152,7 +152,7 @@ const updateProfile = async (req, res) => {
         const userId = user._id;
 
         const {
-            fullName,
+            fullname,
             location,
             githubUsername,
             linkedinUsername,
@@ -164,10 +164,11 @@ const updateProfile = async (req, res) => {
         if (req.file) {
             imageUrl = await uploadImage(req.file.path);
         }
+        console.log("image url is",imageUrl);
         const updatedUser = await User.findByIdAndUpdate(
             userId,
             {
-                fullname:fullName,
+                fullname,
                 location,
                 githubUsername,
                 linkedinUsername,

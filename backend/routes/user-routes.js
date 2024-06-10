@@ -16,7 +16,7 @@ const router = express.Router();
 router.post("/signup", signup);
 router.post("/login", login);
 router.get("/user", verifyToken, getUser);
-router.post("/update/:username",upload.single('image'),updateProfile)
+router.put("/update/:username",upload.single('image'),updateProfile)
 router.get("/refresh", refreshToken, verifyToken, getUser);
 router.post("/logout",logout);
 router.get("/getUser/:username",getUserfromUsername);
