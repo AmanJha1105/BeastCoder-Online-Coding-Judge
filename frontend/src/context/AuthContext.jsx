@@ -51,6 +51,7 @@ export const AuthProvider = ({ children }) => {
       setUser(response.data.user);
       localStorage.setItem('userId',response.data.user?._id);
       localStorage.setItem('username',response.data.user?.username);
+      fetchUser();
     } catch (error) {
       console.error('Error in signup', error);
     }
