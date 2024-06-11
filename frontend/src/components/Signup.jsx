@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import {toast} from 'raect-hot-toast'
+import { AuthContext } from '../context/AuthContext';
 
 export default function SignUp() {
 
-  const BackendUrl = import.meta.env.VITE_BACKEND_URL;
+  const {signup} = useContext(AuthContext);
 
   const history=useNavigate();
   const [formData, setFormData] = useState({
@@ -23,20 +24,13 @@ export default function SignUp() {
   const sendRequest = async ()=>{
     setLoading(true);
     setError(false);
-    const res= await axios
-    .post(`${BackendUrl}/api/signup`,{
-       fullname:formData.fullname,
-       name: formData.name,
-       email: formData.email,
-       password: formData.password
-    }).catch(err=>console.log(err));
-    const data = await res.data;
-    setLoading(false);
-      if (data.success === false) {
-        setError(true);
-        return;
-      }
-    return data;
+
+    try {
+      await signup(formData.fullname,formData.name,formData.email,formData.password);
+    } catch (error) {
+       toast.error("SignUp failed.")
+    }
+    
   }
 
   const handleSubmit =  (e) => {

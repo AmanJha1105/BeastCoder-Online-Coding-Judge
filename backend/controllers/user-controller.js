@@ -35,7 +35,7 @@ const signup = async (req, res, next) => {
         console.log(error);
     }
 
-    return res.status(201).json({ message: user });
+    return res.status(201).json({ message: "user signup sucessfull",user:user });
 };
 
 const login = async (req, res, next) => {

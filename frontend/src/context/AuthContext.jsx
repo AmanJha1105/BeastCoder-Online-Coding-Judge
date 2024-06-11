@@ -45,8 +45,19 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const signup =async(fullname,name,email,password)=>{
+    try {
+      const response = await axios.post(`${BackendUrl}/api/signup`, {fullname,name,email,password}, { withCredentials: true });
+      setUser(response.data.user);
+      localStorage.setItem('userId',response.data.user?._id);
+      localStorage.setItem('username',response.data.user?.username);
+    } catch (error) {
+      console.error('Error in signup', error);
+    }
+  }
+
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout ,setUser}}>
+    <AuthContext.Provider value={{ user, loading, login, logout ,setUser,signup}}>
       {children}
     </AuthContext.Provider>
   );
