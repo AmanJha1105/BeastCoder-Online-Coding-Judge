@@ -1,5 +1,6 @@
 import React, { createContext, useState, useEffect } from 'react';
 import axios from 'axios';
+import toast from 'react-hot-toast';
 
 export const AuthContext = createContext();
 
@@ -52,6 +53,7 @@ export const AuthProvider = ({ children }) => {
       localStorage.setItem('userId',response.data.user?._id);
       localStorage.setItem('username',response.data.user?.username);
       fetchUser();
+      toast.success("SingUp successfull. Please login now.")
     } catch (error) {
       console.error('Error in signup', error);
     }
