@@ -99,3 +99,6 @@ An Online Judge system that facilitates code submissions and feedback. The platf
 ## Acknowledgements
 
 This platform provides a comprehensive environment for users to practice coding, participate in competitions, and track their progress effectively and communicate with other coders.
+
+
+![Home Page](https://github.com/AmanJha1105/BeastCoder-Online-Coding-Judge/assets/125438101/a91fb22f-5a77-4c0a-ade6-0293faae1a77)
