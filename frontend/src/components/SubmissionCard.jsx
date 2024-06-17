@@ -48,7 +48,7 @@ const SubmissionCard = ({ selectedSubmission }) => {
         {selectedSubmission?.verdict !== "AC" &&
   selectedSubmission?.testCases.length > 0 && (
     <div>
-      <h3 className="py-2">{selectedSubmission?.verdict === "RE" ? "All Test Cases Failed.Please recheck your code." : "Failed Test Case"}</h3>
+      <h3 className="py-2">{selectedSubmission?.verdict === "RE" ? "All Test Cases Failed.Please recheck your code." : selectedSubmission?.verdict === "AC" ? "All testcases passed": "Failed Test Case"}</h3>
       {selectedSubmission?.verdict !== "RE" &&
         selectedSubmission?.testCases
           .map((testCase, index) => {
