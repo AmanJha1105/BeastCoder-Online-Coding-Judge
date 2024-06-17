@@ -22,6 +22,7 @@ An Online Judge system that facilitates code submissions and feedback. The platf
     - [Security](#security)
     - [Deployment](#deployment)
 3. [Acknowledgements](#acknowledgements)
+4. [Screenshots](#screenshots)
 
 ## Key Features
 
@@ -100,5 +101,46 @@ An Online Judge system that facilitates code submissions and feedback. The platf
 
 This platform provides a comprehensive environment for users to practice coding, participate in competitions, and track their progress effectively and communicate with other coders.
 
+## ScreenShots
+
+- **Home Page**
 
 ![Home Page](https://github.com/AmanJha1105/BeastCoder-Online-Coding-Judge/assets/125438101/a91fb22f-5a77-4c0a-ade6-0293faae1a77)
+
+- **Problem Description**
+![Problem Description](https://github.com/AmanJha1105/BeastCoder-Online-Coding-Judge/assets/125438101/810b5221-9751-4968-ba53-e64a2cf650ee)
+
+- **Submissions**
+![Submissions](https://github.com/AmanJha1105/BeastCoder-Online-Coding-Judge/assets/125438101/a49d26f3-e482-4513-a083-1f5cbeb9f111)
+
+- **Solutions**
+![Solutions](https://github.com/AmanJha1105/BeastCoder-Online-Coding-Judge/assets/125438101/fff30b36-c327-44a6-bb78-e40292beaf5a)
+
+- **Specific Solution**
+
+![Screenshot 2024-06-17 132613](https://github.com/AmanJha1105/BeastCoder-Online-Coding-Judge/assets/125438101/2ddc55a0-6cfd-41ee-9d8e-4904c880ffdf)
+
+
+- **Discuss**
+
+![Discussions](https://github.com/AmanJha1105/BeastCoder-Online-Coding-Judge/assets/125438101/cbf2811c-4ace-4ff0-8b95-bbfa611de673)
+
+- **LeaderBoard**
+
+![LeaderBoard](https://github.com/AmanJha1105/BeastCoder-Online-Coding-Judge/assets/125438101/1caf55cb-5b16-47d5-9fa0-9da20080b9a6)
+
+- **All Submissions**
+![Screenshot 2024-06-17 131818](https://github.com/AmanJha1105/BeastCoder-Online-Coding-Judge/assets/125438101/3a8129fb-5baa-4e85-b865-1f5e08905683)
+
+- **User Profile**
+![Screenshot 2024-06-17 132053](https://github.com/AmanJha1105/BeastCoder-Online-Coding-Judge/assets/125438101/b0831210-c759-4327-85e4-f85e141510df)
+![Screenshot 2024-06-17 132139](https://github.com/AmanJha1105/BeastCoder-Online-Coding-Judge/assets/125438101/198e09e0-97d0-4a9f-95bb-ef2f541e2e8f)
+
+- **Publish Solution**
+
+![Screenshot 2024-06-17 132329](https://github.com/AmanJha1105/BeastCoder-Online-Coding-Judge/assets/125438101/5c15ccd9-de1e-4b63-9765-c4b59289062c)
+
+- **Update Profile**
+![Screenshot 2024-06-17 132442](https://github.com/AmanJha1105/BeastCoder-Online-Coding-Judge/assets/125438101/8eb267bd-3622-41cd-bd5c-968f0907fb21)
+
+
