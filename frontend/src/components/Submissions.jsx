@@ -157,20 +157,22 @@ const Submissions = () => {
             </div>
           )}
         </div>
-        <div className="flex-1 p-4">
-          {user === null && (
-            <div className=" items-center flex flex-col mr-10">
-              <div>🔥 Join BeastCoder to Code!</div>
-              <div>View your Submission records here</div>
-              <div className="">
-                <Link to="/login">
-                  <button className="bg-green-500 text-white font-medium py-2 px-4 mt-4 flex items-center cursor-pointer border rounded-lg">
-                    Register or Login
-                  </button>
-                </Link>
+        <div className="flex-1 lg:w-1/2 p-4 overflow-y-auto max-h-screen">
+          <div className="flex-1 p-4">
+            {user === null && (
+              <div className=" items-center flex flex-col mr-10">
+                <div>🔥 Join BeastCoder to Code!</div>
+                <div>View your Submission records here</div>
+                <div className="">
+                  <Link to="/login">
+                    <button className="bg-green-500 text-white font-medium py-2 px-4 mt-4 flex items-center cursor-pointer border rounded-lg">
+                      Register or Login
+                    </button>
+                  </Link>
+                </div>
               </div>
-            </div>
-          )}
+            )}
+          </div>
         </div>
         <div className="flex-1 lg:w-1/2 overflow-y-auto max-h-screen">
           <Code quesID={titleslug} />
