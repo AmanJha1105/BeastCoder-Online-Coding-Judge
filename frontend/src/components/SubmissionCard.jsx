@@ -44,7 +44,6 @@ const SubmissionCard = ({ selectedSubmission }) => {
         >
           {selectedSubmission?.verdict === "AC" ? "Accepted" : selectedSubmission?.verdict === "WA" ? "Wrong Answer" : selectedSubmission?.verdict === "RE" ? "Runtime Error" : selectedSubmission?.verdict === "TLE" ? "Time Limit Exceeded" : "Unknown Verdict"}
         </h2>
-        <h3 className="py-2">{selectedSubmission?.verdict === "RE" ? "All Test Cases Failed.Please recheck your code." : "Failed Test Case"}</h3>
 
         {selectedSubmission?.verdict !== "AC" &&
   selectedSubmission?.testCases.length > 0 && (
