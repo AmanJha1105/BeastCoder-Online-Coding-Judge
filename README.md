@@ -9,8 +9,8 @@ An Online Judge system that facilitates code submissions and feedback. The platf
     - [Problem Management](#problem-management)
     - [Code Submission](#code-submission)
     - [Problem Discussions](#problem-discussion)
-        -[Solutions](#solution-discussions)
-        -[Discuss](#Discussions-on-a-problem)
+        - [Solutions](#solutions)
+        - [Discuss](#discuss)
     - [Profile Management](#profile-management)
     - [Search Question by Name or Topics](#search-problem-by-name-or-topics)
     - [Leaderboard](#leaderboard)
@@ -33,7 +33,7 @@ An Online Judge system that facilitates code submissions and feedback. The platf
 - **Curated Problem List**: A curated list of coding problems covering various difficulty levels and topics.
 - **Detailed Problem Descriptions**: Detailed problem statements, input/output specifications,example test cases and constraints.
 - **Like or Dislike Problem**: Users can vote for a particular question to like or dislike it.
-- 
+ 
 ### Code Submission
 - **Code Execution Environment**: Dockerized compiler for secure and isolated code execution.
 - **Languages**: Code can be written in C++, C, Java and Python .
@@ -48,14 +48,15 @@ An Online Judge system that facilitates code submissions and feedback. The platf
 - **Submissions**: Users can see all of their submission for a given problem with verdicts.
 
 ### Problem Discussions
-- ### Solutions
--   **All Solutions Posted For a Question**: Users can view all the solutions posted for that problem by various users. Get detailed info about a specific solution as well.
--   **Reply and Like**: Users can reply and ask question for a solution and like them.
--  ### Discuss
--   **All Discussions for a Problem**: Users can view all the discussions for that problem by various users.Share their views on that problem.
--   **Reply and Like**: Users can reply and like to a discussion. User can reply to a reply and also like them.
-- 
-- 
+
+#### Solutions
+- **All Solutions Posted For a Question**: Users can view all the solutions posted for that problem by various users. Get detailed info about a specific solution as well.
+- **Reply and Like**: Users can reply and ask questions for a solution and like them.
+
+#### Discuss
+- **All Discussions for a Problem**: Users can view all the discussions for that problem by various users and share their views on that problem.
+- **Reply and Like**: Users can reply and like a discussion. Users can reply to a reply and also like them.
+
 ### Profile Management
 - **Personalized User Profiles**: Personal profiles for users to track solved problems, submission history, and overall performance. Users can see their all time submissions and monthly track daily submissions using Heat Map. they can view their recent accepted submissions and recent published solutions, can edit their profiles, add their info along with their profile picture. Users can also view profile of other users and track their progress but cannot edit them.
 - **Browse Other User Profiles**: Users can also view profile of other users and track their progress but cannot edit them. They can view their submissions heat map, problems solved, their recent accepted submissions and published solutions.
@@ -69,7 +70,7 @@ An Online Judge system that facilitates code submissions and feedback. The platf
 
 ### All Submissions
 - **View all Submissions**: All of users submissions are displayed with vercit, runtime, submission time, problem name. Users can also view specific submissions by clicking on them.
-- 
+  
 ## Technologies Used
 
 ### Frontend
