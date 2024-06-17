@@ -53,6 +53,12 @@ const SubmissionCard = ({ selectedSubmission }) => {
               : "Unknown Verdict"}
           </h2>
 
+          {selectedSubmission?.verdict === "RE" && (
+            <h3 className="py-2">
+              All test cases failed. Please recheck your code.
+            </h3>
+          )}
+
           {selectedSubmission?.verdict !== "AC" &&
             selectedSubmission?.testCases.length > 0 && (
               <div>
